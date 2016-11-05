@@ -4,6 +4,7 @@ import pygame
 import string
 import itertools
 from collections import deque
+import timer
 
 
 class Terminal:
@@ -15,13 +16,16 @@ class Terminal:
     _BUF_SIZE = 100
     _TEXT_SIZE = 20
 
-    def __init__(self, prompt='$ ', programs=None):
+    def __init__(self, prompt='$ ', programs=None, time=300):
         """Initialize the class."""
         self._buf = deque(maxlen=Terminal._BUF_SIZE)
         self._prompt = prompt
         self._current_line = self._prompt
         self._font = pygame.font.Font(None, Terminal._TEXT_SIZE)
         self._current_program = None
+        self._timer = timer.Timer()
+        self._timeleft = time * 1000
+        self._locked = False
 
         if not programs:
             # Can't have a mutable type as a default argument.
@@ -79,7 +83,7 @@ class Terminal:
             # Don't allow removing the prompt, just what the user has typed.
             # If a program is running there is no prompt.
             if (self._current_program or
-                len(self._current_line) > len(self._prompt)):
+                    len(self._current_line) > len(self._prompt)):
                 self._current_line = self._current_line[:-1]
         elif key_unicode in Terminal._ACCEPTED_CHARS:
             self._current_line += key_unicode
@@ -97,3 +101,11 @@ class Terminal:
             text = self._font.render(line, True, (255, 255, 255))
             pygame.display.get_surface().blit(text, (0, y_coord))
             y_coord -= Terminal._TEXT_SIZE
+
+    def run(self):
+        """Run terminal logic."""
+        self._timer.update()
+        self._timeleft -= self._timer.frametime
+
+        if self._timeleft <= 0:
+            self._locked = True
