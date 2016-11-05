@@ -22,7 +22,7 @@ class Timer:
         """Update the time values based on the current tickcount."""
         time = pygame.time.get_ticks()
 
-        if not self._paused:
+        if not self.paused:
             self.frametime = time - self._lasttime
             self.time += self.frametime
 

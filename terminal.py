@@ -95,6 +95,13 @@ class Terminal:
 
     def draw(self):
         """Draw the terminal."""
+        # Draw the countdown text.
+        minutes, seconds = divmod(self._timeleft // 1000, 60)
+        text = self._font.render('{}:{}'.format(minutes, seconds),
+                                 True, (255, 255, 255))
+        pygame.display.get_surface().blit(text, (0, 0))
+
+        # Draw the buffer.
         y_coord = pygame.display.Info().current_h - Terminal._TEXT_SIZE
 
         for line in itertools.chain([self._current_line], self._buf):

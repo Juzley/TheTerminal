@@ -21,6 +21,8 @@ class GameplayState:
             if e.type == pygame.KEYDOWN:
                 self._terminal.input(e.key, e.unicode)
 
+        self._terminal.run()
+
     def draw(self):
         """Draw the game."""
         self._terminal.draw()
