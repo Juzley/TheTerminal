@@ -1,4 +1,4 @@
-"""Module containing the main terminal class."""
+"""Module containing the terminal class, the main gameplay logic."""
 
 import pygame
 import string
@@ -16,7 +16,7 @@ class Terminal:
     _BUF_SIZE = 100
     _TEXT_SIZE = 20
 
-    def __init__(self, prompt='$ ', programs=None, time=300):
+    def __init__(self, prompt='$ ', programs=None, time=10):
         """Initialize the class."""
         self._buf = deque(maxlen=Terminal._BUF_SIZE)
         self._prompt = prompt
@@ -25,7 +25,7 @@ class Terminal:
         self._current_program = None
         self._timer = timer.Timer()
         self._timeleft = time * 1000
-        self._locked = False
+        self.locked = False
 
         if not programs:
             # Can't have a mutable type as a default argument.
@@ -97,7 +97,7 @@ class Terminal:
         """Draw the terminal."""
         # Draw the countdown text.
         minutes, seconds = divmod(self._timeleft // 1000, 60)
-        text = self._font.render('{}:{}'.format(minutes, seconds),
+        text = self._font.render('{}:{:02}'.format(minutes, seconds),
                                  True, (255, 255, 255))
         pygame.display.get_surface().blit(text, (0, 0))
 
@@ -115,4 +115,4 @@ class Terminal:
         self._timeleft -= self._timer.frametime
 
         if self._timeleft <= 0:
-            self._locked = True
+            self.locked = True

@@ -26,6 +26,11 @@ class GameStateManager:
         if self._states:
             self._states.pop()
 
+    def pop_until(self, cls):
+        """Pop until the current state is an instance of a given class."""
+        while self._states and not isinstance(self._states[-1], cls):
+            self._states.pop()
+
     def run(self, events):
         """Run the current gamestate."""
         if self._states:
