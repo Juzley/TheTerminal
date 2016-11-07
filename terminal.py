@@ -4,6 +4,7 @@ import pygame
 import string
 import itertools
 from collections import deque
+import util
 import timer
 
 
@@ -15,6 +16,10 @@ class Terminal:
                        string.punctuation + " ")
     _BUF_SIZE = 100
     _TEXT_SIZE = 20
+    _BEZEL_IMAGE = 'media/bezel.png'
+
+    # The coordinates to start drawing text.
+    _TEXT_START = (45, 525)
 
     def __init__(self, programs, prompt='$ ', time=300):
         """Initialize the class."""
@@ -26,6 +31,8 @@ class Terminal:
         self._timer = timer.Timer()
         self._timeleft = time * 1000
         self.locked = False
+
+        self._bezel = util.load_image(Terminal._BEZEL_IMAGE)
 
         # Create instances of the programs that have been registered.
         self._programs = {c: programs[c](self) for c in programs}
@@ -108,16 +115,20 @@ class Terminal:
         pygame.display.get_surface().blit(text, (0, 0))
 
         # Draw the buffer.
-        y_coord = pygame.display.Info().current_h - Terminal._TEXT_SIZE
+        y_coord = Terminal._TEXT_START[1]
 
         for line in itertools.chain([self._current_line], self._buf):
             text = self._font.render(line, True, (255, 255, 255))
-            pygame.display.get_surface().blit(text, (0, y_coord))
+            pygame.display.get_surface().blit(
+                text, (Terminal._TEXT_START[0], y_coord))
             y_coord -= Terminal._TEXT_SIZE
 
         # If the current program is a graphical one, draw it now.
         if self._current_program and self._current_program.is_graphical():
             self._current_program.draw()
+
+        # Draw the bezel on top of everything.
+        pygame.display.get_surface().blit(self._bezel, self._bezel.get_rect())
 
     def run(self):
         """Run terminal logic."""
