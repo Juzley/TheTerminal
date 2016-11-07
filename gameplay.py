@@ -4,7 +4,7 @@
 import pygame
 import timer
 from terminal import Terminal
-from program import PasswordGuess
+from program import PasswordGuess, TestGraphical
 import mainmenu
 
 
@@ -78,14 +78,18 @@ class GameplayState:
 
     def __init__(self, mgr):
         """Initialize the class."""
-        self._terminal = Terminal(programs={'login': PasswordGuess})
+        self._terminal = Terminal(programs={
+            'login': PasswordGuess,
+            'gfx': TestGraphical})
         self._mgr = mgr
 
     def run(self, events):
         """Run the game."""
         for e in events:
             if e.type == pygame.KEYDOWN:
-                self._terminal.input(e.key, e.unicode)
+                self._terminal.on_keypress(e.key, e.unicode)
+            elif e.type == pygame.MOUSEBUTTONDOWN:
+                self._terminal.on_mouseclick(e.button, e.pos)
 
         self._terminal.run()
 
