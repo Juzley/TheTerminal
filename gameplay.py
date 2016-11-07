@@ -8,6 +8,38 @@ from program import PasswordGuess
 import mainmenu
 
 
+class SuccessState:
+
+    """Gamestate implementation for the success screen."""
+
+    _WAIT_TIME = 2000
+
+    def __init__(self, mgr):
+        """Initialize the class."""
+        self._mgr = mgr
+        self._timer = timer.Timer()
+
+    def draw(self):
+        """Draw the losing screen."""
+        # TODO: make this look like the terminal
+        font = pygame.font.Font(None, 30)
+        text = font.render('You have gained access', True, (255, 255, 255))
+        pygame.display.get_surface().blit(text, (0, 0))
+
+        if self._timer.time >= SuccessState._WAIT_TIME:
+            text = font.render('Press any key to continue...', True,
+                               (255, 255, 255))
+            pygame.display.get_surface().blit(text, (0, 30))
+
+    def run(self, events):
+        """Run the lost-game screen."""
+        self._timer.update()
+        if self._timer.time >= SuccessState._WAIT_TIME:
+            if len([e for e in events if e.type == pygame.KEYDOWN]) > 0:
+                # Return to the main menu.
+                self._mgr.pop_until(mainmenu.MainMenuState)
+
+
 class LostState:
 
     """Gamestate implementation for the defeat screen."""
@@ -62,6 +94,12 @@ class GameplayState:
             # Push so that we can restart the game if required by just popping
             # again.
             self._mgr.push(LostState(self._mgr))
+
+        # The player has succeeded, switch to the success gamestate.
+        if self._terminal.completed():
+            # Don't need to return to the game, so replace this gamestate with
+            # the success screen.
+            self._mgr.replace(SuccessState(self._mgr))
 
     def draw(self):
         """Draw the game."""

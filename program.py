@@ -2,24 +2,43 @@
 
 
 class TerminalProgram:
+
+    """Base class for terminal programs."""
+
     def __init__(self, terminal):
         """Initialize the class."""
         self._terminal = terminal
 
+    @classmethod
+    def is_graphical(cls):
+        """Indicate whether the program is graphical or not."""
+        return False
+
+    def draw(self):
+        """Draw the program, if it is graphical."""
+        pass
+
     def start(self):
-        """Called when the program is started."""
+        """Called when the program is started, or restarted."""
         pass
 
     def input(self, line):
         """Handle a line of input from the terminal."""
         pass
 
-    def finished(self):
-        """Indicate whether the program has finished."""
+    def exited(self):
+        """Whether the current instance of the program has exited."""
+        return False
+
+    def completed(self):
+        """Whether the task associated with this program has been completed."""
         return False
 
 
 class PasswordGuess(TerminalProgram):
+
+    """Class for a password-guessing program."""
+
     _PROMPT = 'Enter password: '
 
     def __init__(self, terminal):
@@ -33,6 +52,7 @@ class PasswordGuess(TerminalProgram):
 
     def start(self):
         """Start the program."""
+        self._guesses = 0
         self._terminal.output([PasswordGuess._PROMPT])
 
     def input(self, line):
@@ -48,7 +68,7 @@ class PasswordGuess(TerminalProgram):
         else:
             self._guesses += 1
             if self._guesses == self._maxguesses:
-                # TODO: Pick another password, have a 'strike'.
+                # TODO: Pick another password, reduce the timer.
                 pass
             else:
                 self._terminal.output(
@@ -56,5 +76,10 @@ class PasswordGuess(TerminalProgram):
                         correct, len(self._password)),
                      PasswordGuess._PROMPT])
 
-    def finished(self):
-        return self._guessed or self._guesses == self._maxguesses
+    def completed(self):
+        """Indicate whether the user has guessed the password."""
+        return self._guessed
+
+    def exited(self):
+        """Indicate whether the current instance has exited."""
+        return self.completed() or self._guesses == self._maxguesses
