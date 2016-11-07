@@ -16,7 +16,7 @@ class Terminal:
     _BUF_SIZE = 100
     _TEXT_SIZE = 20
 
-    def __init__(self, prompt='$ ', programs=None, time=10):
+    def __init__(self, programs, prompt='$ ', time=300):
         """Initialize the class."""
         self._buf = deque(maxlen=Terminal._BUF_SIZE)
         self._prompt = prompt
@@ -27,18 +27,19 @@ class Terminal:
         self._timeleft = time * 1000
         self.locked = False
 
-        if not programs:
-            # Can't have a mutable type as a default argument.
-            self._programs = {}
-        else:
-            self._programs = programs
+        # Create instances of the programs that have been registered.
+        self._programs = {c: programs[c](self) for c in programs}
 
     def _process_command(self, cmd):
         """Process a completed command."""
         if cmd in self._programs:
             # Create a new instance of the program
-            self._current_program = self._programs[cmd](self)
-            self._current_program.start()
+            self._current_program = self._programs[cmd]
+
+            # Don't run the program if it is already completed
+            # TODO: Some kind of message here.
+            if not self._current_program.completed():
+                self._current_program.start()
         elif cmd == 'help':
             # TODO: Output available commands.
             pass
@@ -59,7 +60,7 @@ class Terminal:
             self._current_program.input(self._current_line)
 
             # Check if the latest input has caused the current program to exit.
-            if self._current_program.finished():
+            if self._current_program.exited():
                 self._current_program = None
         else:
             # Skip the prompt and any leading/trailing whitespace to get
@@ -116,3 +117,8 @@ class Terminal:
 
         if self._timeleft <= 0:
             self.locked = True
+
+    def completed(self):
+        """Indicate whether the player has been successful."""
+        return len([p for p in self._programs.values()
+                    if not p.completed()]) == 0
