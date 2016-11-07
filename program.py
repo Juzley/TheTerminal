@@ -1,6 +1,10 @@
 """Classes for programs that run on the terminal."""
 
 
+import pygame
+from util import MouseButton
+
+
 class TerminalProgram:
 
     """Base class for terminal programs."""
@@ -22,8 +26,12 @@ class TerminalProgram:
         """Called when the program is started, or restarted."""
         pass
 
-    def input(self, line):
+    def text_input(self, line):
         """Handle a line of input from the terminal."""
+        pass
+
+    def on_mouseclick(self, button, pos):
+        """Handle a mouse click from the user."""
         pass
 
     def exited(self):
@@ -55,7 +63,7 @@ class PasswordGuess(TerminalProgram):
         self._guesses = 0
         self._terminal.output([PasswordGuess._PROMPT])
 
-    def input(self, line):
+    def text_input(self, line):
         """Check a password guess."""
         correct = 0
         for c in zip(line, self._password):
@@ -83,3 +91,37 @@ class PasswordGuess(TerminalProgram):
     def exited(self):
         """Indicate whether the current instance has exited."""
         return self.completed() or self._guesses == self._maxguesses
+
+
+class TestGraphical(TerminalProgram):
+
+    """Program to test the graphical program handling."""
+
+    def __init__(self, terminal):
+        """Initialize the class."""
+        super().__init__(terminal)
+        self._rect = pygame.Rect(100, 100, 180, 120)
+        self._clicked = False
+
+    @classmethod
+    def is_graphical(cls):
+        """Indicate that this is a graphical program."""
+        return True
+
+    def draw(self):
+        """Draw the program."""
+        screen = pygame.display.get_surface()
+        pygame.draw.rect(screen, (255, 255, 255), self._rect)
+
+    def on_mouseclick(self, button, pos):
+        """Detect whether the user clicked the program."""
+        if button == MouseButton.LEFT and self._rect.collidepoint(pos):
+            self._clicked = True
+
+    def completed(self):
+        """Indicate whether the program was completed."""
+        return self._clicked
+
+    def exited(self):
+        """Indicate whether the program has exited."""
+        return self._clicked

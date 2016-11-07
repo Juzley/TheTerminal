@@ -57,11 +57,7 @@ class Terminal:
         self._add_to_buf([self._current_line])
 
         if self._current_program:
-            self._current_program.input(self._current_line)
-
-            # Check if the latest input has caused the current program to exit.
-            if self._current_program.exited():
-                self._current_program = None
+            self._current_program.text_input(self._current_line)
         else:
             # Skip the prompt and any leading/trailing whitespace to get
             # the command.
@@ -75,8 +71,12 @@ class Terminal:
         else:
             self._current_line = self._prompt
 
-    def input(self, key, key_unicode):
+    def on_keypress(self, key, key_unicode):
         """Handle a user keypress."""
+        # If we're displaying a graphical program, ignore keyboard input
+        if self._current_program and self._current_program.is_graphical():
+            return
+
         if key in [pygame.K_RETURN, pygame.K_KP_ENTER]:
             if self._current_line:
                 self._complete_input()
@@ -88,6 +88,11 @@ class Terminal:
                 self._current_line = self._current_line[:-1]
         elif key_unicode in Terminal._ACCEPTED_CHARS:
             self._current_line += key_unicode
+
+    def on_mouseclick(self, button, pos):
+        """Handle a user mouse click."""
+        if self._current_program:
+            self._current_program.on_mouseclick(button, pos)
 
     def output(self, output):
         """Add a list of lines to the displayed output."""
@@ -110,11 +115,22 @@ class Terminal:
             pygame.display.get_surface().blit(text, (0, y_coord))
             y_coord -= Terminal._TEXT_SIZE
 
+        # If the current program is a graphical one, draw it now.
+        if self._current_program and self._current_program.is_graphical():
+            self._current_program.draw()
+
     def run(self):
         """Run terminal logic."""
+        # Check whether the current program (if there is one) has exited.
+        if self._current_program and self._current_program.exited():
+            self._current_program = None
+
+            # Display the prompt again.
+            self._current_line = self._prompt
+
+        # Check if the player ran out of time.
         self._timer.update()
         self._timeleft -= self._timer.frametime
-
         if self._timeleft <= 0:
             self.locked = True
 
