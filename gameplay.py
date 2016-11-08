@@ -3,6 +3,7 @@
 
 import pygame
 import timer
+import util
 from terminal import Terminal
 from gamestate import GameState
 from program import PasswordGuess, TestGraphical
@@ -92,7 +93,8 @@ class GameplayState(GameState):
             elif e.type == pygame.MOUSEBUTTONDOWN:
                 self._terminal.on_mouseclick(e.button, e.pos)
             elif e.type == pygame.ACTIVEEVENT:
-                self._terminal.on_active_event(e.state, e.gain)
+                self._terminal.on_active_event(util.ActiveEvent(e.state,
+                                                                e.gain))
 
         self._terminal.run()
 
