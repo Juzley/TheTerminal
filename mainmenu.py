@@ -3,24 +3,44 @@
 
 import pygame
 from gameplay import GameplayState
+from menu import MenuItem, Menu
+from enum import Enum, unique
 
 
-class MainMenuState:
+class MainMenu(Menu):
 
-    """Gamestate implementation for the main menu."""
+    """Class defining the main menu."""
+
+    @unique
+    class Items(Enum):
+        START_GAME = 1
+        QUIT = 2
 
     def __init__(self, mgr):
         """Initialize the class."""
+        super().__init__()
+
+        self._items = [
+            MenuItem(item_id=MainMenu.Items.START_GAME,
+                     pos=(0, 0),
+                     text='Start Game',
+                     text_size=40,
+                     colour=(255, 255, 255)),
+            MenuItem(item_id=MainMenu.Items.QUIT,
+                     pos=(0, 40),
+                     text='Quit',
+                     text_size=40,
+                     colour=(255, 255, 255))
+        ]
+
         self._font = pygame.font.Font(None, 40)
         self._mgr = mgr
 
-    def run(self, events):
-        """Run the main menu logic."""
-        for e in events:
-            if e.type == pygame.KEYDOWN and e.key == pygame.K_RETURN:
-                self._mgr.push(GameplayState(self._mgr))
-
-    def draw(self):
-        """Draw the main menu."""
-        text = self._font.render('Press enter to start', True, (255, 255, 255))
-        pygame.display.get_surface().blit(text, (0, 0))
+    def _on_choose(self, item):
+        """Handle activation of a menu item."""
+        if item.item_id == MainMenu.Items.START_GAME:
+            self._mgr.push(GameplayState(self._mgr))
+        elif item.item_id == MainMenu.Items.QUIT:
+            # The main menu should be the last gamestate on the stack, so
+            # popping it should cause the game to exit.
+            self._mgr.pop()
