@@ -121,14 +121,10 @@ class Terminal:
         if self._current_program:
             self._current_program.on_mouseclick(button, pos)
 
-    def on_active_event(self, state, gain):
+    def on_active_event(self, active_event):
         """Handle a window active event."""
-        # Lose focus: state 2, gain 0
-        # Gain focus: state 6, gain 1
-        if state == 2 and gain == 0:
-            self._has_focus = False
-        elif state == 6 and gain == 1:
-            self._has_focus = True
+        if active_event.input_focus_change:
+            self._has_focus = active_event.gained
 
     def output(self, output):
         """Add a list of lines to the displayed output."""
