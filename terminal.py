@@ -23,7 +23,6 @@ class Terminal:
     _TEXT_COLOUR = (20, 200, 20)
 
     # Constants related to cursor
-    _CURSOR_WEIGHT = 1
     _CURSOR_WIDTH = 6
     _CURSOR_ON_MS = 800
     _CURSOR_OFF_MS = 600
@@ -45,6 +44,7 @@ class Terminal:
         self._current_program = None
         self._timer = timer.Timer()
         self._timeleft = time * 1000
+        self._has_focus = True
         self.locked = False
 
         self._bezel = util.load_image(Terminal._BEZEL_IMAGE)
@@ -121,6 +121,15 @@ class Terminal:
         if self._current_program:
             self._current_program.on_mouseclick(button, pos)
 
+    def on_active_event(self, state, gain):
+        """Handle a window active event."""
+        # Lose focus: state 2, gain 0
+        # Gain focus: state 6, gain 1
+        if state == 2 and gain == 0:
+            self._has_focus = False
+        elif state == 6 and gain == 1:
+            self._has_focus = True
+
     def output(self, output):
         """Add a list of lines to the displayed output."""
         # NB Output is expected to be a list of lines.
@@ -147,7 +156,7 @@ class Terminal:
                              (Terminal._TEXT_START[0] + curr_line_size[0] + 1,
                               Terminal._TEXT_START[1] - 1,
                               Terminal._CURSOR_WIDTH, curr_line_size[1]),
-                             Terminal._CURSOR_WEIGHT)
+                             0 if self._has_focus else 1)
 
         # If the current program is a graphical one, draw it now.
         if self._current_program and self._current_program.is_graphical():
