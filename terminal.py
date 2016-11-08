@@ -22,6 +22,12 @@ class Terminal:
     _TEXT_FONT = 'media/whitrabt.ttf'
     _TEXT_COLOUR = (20, 200, 20)
 
+    # Constants related to cursor
+    _CURSOR_WEIGHT = 1
+    _CURSOR_WIDTH = 6
+    _CURSOR_ON_MS = 800
+    _CURSOR_OFF_MS = 600
+
     # Constants related to drawing the bezel.
     _BEZEL_IMAGE = 'media/bezel.png'
     _BEZEL_TEXT_SIZE = 30
@@ -130,6 +136,18 @@ class Terminal:
             pygame.display.get_surface().blit(
                 text, (Terminal._TEXT_START[0], y_coord))
             y_coord -= Terminal._TEXT_SIZE
+
+        # Determine whether the cursor is on
+        if (self._timer.time % (Terminal._CURSOR_ON_MS +
+                                Terminal._CURSOR_OFF_MS) <
+                Terminal._CURSOR_ON_MS):
+            curr_line_size = self._font.size(self._current_line)
+            pygame.draw.rect(pygame.display.get_surface(),
+                             Terminal._TEXT_COLOUR,
+                             (Terminal._TEXT_START[0] + curr_line_size[0] + 1,
+                              Terminal._TEXT_START[1] - 1,
+                              Terminal._CURSOR_WIDTH, curr_line_size[1]),
+                             Terminal._CURSOR_WEIGHT)
 
         # If the current program is a graphical one, draw it now.
         if self._current_program and self._current_program.is_graphical():
