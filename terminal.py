@@ -138,10 +138,9 @@ class Terminal:
                 text, (Terminal._TEXT_START[0], y_coord))
             y_coord -= Terminal._TEXT_SIZE
 
-        # Increment cursor counter
+        # Increment cursor counter and draw if it is 'on'
         self._cursor_counter += 1
         if self._cursor_counter <= Terminal._CURSOR_ON_FRAMES:
-            # Draw cursor
             curr_line_size = self._font.size(self._current_line)
             pygame.draw.rect(pygame.display.get_surface(),
                              Terminal._TEXT_COLOUR,
