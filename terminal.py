@@ -6,6 +6,7 @@ import itertools
 from collections import deque
 import util
 import timer
+import random
 
 
 class Terminal:
@@ -16,7 +17,11 @@ class Terminal:
                        string.punctuation + " ")
     _BUF_SIZE = 100
     _TEXT_SIZE = 20
+
+    # Constants related to drawing the bezel.
     _BEZEL_IMAGE = 'media/bezel.png'
+    _BEZEL_TEXT_SIZE = 30
+    _BEZEL_TEXT_LOCATION = (680, 575)
 
     # The coordinates to start drawing text.
     _TEXT_START = (45, 525)
@@ -33,6 +38,11 @@ class Terminal:
         self.locked = False
 
         self._bezel = util.load_image(Terminal._BEZEL_IMAGE)
+        bezel_font = pygame.font.Font(None, Terminal._BEZEL_TEXT_SIZE)
+        bezel_label = ''.join(
+            random.choice(string.ascii_uppercase + string.digits)
+            for i in range(5))
+        self._bezel_text = bezel_font.render(bezel_label, True, (255, 255, 255))
 
         # Create instances of the programs that have been registered.
         self._programs = {c: programs[c](self) for c in programs}
@@ -108,12 +118,6 @@ class Terminal:
 
     def draw(self):
         """Draw the terminal."""
-        # Draw the countdown text.
-        minutes, seconds = divmod(self._timeleft // 1000, 60)
-        text = self._font.render('{}:{:02}'.format(minutes, seconds),
-                                 True, (255, 255, 255))
-        pygame.display.get_surface().blit(text, (0, 0))
-
         # Draw the buffer.
         y_coord = Terminal._TEXT_START[1]
 
@@ -127,8 +131,16 @@ class Terminal:
         if self._current_program and self._current_program.is_graphical():
             self._current_program.draw()
 
-        # Draw the bezel on top of everything.
+        # Draw the bezel.
         pygame.display.get_surface().blit(self._bezel, self._bezel.get_rect())
+        pygame.display.get_surface().blit(self._bezel_text,
+                                          Terminal._BEZEL_TEXT_LOCATION)
+
+        # Draw the countdown text.
+        minutes, seconds = divmod(self._timeleft // 1000, 60)
+        text = self._font.render('{}:{:02}'.format(minutes, seconds),
+                                 True, (255, 255, 255))
+        pygame.display.get_surface().blit(text, (0, 0))
 
     def run(self):
         """Run terminal logic."""
