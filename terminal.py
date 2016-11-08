@@ -56,7 +56,7 @@ class Terminal:
         bezel_font = pygame.font.Font(None, Terminal._BEZEL_TEXT_SIZE)
         bezel_label = ''.join(
             random.choice(string.ascii_uppercase + string.digits)
-            for i in range(5))
+            for _ in range(5))
         self._bezel_text = bezel_font.render(bezel_label, True, (255, 255, 255))
 
         # Create instances of the programs that have been registered.
@@ -104,7 +104,10 @@ class Terminal:
             # Skip the prompt and any leading/trailing whitespace to get
             # the command.
             cmd = self._current_line[len(self._prompt):].lstrip().rstrip()
-            if cmd:
+
+            # Add to command history, skipping repeated entries
+            if cmd and (len(self._cmd_history) == 0 or
+                        self._cmd_history[0] != cmd):
                 self._cmd_history.appendleft(cmd)
             self._process_command(cmd)
 

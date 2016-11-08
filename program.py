@@ -8,6 +8,7 @@ from util import MouseButton
 class BadInput(Exception):
     pass
 
+
 class TerminalProgram:
 
     """Base class for terminal programs."""
@@ -82,8 +83,8 @@ class PasswordGuess(TerminalProgram):
             self._aborted = False
         else:
             self._guesses = 0
-        self._terminal.output([PasswordGuess._PROMPT
-                                .format(self._maxguesses - self._guesses)])
+        self._terminal.output([PasswordGuess._PROMPT.format(
+            self._maxguesses - self._guesses)])
 
     def text_input(self, line):
         """Check a password guess."""
@@ -104,8 +105,8 @@ class PasswordGuess(TerminalProgram):
                 self._terminal.output(
                     ['Login failed. {} of {}'.format(
                         correct, len(self._password)),
-                     PasswordGuess._PROMPT
-                         .format(self._maxguesses - self._guesses)])
+                     PasswordGuess._PROMPT.format(
+                         self._maxguesses - self._guesses)])
 
     def on_abort(self):
         """Handle a ctrl+c from user."""
@@ -201,7 +202,7 @@ class HexEditor(TerminalProgram):
         self._col = None
 
         self._files = {
-            "login.dll" : HexFileA(),
+            "login.dll": HexFileA(),
         }
 
         super().__init__(terminal)
@@ -245,7 +246,7 @@ class HexEditor(TerminalProgram):
             except:
                 raise BadInput("Not a number")
 
-            if row < len(self._file.rows) and row > 0:
+            if 0 <= row < len(self._file.rows):
                 self._row = row
             else:
                 raise BadInput("Invalid row")
@@ -256,7 +257,7 @@ class HexEditor(TerminalProgram):
             except:
                 raise BadInput("Not a number")
 
-            if col < HexFile.COL_COUNT and col > 0:
+            if 0 <= col < HexFile.COL_COUNT:
                 self._col = col
             else:
                 raise BadInput("Invalid col")
@@ -279,7 +280,8 @@ class HexEditor(TerminalProgram):
     def _open_file(self, filename):
         self._file = self._files[filename]
         self._terminal.output([""] +
-                              [" " * 2 + " | " + "  ".join("{:4}".format(i)
+                              [" " * 2 + " | " +
+                               "  ".join("{:4}".format(i)
                                          for i in range(HexFile.COL_COUNT))] +
                               ["-" * (5 + 6 * HexFile.COL_COUNT)])
         self._terminal.output(
