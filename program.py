@@ -7,6 +7,9 @@ from util import MouseButton
 
 
 class BadInput(Exception):
+
+    """Exception raised by a program receiving bad input."""
+
     pass
 
 
@@ -67,6 +70,8 @@ class PasswordGuess(TerminalProgram):
 
     _PROMPT = 'Enter password: '
 
+    _MAX_GUESSES = 5
+
     # TODO: Some more complicated matching of user to passwords, e.g. only have
     # certain characters available in the manual - need to make sure there's
     # no ambiguity though.
@@ -88,6 +93,11 @@ class PasswordGuess(TerminalProgram):
 
         super().__init__(terminal)
 
+    def _get_prompt(self):
+        """Get the prompt string."""
+        return 'Enter password ({} attempts remaining)'.format(
+            PasswordGuess._MAX_GUESSES - self._guesses)
+
     def start(self):
         """Start the program."""
         # Don't reset guesses if we are restarting after an abort
@@ -95,7 +105,11 @@ class PasswordGuess(TerminalProgram):
             self._aborted = False
         else:
             self._guesses = 0
-        self._terminal.output([PasswordGuess._PROMPT])
+
+            # Pick a new password for the current user.
+            self._password = random.choice(PasswordGuess._PASSWORDS[self._user])
+
+        self._terminal.output([self._get_prompt()])
 
     def text_input(self, line):
         """Check a password guess."""
@@ -108,12 +122,16 @@ class PasswordGuess(TerminalProgram):
             self._terminal.output(['Password accepted'])
             self._guessed = True
         else:
-            # TODO: Pause before accepting further ouput, to avoid just typing
-            # all the words in order
-            self._terminal.output([
-                'Incorrect password. {} of {} characters correct'.format(
-                    correct, len(self._password)),
-                PasswordGuess._PROMPT])
+            self._guesses += 1
+
+            if self._guesses == PasswordGuess._MAX_GUESSES:
+                self._terminal.output([
+                    'Max retries reached - password reset!'])
+            else:
+                self._terminal.output([
+                    'Incorrect password. {} of {} characters correct'.format(
+                        correct, len(self._password)),
+                    self._get_prompt()])
 
     def on_abort(self):
         """Handle a ctrl+c from user."""
@@ -125,7 +143,7 @@ class PasswordGuess(TerminalProgram):
 
     def exited(self):
         """Indicate whether the current instance has exited."""
-        return self.completed()
+        return self.completed() or self._guesses == PasswordGuess._MAX_GUESSES
 
 
 class TestGraphical(TerminalProgram):
@@ -169,6 +187,7 @@ class HexFile:
     COL_COUNT = 5
 
     def __init__(self, row, col, val):
+        """Initialize the class."""
         self.row = row
         self.col = col
         self.val = val
@@ -179,6 +198,7 @@ class HexFile:
         return None
 
     def validate(self, row, col, val):
+        """Check whether the file has been correctly edited."""
         return row == self.row and col == self.col and val == self.val
 
 
