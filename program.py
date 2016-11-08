@@ -2,6 +2,7 @@
 
 
 import pygame
+import random
 from util import MouseButton
 
 
@@ -61,12 +62,23 @@ class PasswordGuess(TerminalProgram):
 
     _PROMPT = 'Enter password: '
 
+    # TODO: Some more complicated matching of user to passwords, e.g. only have
+    # certain characters available in the manual - need to make sure there's
+    # no ambiguity though.
+    _PASSWORDS = {
+        'user00': ['flask', 'great', 'asked', 'tarts', 'force', 'gleam',
+                   'think', 'brick', 'flute', 'brisk', 'freak', 'blast',
+                   'feast', 'flick', 'flank']
+    }
+
     def __init__(self, terminal):
         """Initialize the class."""
         self._guesses = 0
-        self._maxguesses = 5
         self._guessed = False
-        self._password = 'Test'
+
+        # Pick a user
+        self._user = random.choice(list(PasswordGuess._PASSWORDS.keys()))
+        self._password = random.choice(PasswordGuess._PASSWORDS[self._user])
 
         super().__init__(terminal)
 
@@ -86,15 +98,11 @@ class PasswordGuess(TerminalProgram):
             self._terminal.output(['Password accepted'])
             self._guessed = True
         else:
-            self._guesses += 1
-            if self._guesses == self._maxguesses:
-                # TODO: Pick another password, reduce the timer.
-                pass
-            else:
-                self._terminal.output(
-                    ['Login failed. {} of {}'.format(
-                        correct, len(self._password)),
-                     PasswordGuess._PROMPT])
+            # TODO: Pause before accepting further ouput, to avoid just typing
+            # all the words in order
+            self._terminal.output([
+                'Incorrect password. {} of {} characters correct'.format(
+                    correct, len(self._password))])
 
     def completed(self):
         """Indicate whether the user has guessed the password."""
@@ -102,7 +110,7 @@ class PasswordGuess(TerminalProgram):
 
     def exited(self):
         """Indicate whether the current instance has exited."""
-        return self.completed() or self._guesses == self._maxguesses
+        return self.completed()
 
 
 class TestGraphical(TerminalProgram):
