@@ -46,6 +46,10 @@ class TerminalProgram:
         """Handle a mouse click from the user."""
         pass
 
+    def on_abort(self):
+        """Handle a ctrl+c from user."""
+        pass
+
     def exited(self):
         """Whether the current instance of the program has exited."""
         return False
@@ -59,7 +63,7 @@ class PasswordGuess(TerminalProgram):
 
     """Class for a password-guessing program."""
 
-    _PROMPT = 'Enter password: '
+    _PROMPT = 'Enter password ({} tries remaining): '
 
     def __init__(self, terminal):
         """Initialize the class."""
@@ -67,13 +71,19 @@ class PasswordGuess(TerminalProgram):
         self._maxguesses = 5
         self._guessed = False
         self._password = 'Test'
+        self._aborted = False
 
         super().__init__(terminal)
 
     def start(self):
         """Start the program."""
-        self._guesses = 0
-        self._terminal.output([PasswordGuess._PROMPT])
+        # Don't reset guesses if we are restarting after an abort
+        if self._aborted:
+            self._aborted = False
+        else:
+            self._guesses = 0
+        self._terminal.output([PasswordGuess._PROMPT
+                                .format(self._maxguesses - self._guesses)])
 
     def text_input(self, line):
         """Check a password guess."""
@@ -94,7 +104,12 @@ class PasswordGuess(TerminalProgram):
                 self._terminal.output(
                     ['Login failed. {} of {}'.format(
                         correct, len(self._password)),
-                     PasswordGuess._PROMPT])
+                     PasswordGuess._PROMPT
+                         .format(self._maxguesses - self._guesses)])
+
+    def on_abort(self):
+        """Handle a ctrl+c from user."""
+        self._aborted = True
 
     def completed(self):
         """Indicate whether the user has guessed the password."""
