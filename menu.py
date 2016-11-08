@@ -20,7 +20,7 @@ class MenuItem:
 
     def collidepoint(self, pos):
         """Determine whether a given point is within this menu item."""
-        return self._text.get_rect().collidepoint(pos)
+        return self._text.get_rect().move(self._pos).collidepoint(pos)
 
     def draw(self, selected):
         """Draw the menu item."""
