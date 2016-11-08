@@ -7,6 +7,7 @@ from collections import deque
 import util
 import timer
 import random
+from program import BadInput
 
 
 class Terminal:
@@ -84,16 +85,28 @@ class Terminal:
         self._add_to_buf([self._current_line])
 
         if self._current_program:
-            self._current_program.text_input(self._current_line)
+            # Skip the prompt
+            if self._current_program.prompt is not None:
+                line = self._current_line[len(self._current_program.prompt):]
+            else:
+                line = self._current_line
+
+            # Handle bad input errors
+            try:
+                self._current_program.text_input(line)
+            except BadInput as e:
+                self.output(["Error: {}".format(str(e))])
         else:
             # Skip the prompt and any leading/trailing whitespace to get
             # the command.
             cmd = self._current_line[len(self._prompt):].lstrip().rstrip()
             self._process_command(cmd)
 
-        # Reset the prompt, unless a program is running in which case there is
-        # no prompt.
-        if self._current_program:
+        # Reset the prompt, unless a program is running in which case see
+        # whether it has a prompt.
+        if self._current_program and self._current_program.prompt is not None:
+            self._current_line = self._current_program.prompt
+        elif self._current_program:
             self._current_line = ""
         else:
             self._current_line = self._prompt
@@ -109,9 +122,13 @@ class Terminal:
                 self._complete_input()
         elif key == pygame.K_BACKSPACE:
             # Don't allow removing the prompt, just what the user has typed.
-            # If a program is running there is no prompt.
-            if (self._current_program or
-                    len(self._current_line) > len(self._prompt)):
+            # If a program is running then grab its prompt (which will be None
+            # if it doesn't have one)
+            if self._current_program:
+                prompt = self._current_program.prompt
+            else:
+                prompt = self._prompt
+            if prompt is None or len(self._current_line) > len(prompt):
                 self._current_line = self._current_line[:-1]
         elif key_unicode in Terminal._ACCEPTED_CHARS:
             self._current_line += key_unicode

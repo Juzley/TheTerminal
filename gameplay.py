@@ -6,7 +6,7 @@ import timer
 import util
 from terminal import Terminal
 from gamestate import GameState
-from program import PasswordGuess, TestGraphical
+from program import PasswordGuess, TestGraphical, HexEditor
 import mainmenu
 
 
@@ -82,7 +82,8 @@ class GameplayState(GameState):
         """Initialize the class."""
         self._terminal = Terminal(programs={
             'login': PasswordGuess,
-            'gfx': TestGraphical})
+            'gfx': TestGraphical,
+            'hexedit': HexEditor})
         self._mgr = mgr
 
     def run(self, events):
