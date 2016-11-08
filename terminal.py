@@ -25,8 +25,8 @@ class Terminal:
     # Constants related to cursor
     _CURSOR_WEIGHT = 1
     _CURSOR_WIDTH = 6
-    _CURSOR_ON_FRAMES = 80
-    _CURSOR_OFF_FRAMES = 40
+    _CURSOR_ON_MS = 800
+    _CURSOR_OFF_MS = 600
 
     # Constants related to drawing the bezel.
     _BEZEL_IMAGE = 'media/bezel.png'
@@ -45,7 +45,6 @@ class Terminal:
         self._current_program = None
         self._timer = timer.Timer()
         self._timeleft = time * 1000
-        self._cursor_counter = 0
         self.locked = False
 
         self._bezel = util.load_image(Terminal._BEZEL_IMAGE)
@@ -138,9 +137,10 @@ class Terminal:
                 text, (Terminal._TEXT_START[0], y_coord))
             y_coord -= Terminal._TEXT_SIZE
 
-        # Increment cursor counter and draw if it is 'on'
-        self._cursor_counter += 1
-        if self._cursor_counter <= Terminal._CURSOR_ON_FRAMES:
+        # Determine whether the cursor is on
+        if (self._timer.time % (Terminal._CURSOR_ON_MS +
+                                Terminal._CURSOR_OFF_MS) <
+                Terminal._CURSOR_ON_MS):
             curr_line_size = self._font.size(self._current_line)
             pygame.draw.rect(pygame.display.get_surface(),
                              Terminal._TEXT_COLOUR,
@@ -148,8 +148,6 @@ class Terminal:
                               Terminal._TEXT_START[1] - 1,
                               Terminal._CURSOR_WIDTH, curr_line_size[1]),
                              Terminal._CURSOR_WEIGHT)
-        elif self._cursor_counter > Terminal._CURSOR_ON_FRAMES + Terminal._CURSOR_OFF_FRAMES:
-            self._cursor_counter = 0
 
         # If the current program is a graphical one, draw it now.
         if self._current_program and self._current_program.is_graphical():
