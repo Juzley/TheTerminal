@@ -9,6 +9,7 @@ from util import MouseButton
 class BadInput(Exception):
     pass
 
+
 class TerminalProgram:
 
     """Base class for terminal programs."""
@@ -24,7 +25,7 @@ class TerminalProgram:
 
     @property
     def prompt(self):
-        """Return the prompt for this program. None if it doesn't have one"""
+        """Return the prompt for this program. None if it doesn't have one."""
         return None
 
     def draw(self):
@@ -45,6 +46,10 @@ class TerminalProgram:
 
     def on_mouseclick(self, button, pos):
         """Handle a mouse click from the user."""
+        pass
+
+    def on_abort(self):
+        """Handle a ctrl+c from user."""
         pass
 
     def exited(self):
@@ -75,6 +80,7 @@ class PasswordGuess(TerminalProgram):
         """Initialize the class."""
         self._guesses = 0
         self._guessed = False
+        self._aborted = False
 
         # Pick a user
         self._user = random.choice(list(PasswordGuess._PASSWORDS.keys()))
@@ -84,7 +90,11 @@ class PasswordGuess(TerminalProgram):
 
     def start(self):
         """Start the program."""
-        self._guesses = 0
+        # Don't reset guesses if we are restarting after an abort
+        if self._aborted:
+            self._aborted = False
+        else:
+            self._guesses = 0
         self._terminal.output([PasswordGuess._PROMPT])
 
     def text_input(self, line):
@@ -102,7 +112,12 @@ class PasswordGuess(TerminalProgram):
             # all the words in order
             self._terminal.output([
                 'Incorrect password. {} of {} characters correct'.format(
-                    correct, len(self._password))])
+                    correct, len(self._password)),
+                PasswordGuess._PROMPT])
+
+    def on_abort(self):
+        """Handle a ctrl+c from user."""
+        self._aborted = True
 
     def completed(self):
         """Indicate whether the user has guessed the password."""
@@ -148,7 +163,9 @@ class TestGraphical(TerminalProgram):
 
 
 class HexFile:
+
     """Represents a HexEditor file."""
+
     COL_COUNT = 5
 
     def __init__(self, row, col, val):
@@ -158,7 +175,7 @@ class HexFile:
 
     @property
     def rows(self):
-        """Get the rows in the hex file. Each row is 5 hex values"""
+        """Get the rows in the hex file. Each row is 5 hex values."""
         return None
 
     def validate(self, row, col, val):
@@ -194,7 +211,7 @@ class HexEditor(TerminalProgram):
         self._col = None
 
         self._files = {
-            "login.dll" : HexFileA(),
+            "login.dll": HexFileA(),
         }
 
         super().__init__(terminal)
@@ -238,7 +255,7 @@ class HexEditor(TerminalProgram):
             except:
                 raise BadInput("Not a number")
 
-            if row < len(self._file.rows) and row > 0:
+            if 0 <= row < len(self._file.rows):
                 self._row = row
             else:
                 raise BadInput("Invalid row")
@@ -249,7 +266,7 @@ class HexEditor(TerminalProgram):
             except:
                 raise BadInput("Not a number")
 
-            if col < HexFile.COL_COUNT and col > 0:
+            if 0 <= col < HexFile.COL_COUNT:
                 self._col = col
             else:
                 raise BadInput("Invalid col")
@@ -272,7 +289,8 @@ class HexEditor(TerminalProgram):
     def _open_file(self, filename):
         self._file = self._files[filename]
         self._terminal.output([""] +
-                              [" " * 2 + " | " + "  ".join("{:4}".format(i)
+                              [" " * 2 + " | " +
+                               "  ".join("{:4}".format(i)
                                          for i in range(HexFile.COL_COUNT))] +
                               ["-" * (5 + 6 * HexFile.COL_COUNT)])
         self._terminal.output(
