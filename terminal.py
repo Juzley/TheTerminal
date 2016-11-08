@@ -17,6 +17,7 @@ class Terminal:
     _ACCEPTED_CHARS = (string.ascii_letters + string.digits +
                        string.punctuation + " ")
     _BUF_SIZE = 100
+    _HISTORY_SIZE = 50
 
     # Constants related to drawing the terminal text.
     _TEXT_SIZE = 16
@@ -41,6 +42,9 @@ class Terminal:
         self._buf = deque(maxlen=Terminal._BUF_SIZE)
         self._prompt = prompt
         self._current_line = self._prompt
+        self._cmd_history = deque(maxlen=Terminal._HISTORY_SIZE)
+        self._history_pos = -1
+        self._saved_line = ""
         self._font = pygame.font.Font(Terminal._TEXT_FONT, Terminal._TEXT_SIZE)
         self._current_program = None
         self._timer = timer.Timer()
@@ -100,6 +104,8 @@ class Terminal:
             # Skip the prompt and any leading/trailing whitespace to get
             # the command.
             cmd = self._current_line[len(self._prompt):].lstrip().rstrip()
+            if cmd:
+                self._cmd_history.appendleft(cmd)
             self._process_command(cmd)
 
         # Reset the prompt, unless a program is running in which case see
@@ -113,11 +119,29 @@ class Terminal:
 
     def on_keypress(self, key, key_unicode):
         """Handle a user keypress."""
+        # Detect ctrl+c
+        ctrl_c_pressed = (key == pygame.K_c and
+                          pygame.key.get_mods() & pygame.KMOD_CTRL)
+
         # If we're displaying a graphical program, ignore keyboard input
-        if self._current_program and self._current_program.is_graphical():
+        # (unless it is ctrl+c)
+        if (self._current_program and
+                self._current_program.is_graphical() and
+                not ctrl_c_pressed):
             return
 
-        if key in [pygame.K_RETURN, pygame.K_KP_ENTER]:
+        # Any typing other than arrows reset history navigation
+        if key not in (pygame.K_UP, pygame.K_DOWN):
+            self._history_pos = -1
+
+        if ctrl_c_pressed:
+            # If we are in a program, then abort it
+            if self._current_program:
+                self._current_program.on_abort()
+                self._current_program = None
+            self.output([self._current_line + "^C"])
+            self._current_line = self._prompt
+        elif key in [pygame.K_RETURN, pygame.K_KP_ENTER]:
             if self._current_line:
                 self._complete_input()
         elif key == pygame.K_BACKSPACE:
@@ -130,6 +154,24 @@ class Terminal:
                 prompt = self._prompt
             if prompt is None or len(self._current_line) > len(prompt):
                 self._current_line = self._current_line[:-1]
+        elif key == pygame.K_UP:
+            if self._history_pos + 1 < len(self._cmd_history):
+                # If we are starting a history navigation, then save current
+                # line
+                if self._history_pos == -1:
+                    self._saved_line = self._current_line
+                self._history_pos += 1
+                self._current_line = self._prompt + \
+                                     self._cmd_history[self._history_pos]
+        elif key == pygame.K_DOWN:
+            if self._history_pos > 0:
+                self._history_pos -= 1
+                self._current_line = self._prompt + \
+                                     self._cmd_history[self._history_pos]
+            elif self._history_pos == 0:
+                # Restore saved line
+                self._history_pos = -1
+                self._current_line = self._saved_line
         elif key_unicode in Terminal._ACCEPTED_CHARS:
             self._current_line += key_unicode
 
