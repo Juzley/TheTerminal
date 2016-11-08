@@ -22,6 +22,12 @@ class Terminal:
     _TEXT_FONT = 'media/whitrabt.ttf'
     _TEXT_COLOUR = (20, 200, 20)
 
+    # Constants related to cursor
+    _CURSOR_WEIGHT = 1
+    _CURSOR_WIDTH = 6
+    _CURSOR_ON_FRAMES = 80
+    _CURSOR_OFF_FRAMES = 40
+
     # Constants related to drawing the bezel.
     _BEZEL_IMAGE = 'media/bezel.png'
     _BEZEL_TEXT_SIZE = 30
@@ -39,6 +45,7 @@ class Terminal:
         self._current_program = None
         self._timer = timer.Timer()
         self._timeleft = time * 1000
+        self._cursor_counter = 0
         self.locked = False
 
         self._bezel = util.load_image(Terminal._BEZEL_IMAGE)
@@ -130,6 +137,20 @@ class Terminal:
             pygame.display.get_surface().blit(
                 text, (Terminal._TEXT_START[0], y_coord))
             y_coord -= Terminal._TEXT_SIZE
+
+        # Increment cursor counter
+        self._cursor_counter += 1
+        if self._cursor_counter <= Terminal._CURSOR_ON_FRAMES:
+            # Draw cursor
+            curr_line_size = self._font.size(self._current_line)
+            pygame.draw.rect(pygame.display.get_surface(),
+                             Terminal._TEXT_COLOUR,
+                             (Terminal._TEXT_START[0] + curr_line_size[0] + 1,
+                              Terminal._TEXT_START[1] - 1,
+                              Terminal._CURSOR_WIDTH, curr_line_size[1]),
+                             Terminal._CURSOR_WEIGHT)
+        elif self._cursor_counter > Terminal._CURSOR_ON_FRAMES + Terminal._CURSOR_OFF_FRAMES:
+            self._cursor_counter = 0
 
         # If the current program is a graphical one, draw it now.
         if self._current_program and self._current_program.is_graphical():
