@@ -37,7 +37,7 @@ class Terminal:
     # The coordinates to start drawing text.
     _TEXT_START = (45, 525)
 
-    def __init__(self, programs, prompt='$ ', time=300):
+    def __init__(self, programs, prompt='$ ', time=300, depends=None):
         """Initialize the class."""
         self._buf = deque(maxlen=Terminal._BUF_SIZE)
         self._prompt = prompt
@@ -50,6 +50,7 @@ class Terminal:
         self._timer = timer.Timer()
         self._timeleft = time * 1000
         self._has_focus = True
+        self._depends = {} if depends is None else depends
         self.locked = False
 
         self._bezel = util.load_image(Terminal._BEZEL_IMAGE)
@@ -65,16 +66,35 @@ class Terminal:
     def _process_command(self, cmd):
         """Process a completed command."""
         if cmd in self._programs:
-            # Create a new instance of the program
-            self._current_program = self._programs[cmd]
+            # Check dependencies for this command
+            if self._is_cmd_runnable(cmd):
+                # Create a new instance of the program
+                self._current_program = self._programs[cmd]
 
-            # Don't run the program if it is already completed
-            # TODO: Some kind of message here.
-            if not self._current_program.completed():
-                self._current_program.start()
+                # Don't run the program if it is already completed
+                # TODO: Some kind of message here.
+                if not self._current_program.completed():
+                    self._current_program.start()
         elif cmd == 'help':
             # TODO: Output available commands.
             pass
+
+    def _is_cmd_runnable(self, cmd):
+        depends_list = self._depends.get(cmd)
+        if depends_list is None:
+            reasons = []
+        else:
+            # Get list of block reasons
+            reasons = [r for c, r in depends_list
+                       if not self._programs[c].completed()]
+
+        if len(reasons) == 0:
+            return True
+        else:
+            self.output(["{} currently blocked by: {}".format(
+                cmd, ", ".join(reasons)
+            )])
+            return False
 
     def _add_to_buf(self, lines):
         """Add lines to the display buffer."""
@@ -165,12 +185,12 @@ class Terminal:
                     self._saved_line = self._current_line
                 self._history_pos += 1
                 self._current_line = self._prompt + \
-                                     self._cmd_history[self._history_pos]
+                    self._cmd_history[self._history_pos]
         elif key == pygame.K_DOWN:
             if self._history_pos > 0:
                 self._history_pos -= 1
                 self._current_line = self._prompt + \
-                                     self._cmd_history[self._history_pos]
+                    self._cmd_history[self._history_pos]
             elif self._history_pos == 0:
                 # Restore saved line
                 self._history_pos = -1

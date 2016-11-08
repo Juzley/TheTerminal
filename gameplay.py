@@ -80,10 +80,15 @@ class GameplayState(GameState):
 
     def __init__(self, mgr):
         """Initialize the class."""
-        self._terminal = Terminal(programs={
-            'login': PasswordGuess,
-            'gfx': TestGraphical,
-            'hexedit': HexEditor})
+        self._terminal = Terminal(
+            programs={
+                'login': PasswordGuess,
+                'gfx': TestGraphical,
+                'hexedit': HexEditor},
+            depends={
+                'login': (('hexedit', 'software lock'),
+                          ('gfx', 'hardware security')),
+            })
         self._mgr = mgr
 
     def run(self, events):
