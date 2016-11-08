@@ -4,11 +4,12 @@
 import pygame
 import timer
 from terminal import Terminal
+from gamestate import GameState
 from program import PasswordGuess, TestGraphical
 import mainmenu
 
 
-class SuccessState:
+class SuccessState(GameState):
 
     """Gamestate implementation for the success screen."""
 
@@ -37,10 +38,10 @@ class SuccessState:
         if self._timer.time >= SuccessState._WAIT_TIME:
             if len([e for e in events if e.type == pygame.KEYDOWN]) > 0:
                 # Return to the main menu.
-                self._mgr.pop_until(mainmenu.MainMenuState)
+                self._mgr.pop_until(mainmenu.MainMenu)
 
 
-class LostState:
+class LostState(GameState):
 
     """Gamestate implementation for the defeat screen."""
 
@@ -69,10 +70,10 @@ class LostState:
         if self._timer.time >= LostState._WAIT_TIME:
             if len([e for e in events if e.type == pygame.KEYDOWN]) > 0:
                 # Return to the main menu.
-                self._mgr.pop_until(mainmenu.MainMenuState)
+                self._mgr.pop_until(mainmenu.MainMenu)
 
 
-class GameplayState:
+class GameplayState(GameState):
 
     """Gamestate implementation for the core gameplay."""
 
