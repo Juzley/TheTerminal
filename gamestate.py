@@ -1,6 +1,18 @@
 """Module responsible for switching between different gamestates."""
 
 
+class GameState:
+
+    """Base class for gamestates."""
+
+    def run(self, events):
+        """Run the gamestate."""
+        pass
+
+    def draw(self):
+        """Draw the gamestate."""
+
+
 class GameStateManager:
 
     """Class to manage running and switching between gamestates."""
@@ -40,3 +52,7 @@ class GameStateManager:
         """Draw the current gamestate."""
         if self._states:
             self._states[-1].draw()
+
+    def empty(self):
+        """Indicate whether there are any active gamestates."""
+        return len(self._states) == 0
