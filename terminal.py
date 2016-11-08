@@ -16,12 +16,16 @@ class Terminal:
     _ACCEPTED_CHARS = (string.ascii_letters + string.digits +
                        string.punctuation + " ")
     _BUF_SIZE = 100
-    _TEXT_SIZE = 20
+
+    # Constants related to drawing the terminal text.
+    _TEXT_SIZE = 16
+    _TEXT_FONT = 'media/whitrabt.ttf'
+    _TEXT_COLOUR = (20, 200, 20)
 
     # Constants related to drawing the bezel.
     _BEZEL_IMAGE = 'media/bezel.png'
     _BEZEL_TEXT_SIZE = 30
-    _BEZEL_TEXT_LOCATION = (680, 575)
+    _BEZEL_TEXT_LOCATION = (680, 576)
 
     # The coordinates to start drawing text.
     _TEXT_START = (45, 525)
@@ -31,7 +35,7 @@ class Terminal:
         self._buf = deque(maxlen=Terminal._BUF_SIZE)
         self._prompt = prompt
         self._current_line = self._prompt
-        self._font = pygame.font.Font(None, Terminal._TEXT_SIZE)
+        self._font = pygame.font.Font(Terminal._TEXT_FONT, Terminal._TEXT_SIZE)
         self._current_program = None
         self._timer = timer.Timer()
         self._timeleft = time * 1000
@@ -122,7 +126,7 @@ class Terminal:
         y_coord = Terminal._TEXT_START[1]
 
         for line in itertools.chain([self._current_line], self._buf):
-            text = self._font.render(line, True, (255, 255, 255))
+            text = self._font.render(line, True, Terminal._TEXT_COLOUR)
             pygame.display.get_surface().blit(
                 text, (Terminal._TEXT_START[0], y_coord))
             y_coord -= Terminal._TEXT_SIZE
