@@ -94,12 +94,28 @@ class Terminal:
                 # TODO: Some kind of message here.
                 if not self._current_program.completed():
                     self._current_program.start()
+
         elif cmd in ('help', '?'):
             sorted_cmds = sorted(self._programs.items(),
                                  key=lambda i: i[0])
             self.output(["Available commands:"] +
                         ["  {:10}   {}".format(c, p.help)
                          for c, p in sorted_cmds])
+
+        # Easter egg!
+        elif cmd.startswith("colour "):
+            args = cmd.split(" ")[1:]
+            if len(args) == 3:
+                try:
+                    # Get colour and try a render to make sure code correct
+                    colour = tuple(int(a) for a in args)
+                    self._font.render("test", True, colour)
+                    Terminal._TEXT_COLOUR = colour
+                except (ValueError, TypeError):
+                    self.output(["I am not familiar with that colour code."])
+                else:
+                    self.output(["Enjoy your new colour!"])
+
         elif cmd:
             self.output(["Unknown command '{}'.".format(cmd)])
 
@@ -196,12 +212,12 @@ class Terminal:
                     self._saved_line = self._current_line
                 self._history_pos += 1
                 self._current_line = self._prompt + \
-                                     self._cmd_history[self._history_pos]
+                    self._cmd_history[self._history_pos]
         elif key == pygame.K_DOWN:
             if self._history_pos > 0:
                 self._history_pos -= 1
                 self._current_line = self._prompt + \
-                                     self._cmd_history[self._history_pos]
+                    self._cmd_history[self._history_pos]
             elif self._history_pos == 0:
                 # Restore saved line
                 self._history_pos = -1
