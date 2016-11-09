@@ -57,6 +57,10 @@ class TerminalProgram:
         """Handle a mouse click from the user."""
         pass
 
+    def on_mousemove(self, pos):
+        """Handle a mouse move from the user."""
+        pass
+
     def on_abort(self):
         """Handle a ctrl+c from user."""
         pass

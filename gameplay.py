@@ -97,8 +97,12 @@ class GameplayState(GameState):
         for e in events:
             if e.type == pygame.KEYDOWN:
                 self._terminal.on_keypress(e.key, e.unicode)
+            elif e.type == pygame.KEYUP:
+                self._terminal.on_keyrelease()
             elif e.type == pygame.MOUSEBUTTONDOWN:
                 self._terminal.on_mouseclick(e.button, e.pos)
+            elif e.type == pygame.MOUSEMOTION:
+                self._terminal.on_mousemove(e.pos)
             elif e.type == pygame.ACTIVEEVENT:
                 self._terminal.on_active_event(util.ActiveEvent(e.state,
                                                                 e.gain))

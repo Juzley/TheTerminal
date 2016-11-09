@@ -2,7 +2,8 @@
 
 
 import pygame
-from util import MouseButton
+
+import mouse
 from gamestate import GameState
 
 
@@ -17,6 +18,13 @@ class MenuItem:
 
         font = pygame.font.Font(None, text_size)
         self._text = font.render(text, True, colour)
+
+        # If the position is None, that means center
+        if self._pos[0] is None:
+            text_width = self._text.get_rect()[2]
+            surface_width = pygame.display.get_surface().get_rect()[2]
+            self._pos = (int((surface_width / 2) - (text_width / 2)),
+                         self._pos[1])
 
     def collidepoint(self, pos):
         """Determine whether a given point is within this menu item."""
@@ -67,22 +75,28 @@ class Menu(GameState):
             if self._selected_index > 0:
                 self._selected_index -= 1
         elif event.key in [pygame.K_DOWN, pygame.K_RIGHT]:
-            if self._selected_index < len(self._items):
+            if self._selected_index < len(self._items) - 1:
                 self._selected_index += 1
         elif event.key in [pygame.K_RETURN, pygame.K_KP_ENTER]:
             self._on_choose(self._items[self._selected_index])
 
     def _on_mouseclick(self, event):
         """Handle a mouse click."""
-        if event.button == MouseButton.LEFT:
+        if event.button == mouse.Button.LEFT:
             for item in [i for i in self._items if i.collidepoint(event.pos)]:
                 self._on_choose(item)
 
     def _on_mousemove(self, event):
         """Handle mousemove event."""
+        over_item = False
         for idx, item in enumerate(self._items):
             if item.collidepoint(event.pos):
                 self._selected_index = idx
+                over_item = True
+        if over_item:
+            mouse.current.set_cursor(mouse.Cursor.HAND)
+        else:
+            mouse.current.set_cursor(mouse.Cursor.ARROW)
 
     def _on_choose(self, item):
         """Handle activation of a menu item."""

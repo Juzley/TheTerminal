@@ -2,7 +2,7 @@
 
 import pygame
 
-from util import MouseButton
+import mouse
 from . import program
 
 
@@ -59,7 +59,7 @@ class HardwareInspect(program.TerminalProgram):
         except IndexError:
             # IndexError is raised if the position is outside the surface -
             # return a 0 to indicate no chip was clicked,
-            return HardwareInspect._NO_CHIP
+            return HardwareInspect._NO_CHIP_CODE
 
         return colour.r
 
@@ -70,7 +70,7 @@ class HardwareInspect(program.TerminalProgram):
 
     def on_mouseclick(self, button, pos):
         """Detect whether the user clicked the program."""
-        if button == MouseButton.LEFT:
+        if button == mouse.Button.LEFT:
             chip_code = self._get_chip_code(pos)
             if chip_code == HardwareInspect._RESET_CODE:
                 self._exited = True
@@ -89,6 +89,13 @@ class HardwareInspect(program.TerminalProgram):
                     self._disabled_chips.remove(chip_code)
                 else:
                     self._disabled_chips.add(chip_code)
+
+    def on_mousemove(self, pos):
+        """Handle a mouse move event."""
+        if self._get_chip_code(pos) != HardwareInspect._NO_CHIP_CODE:
+            mouse.current.set_cursor(mouse.Cursor.HAND)
+        else:
+            mouse.current.set_cursor(mouse.Cursor.ARROW)
 
     def completed(self):
         """Indicate whether the program was completed."""
