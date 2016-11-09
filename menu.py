@@ -75,7 +75,7 @@ class Menu(GameState):
             if self._selected_index > 0:
                 self._selected_index -= 1
         elif event.key in [pygame.K_DOWN, pygame.K_RIGHT]:
-            if self._selected_index < len(self._items):
+            if self._selected_index < len(self._items) - 1:
                 self._selected_index += 1
         elif event.key in [pygame.K_RETURN, pygame.K_KP_ENTER]:
             self._on_choose(self._items[self._selected_index])
