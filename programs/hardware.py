@@ -46,6 +46,7 @@ class HardwareInspect(program.TerminalProgram):
     def start(self):
         """Start the program."""
         self._exited = False
+        self._disabled_chips = set()
 
     def _get_chip_code(self, pos):
         """Determine the chip code based on the area the player clicked."""
@@ -75,12 +76,14 @@ class HardwareInspect(program.TerminalProgram):
                 self._exited = True
                 # See if the user disabled the correct chips.
                 if self._disabled_chips == self._expected_disabled:
+                    self._terminal.reboot("SYSTEM ALERT: Hardware security"
+                                          " module disabled.")
                     self._completed = True
-                    self._terminal.output(["SYSTEM ALERT: Hardware security"
-                                           " module disabled."])
                 else:
-                    # TODO: Reboot.
-                    pass
+                    self._terminal.reboot("SYSTEM ALERT: Hardware error:"
+                                          " clock skew detected. Recovering")
+                    self._terminal.reduce_time(10)
+
             elif chip_code != HardwareInspect._NO_CHIP_CODE:
                 if chip_code in self._disabled_chips:
                     self._disabled_chips.remove(chip_code)

@@ -9,13 +9,7 @@ class PasswordGuess(program.TerminalProgram):
 
     """Class for a password-guessing program."""
 
-    _PROMPT = 'Enter password: '
-
     _MAX_GUESSES = 5
-
-    # TODO: Some more complicated matching of user to passwords, e.g. only have
-    # certain characters available in the manual - need to make sure there's
-    # no ambiguity though.
     _PASSWORDS = {
         'root':  ['flask', 'great', 'asked', 'tarts', 'force', 'gleam', 'think',
                   'brick', 'flute', 'brisk', 'freak', 'blast', 'feast', 'flick',
@@ -23,7 +17,9 @@ class PasswordGuess(program.TerminalProgram):
         'ro0t': ['tusks', 'blush', 'askew', 'train', 'asset', 'burns', 'tries',
                  'turns', 'basks', 'busks'],
         'rewt': ['maple', 'pearl', 'lapel', 'myths', 'cycle', 'apple', 'ladle',
-                 'ample', 'maize', 'capel']
+                 'ample', 'maize', 'capel'],
+        '00142331': ['trice', 'racer', 'tours', 'glaze', 'trail', 'raise',
+                     'slick', 'track', 'grace', 'trace']
     }
 
     def __init__(self, terminal):
