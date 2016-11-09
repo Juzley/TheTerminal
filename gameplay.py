@@ -86,7 +86,7 @@ class GameplayState(GameState):
                 'inspect': TestGraphical,
                 'hexedit': HexEditor},
             depends={
-                'login': ('hexedit', 'gfx'),
+                'login': ('hexedit', 'inspect'),
             })
         self._mgr = mgr
 
