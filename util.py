@@ -18,8 +18,8 @@ class MouseButton:
 class ActiveEvent:
 
     """
-    Class representing an ActiveEvent, wrapping the state mask and providing
-    a cleaner interface.
+    Class representing an pygame.ACTIVEEVENT, wrapping the state mask and
+    providing a cleaner interface.
 
     """
 

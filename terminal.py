@@ -1,13 +1,15 @@
 """Module containing the terminal class, the main gameplay logic."""
 
-import pygame
-import string
 import itertools
-from collections import deque
-import util
-import timer
 import random
-from program import BadInput
+import string
+from collections import deque
+
+import pygame
+
+import timer
+import util
+from programs.program import BadInput
 
 
 class Terminal:

@@ -1,13 +1,14 @@
 """Implementation of the core gameplay."""
 
-
 import pygame
+
+import mainmenu
 import timer
 import util
-from terminal import Terminal
 from gamestate import GameState
-from program import PasswordGuess, TestGraphical, HexEditor
-import mainmenu
+from programs.program import PasswordGuess, TestGraphical
+from programs.hexedit import HexEditor
+from terminal import Terminal
 
 
 class SuccessState(GameState):
