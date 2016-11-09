@@ -49,6 +49,9 @@ class HexEditor(program.TerminalProgram):
     _COL_PROMPT = 'Edit col num: '
     _VAL_PROMPT = 'Change {:#04x} to (leave empty to cancel): '
 
+    # How long is the freeze time (in ms) when a mistake is made
+    _FREEZE_TIME = 5 * 1000
+
     def __init__(self, terminal):
         """Initialize the class."""
         self._guessed = False
@@ -137,7 +140,7 @@ class HexEditor(program.TerminalProgram):
                                        .format(self._filename)])
                 self._row = None
                 self._col = None
-                self._terminal.freeze(10 * 1000)
+                self._terminal.freeze(HexEditor._FREEZE_TIME)
 
         else:
             self._row = None

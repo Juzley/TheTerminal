@@ -3,6 +3,7 @@
 import itertools
 import random
 import string
+import os
 from collections import deque
 
 import pygame
@@ -166,6 +167,46 @@ class Terminal:
         else:
             self._current_line = self._prompt
 
+    def _tab_complete(self):
+        # Only works outside programs for now
+        if self._current_program is None:
+            partial = self._current_line[len(self._prompt):]
+
+            # Find the command being typed
+            matches = [c for c in list(self._programs.keys()) + ["help"]
+                       if c.startswith(partial)]
+            if len(matches) == 1:
+                self._current_line = self._prompt + matches[0]
+            else:
+                # Get the common prefix. If this is more than what is typed
+                # then complete up till that, else display options
+                common_prefix = os.path.commonprefix(matches)
+                if common_prefix != partial:
+                    self._current_line = self._prompt + common_prefix
+                else:
+                    self.output([self._current_line,
+                                 "  ".join(matches)])
+
+    def _navigate_history(self, key):
+        if key == pygame.K_UP:
+            if self._history_pos + 1 < len(self._cmd_history):
+                # If we are starting a history navigation, then save current
+                # line
+                if self._history_pos == -1:
+                    self._saved_line = self._current_line
+                self._history_pos += 1
+                self._current_line = self._prompt + \
+                                     self._cmd_history[self._history_pos]
+        elif key == pygame.K_DOWN:
+            if self._history_pos > 0:
+                self._history_pos -= 1
+                self._current_line = self._prompt + \
+                                     self._cmd_history[self._history_pos]
+            elif self._history_pos == 0:
+                # Restore saved line
+                self._history_pos = -1
+                self._current_line = self._saved_line
+
     def on_keypress(self, key, key_unicode):
         """Handle a user keypress."""
         # Ignore all input if in freeze mode
@@ -207,24 +248,10 @@ class Terminal:
                 prompt = self._prompt
             if prompt is None or len(self._current_line) > len(prompt):
                 self._current_line = self._current_line[:-1]
-        elif key == pygame.K_UP:
-            if self._history_pos + 1 < len(self._cmd_history):
-                # If we are starting a history navigation, then save current
-                # line
-                if self._history_pos == -1:
-                    self._saved_line = self._current_line
-                self._history_pos += 1
-                self._current_line = self._prompt + \
-                    self._cmd_history[self._history_pos]
-        elif key == pygame.K_DOWN:
-            if self._history_pos > 0:
-                self._history_pos -= 1
-                self._current_line = self._prompt + \
-                    self._cmd_history[self._history_pos]
-            elif self._history_pos == 0:
-                # Restore saved line
-                self._history_pos = -1
-                self._current_line = self._saved_line
+        elif key in (pygame.K_UP, pygame.K_DOWN):
+            self._navigate_history(key)
+        elif key == pygame.K_TAB:
+            self._tab_complete()
         elif key_unicode in Terminal._ACCEPTED_CHARS:
             self._current_line += key_unicode
 
