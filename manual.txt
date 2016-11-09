@@ -1,0 +1,22 @@
+Password Guessing
+-----------------
+
+We have recovered a shredded list of passwords from a nearby dumpster.
+Despite our best efforts to piece it back together, it is still hard to make
+out the passwords. Below are our best guesses for the passwords of each user -
+perhaps you can work out the password for each user from this?
+
+You will have a number of attempts to log in before the password is reset.
+Using our hacked login program, you will be able to see how many characters
+were correct (the correct letter in the correct place) for each attempt. You
+should be able to work out the password using this information.
+
+User    |  Possible Passwords
+--------|----------------------------------------------------------------------
+root    | flask, great, asked, tarts, force, gleam, think, brick, flute, brisk,
+        | freak, blast, feast, flick, flank 
+--------|----------------------------------------------------------------------
+ro0t    | tusks, blush, askew, train, asset, burns, tries, turns, basks, busks
+--------|----------------------------------------------------------------------
+rewt    | maple, pearl, lapel, myths, cycle, apple, ladle, ample, maize, capel
+--------|----------------------------------------------------------------------

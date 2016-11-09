@@ -33,12 +33,12 @@ class TerminalProgram:
 
     @property
     def help(self):
-        """Returns help string for this program."""
+        """Return help string for this program."""
         return "<empty>"
 
     @property
     def security_type(self):
-        """Returns string indicating what security this program can bypass."""
+        """Return string indicating what security this program can bypass."""
         return "<empty>"
 
     def draw(self):
@@ -51,8 +51,9 @@ class TerminalProgram:
 
     def text_input(self, line):
         """
-        Handle a line of input from the terminal. Raises BadInput error on bad
-        input.
+        Handle a line of input from the terminal.
+
+        Raises BadInput error on bad input.
 
         """
         pass
@@ -86,9 +87,13 @@ class PasswordGuess(TerminalProgram):
     # certain characters available in the manual - need to make sure there's
     # no ambiguity though.
     _PASSWORDS = {
-        'user00': ['flask', 'great', 'asked', 'tarts', 'force', 'gleam',
-                   'think', 'brick', 'flute', 'brisk', 'freak', 'blast',
-                   'feast', 'flick', 'flank']
+        'root':  ['flask', 'great', 'asked', 'tarts', 'force', 'gleam', 'think',
+                  'brick', 'flute', 'brisk', 'freak', 'blast', 'feast', 'flick',
+                  'flank'],
+        'ro0t': ['tusks', 'blush', 'askew', 'train', 'asset', 'burns', 'tries',
+                 'turns', 'basks', 'busks'],
+        'rewt': ['maple', 'pearl', 'lapel', 'myths', 'cycle', 'apple', 'ladle',
+                 'ample', 'maize', 'capel']
     }
 
     def __init__(self, terminal):
@@ -105,15 +110,18 @@ class PasswordGuess(TerminalProgram):
 
     @property
     def help(self):
+        """Return the help string for the program."""
         return "Run main login program."
 
     @property
     def security_type(self):
+        """Return the security type for the program."""
         return "password protection"
 
     def _get_prompt(self):
         """Get the prompt string."""
-        return 'Enter password ({} attempts remaining)'.format(
+        return "Enter password for user '{}' ({} attempts remaining)".format(
+            self._user,
             PasswordGuess._MAX_GUESSES - self._guesses)
 
     def start(self):
