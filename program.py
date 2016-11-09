@@ -31,6 +31,16 @@ class TerminalProgram:
         """Return the prompt for this program. None if it doesn't have one."""
         return None
 
+    @property
+    def help(self):
+        """Returns help string for this program."""
+        return "<empty>"
+
+    @property
+    def security_type(self):
+        """Returns string indicating what security this program can bypass."""
+        return "<empty>"
+
     def draw(self):
         """Draw the program, if it is graphical."""
         pass
@@ -92,6 +102,14 @@ class PasswordGuess(TerminalProgram):
         self._password = random.choice(PasswordGuess._PASSWORDS[self._user])
 
         super().__init__(terminal)
+
+    @property
+    def help(self):
+        return "Run main login program."
+
+    @property
+    def security_type(self):
+        return "password protection"
 
     def _get_prompt(self):
         """Get the prompt string."""
@@ -161,6 +179,14 @@ class TestGraphical(TerminalProgram):
         """Indicate that this is a graphical program."""
         return True
 
+    @property
+    def help(self):
+        return "Inspect hardware."
+
+    @property
+    def security_type(self):
+        return "hardware security"
+
     def draw(self):
         """Draw the program."""
         screen = pygame.display.get_surface()
@@ -170,6 +196,8 @@ class TestGraphical(TerminalProgram):
         """Detect whether the user clicked the program."""
         if button == MouseButton.LEFT and self._rect.collidepoint(pos):
             self._clicked = True
+            self._terminal.output(["SYSTEM ALERT: Hardware security module "
+                                   "disabled."])
 
     def completed(self):
         """Indicate whether the program was completed."""
@@ -234,7 +262,17 @@ class HexEditor(TerminalProgram):
             "login.dll": HexFileA(),
         }
 
+        self._filename = None
+
         super().__init__(terminal)
+
+    @property
+    def help(self):
+        return "Modify raw software data."
+
+    @property
+    def security_type(self):
+        return "software lock"
 
     @property
     def prompt(self):
@@ -267,6 +305,7 @@ class HexEditor(TerminalProgram):
             if line not in self._files:
                 raise BadInput('Unknown file {}'.format(line))
             self._terminal.output(['Loading {}...'.format(line)])
+            self._filename = line
             self._open_file(line)
 
         elif self._row is None:
@@ -298,11 +337,13 @@ class HexEditor(TerminalProgram):
                 raise BadInput("Not a number")
 
             if self._file.validate(self._row, self._col, val):
-                self._terminal.output(['DLL successfully modded!'])
+                self._terminal.output(['SYSTEM ALERT: Software lock '
+                                       'deactivated.'])
                 self._guessed = True
             else:
-                self._terminal.output(['ERROR: DLL corruption detected, '
-                                       'reverting change'])
+                self._terminal.output(["SYSTEM ERROR: corruption detected in "
+                                       "file '{}', reverting modifications!"
+                                       .format(self._filename)])
                 self._row = None
                 self._col = None
 

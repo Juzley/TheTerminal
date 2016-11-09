@@ -63,6 +63,17 @@ class Terminal:
         # Create instances of the programs that have been registered.
         self._programs = {c: programs[c](self) for c in programs}
 
+        # Display welcome message
+        self.output([
+            "-" * 60,
+            "Mainframe terminal",
+            "",
+            "You have {}s to login before terminal is locked down.".format(
+                time),
+            "",
+            "Tip of the day: press ctrl+c to cancel current command.",
+            "-" * 60] + [""] * 20 + ["Type 'help' for available commands"])
+
     def _process_command(self, cmd):
         """Process a completed command."""
         if cmd in self._programs:
@@ -75,24 +86,29 @@ class Terminal:
                 # TODO: Some kind of message here.
                 if not self._current_program.completed():
                     self._current_program.start()
-        elif cmd == 'help':
-            # TODO: Output available commands.
-            pass
+        elif cmd in ('help', '?'):
+            sorted_cmds = sorted(self._programs.items(),
+                                 key=lambda i: i[0])
+            self.output(["Available commands:"] +
+                        ["  {:10}   {}".format(c, p.help)
+                         for c, p in sorted_cmds])
+        elif cmd:
+            self.output(["Unknown command '{}'.".format(cmd)])
 
     def _is_cmd_runnable(self, cmd):
         depends_list = self._depends.get(cmd)
         if depends_list is None:
-            reasons = []
+            blocked_on = []
         else:
-            # Get list of block reasons
-            reasons = [r for c, r in depends_list
-                       if not self._programs[c].completed()]
+            # Get blocked-on list
+            blocked_on = [self._programs[c] for c in depends_list
+                          if not self._programs[c].completed()]
 
-        if len(reasons) == 0:
+        if len(blocked_on) == 0:
             return True
         else:
             self.output(["{} currently blocked by: {}".format(
-                cmd, ", ".join(reasons)
+                cmd, ", ".join(p.security_type for p in blocked_on)
             )])
             return False
 

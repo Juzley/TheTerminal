@@ -83,11 +83,10 @@ class GameplayState(GameState):
         self._terminal = Terminal(
             programs={
                 'login': PasswordGuess,
-                'gfx': TestGraphical,
+                'inspect': TestGraphical,
                 'hexedit': HexEditor},
             depends={
-                'login': (('hexedit', 'software lock'),
-                          ('gfx', 'hardware security')),
+                'login': ('hexedit', 'gfx'),
             })
         self._mgr = mgr
 
