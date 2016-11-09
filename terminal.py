@@ -45,31 +45,38 @@ class Terminal:
 
     def __init__(self, programs, prompt='$ ', time=300, depends=None):
         """Initialize the class."""
-        self._buf = deque(maxlen=Terminal._BUF_SIZE)
-        self._prompt = prompt
-        self._current_line = self._prompt
-        self._cmd_history = deque(maxlen=Terminal._HISTORY_SIZE)
-        self._history_pos = -1
-        self._saved_line = ""
-        self._font = pygame.font.Font(Terminal._TEXT_FONT, Terminal._TEXT_SIZE)
-        self._current_program = None
-        self._timer = timer.Timer()
-        self._timeleft = time * 1000
-        self._has_focus = True
-        self._depends = {} if depends is None else depends
-        self._freeze_start = None
-        self._freeze_time = None
+        # Public attributes
         self.locked = False
 
+        # Current line without prompt. If current line with prompt is required,
+        # use get_current_line(True)
+        self._current_line = ""
+        self._buf = deque(maxlen=Terminal._BUF_SIZE)
+        self._prompt = prompt
+        self._cmd_history = CommandHistory(self, maxlen=Terminal._HISTORY_SIZE)
+        self._font = pygame.font.Font(Terminal._TEXT_FONT, Terminal._TEXT_SIZE)
+        self._has_focus = True
+
+        # Timer attributes
+        self._timer = timer.Timer()
+        self._timeleft = time * 1000
+
+        # Freeze attributes
+        self._freeze_start = None
+        self._freeze_time = None
+
+        # Create instances of the programs that have been registered.
+        self._programs = {c: programs[c](self) for c in programs}
+        self._current_program = None
+        self._depends = {} if depends is None else depends
+
+        # Draw the monitor bezel
         self._bezel = util.load_image(Terminal._BEZEL_IMAGE)
         bezel_font = pygame.font.Font(None, Terminal._BEZEL_TEXT_SIZE)
         bezel_label = ''.join(
             random.choice(string.ascii_uppercase + string.digits)
             for _ in range(5))
         self._bezel_text = bezel_font.render(bezel_label, True, (255, 255, 255))
-
-        # Create instances of the programs that have been registered.
-        self._programs = {c: programs[c](self) for c in programs}
 
         # Display welcome message
         self.output([
@@ -116,6 +123,13 @@ class Terminal:
                 else:
                     self.output(["Enjoy your new colour!"])
 
+        # Freeze test
+        elif cmd.startswith("freeze "):
+            try:
+                self.freeze(int(cmd.split(" ")[1]))
+            except ValueError:
+                self.output(["Invalid time"])
+
         elif cmd:
             self.output(["Unknown command '{}'.".format(cmd)])
 
@@ -146,82 +160,69 @@ class Terminal:
     def _complete_input(self):
         """Process a line of input from the user."""
         # Add the current line to the buffer
-        self._add_to_buf([self._current_line])
+        self._add_to_buf([self.get_current_line(True)])
 
         if self._current_program:
-            # Skip the prompt
-            if self._current_program.prompt is not None:
-                line = self._current_line[len(self._current_program.prompt):]
-            else:
-                line = self._current_line
-
             # Handle bad input errors
             try:
-                self._current_program.text_input(line)
+                self._current_program.text_input(self.get_current_line())
             except BadInput as e:
                 self.output(["Error: {}".format(str(e))])
         else:
             # Skip the prompt and any leading/trailing whitespace to get
             # the command.
-            cmd = self._current_line[len(self._prompt):].lstrip().rstrip()
+            cmd = self.get_current_line().lstrip().rstrip()
 
             # Add to command history, skipping repeated entries
-            if cmd and (len(self._cmd_history) == 0 or
-                        self._cmd_history[0] != cmd):
-                self._cmd_history.appendleft(cmd)
+            if cmd:
+                self._cmd_history.add_command(cmd)
             self._process_command(cmd)
 
         # Reset the prompt
         self._reset_prompt()
 
     def _reset_prompt(self):
-        # Use current program's prompt if it has one
-        if self._current_program and self._current_program.prompt is not None:
-            self._current_line = self._current_program.prompt
-        elif self._current_program:
-            self._current_line = ""
-        else:
-            self._current_line = self._prompt
+        # Current line doesn't have prompt, so we don't have to worry about
+        # adding it.
+        self._current_line = ""
 
     def _tab_complete(self):
         # Only works outside programs for now
         if self._current_program is None:
-            partial = self._current_line[len(self._prompt):]
+            partial = self.get_current_line()
 
             # Find the command being typed
             matches = [c for c in list(self._programs.keys()) + ["help"]
                        if c.startswith(partial)]
             if len(matches) == 1:
-                self._current_line = self._prompt + matches[0]
-            else:
+                self.set_current_line(matches[0])
+            elif len(matches) > 1:
                 # Get the common prefix. If this is more than what is typed
                 # then complete up till that, else display options
                 common_prefix = os.path.commonprefix(matches)
                 if common_prefix != partial:
-                    self._current_line = self._prompt + common_prefix
+                    self.set_current_line(common_prefix)
                 else:
-                    self.output([self._current_line,
+                    self.output([self.get_current_line(True),
                                  "  ".join(matches)])
 
-    def _navigate_history(self, key):
-        if key == pygame.K_UP:
-            if self._history_pos + 1 < len(self._cmd_history):
-                # If we are starting a history navigation, then save current
-                # line
-                if self._history_pos == -1:
-                    self._saved_line = self._current_line
-                self._history_pos += 1
-                self._current_line = self._prompt + \
-                    self._cmd_history[self._history_pos]
-        elif key == pygame.K_DOWN:
-            if self._history_pos > 0:
-                self._history_pos -= 1
-                self._current_line = self._prompt + \
-                    self._cmd_history[self._history_pos]
-            elif self._history_pos == 0:
-                # Restore saved line
-                self._history_pos = -1
-                self._current_line = self._saved_line
+    def get_current_line(self, include_prompt=False):
+        if include_prompt:
+            # See if the current program has a prompt. Will be None if it
+            # doesn't.
+            if self._current_program is not None:
+                prompt = self._current_program.prompt
+            else:
+                prompt = self._prompt
+
+            return (self._current_line if prompt is None
+                    else prompt + self._current_line)
+        else:
+            return self._current_line
+
+    def set_current_line(self, line):
+        # Don't need to add prompt - this gets added by get_current_line()
+        self._current_line = line
 
     def on_keypress(self, key, key_unicode):
         """Handle a user keypress."""
@@ -242,30 +243,24 @@ class Terminal:
 
         # Any typing other than arrows reset history navigation
         if key not in (pygame.K_UP, pygame.K_DOWN):
-            self._history_pos = -1
+            self._cmd_history.reset_navigation()
 
         if ctrl_c_pressed:
             # If we are in a program, then abort it
             if self._current_program:
                 self._current_program.on_abort()
                 self._current_program = None
-            self.output([self._current_line + "^C"])
-            self._current_line = self._prompt
+            self.output([self.get_current_line(True) + "^C"])
+            self._reset_prompt()
         elif key in [pygame.K_RETURN, pygame.K_KP_ENTER]:
-            if self._current_line:
+            if self.get_current_line(True):
                 self._complete_input()
         elif key == pygame.K_BACKSPACE:
-            # Don't allow removing the prompt, just what the user has typed.
-            # If a program is running then grab its prompt (which will be None
-            # if it doesn't have one)
-            if self._current_program:
-                prompt = self._current_program.prompt
-            else:
-                prompt = self._prompt
-            if prompt is None or len(self._current_line) > len(prompt):
-                self._current_line = self._current_line[:-1]
+            self._current_line = self._current_line[:-1]
         elif key in (pygame.K_UP, pygame.K_DOWN):
-            self._navigate_history(key)
+            # Currently not supported in a program
+            if self._current_program is None:
+                self._cmd_history.navigate(key == pygame.K_UP)
         elif key == pygame.K_TAB:
             self._tab_complete()
         elif key_unicode in Terminal._ACCEPTED_CHARS:
@@ -295,18 +290,20 @@ class Terminal:
         """Draw the terminal."""
 
         # If terminal freeze is enabled, then update progress bar to indicate
-        # how long there is left to wait.
+        # how long there is left to wait, using this as the current line.
         if self._freeze_time is not None:
             done = ((self._timer.time -
                      self._freeze_start) * 100) / self._freeze_time
             remain = int((100 - done) * self._PROGRESS_BAR_SIZE / 100)
-            self._current_line = ("[" +
-                                  "!" * (self._PROGRESS_BAR_SIZE - remain) +
-                                  " " * remain + "]")
+            current_line = ("[" +
+                            "!" * (self._PROGRESS_BAR_SIZE - remain) +
+                            " " * remain + "]")
+        else:
+            current_line = self.get_current_line(True)
 
         # Draw the buffer.
         y_coord = Terminal._TEXT_START[1]
-        for line in itertools.chain([self._current_line], self._buf):
+        for line in itertools.chain([current_line], self._buf):
             text = self._font.render(line, True, Terminal._TEXT_COLOUR)
             pygame.display.get_surface().blit(
                 text, (Terminal._TEXT_START[0], y_coord))
@@ -316,7 +313,7 @@ class Terminal:
         if (self._timer.time % (Terminal._CURSOR_ON_MS +
                                 Terminal._CURSOR_OFF_MS) <
                 Terminal._CURSOR_ON_MS):
-            curr_line_size = self._font.size(self._current_line)
+            curr_line_size = self._font.size(current_line)
             pygame.draw.rect(pygame.display.get_surface(),
                              Terminal._TEXT_COLOUR,
                              (Terminal._TEXT_START[0] + curr_line_size[0] + 1,
@@ -346,7 +343,7 @@ class Terminal:
             self._current_program = None
 
             # Display the prompt again.
-            self._current_line = self._prompt
+            self._reset_prompt()
 
         # Check if the player ran out of time.
         self._timer.update()
@@ -367,3 +364,40 @@ class Terminal:
         """Indicate whether the player has been successful."""
         return len([p for p in self._programs.values()
                     if not p.completed()]) == 0
+
+
+class CommandHistory:
+
+    """Class for storing and navigating a terminal's command history."""
+
+    def __init__(self, terminal, maxlen):
+        self._terminal = terminal
+        self._history = deque(maxlen=maxlen)
+        self._pos = -1
+        self._saved_line = None
+
+    def add_command(self, cmd):
+        # Skip repeated commands
+        if len(self._history) == 0 or self._history[0] != cmd:
+            self._history.appendleft(cmd)
+
+    def reset_navigation(self):
+        self._pos = -1
+
+    def navigate(self, up):
+        if up:
+            if self._pos + 1 < len(self._history):
+                # If we are starting a history navigation, then save current
+                # line
+                if self._pos == -1:
+                    self._saved_line = self._terminal.get_current_line()
+                self._pos += 1
+                self._terminal.set_current_line(self._history[self._pos])
+        else:
+            if self._pos > 0:
+                self._pos -= 1
+                self._terminal.set_current_line(self._history[self._pos])
+            elif self._pos == 0:
+                # Restore saved line
+                self._pos = -1
+                self._terminal.set_current_line(self._saved_line)
