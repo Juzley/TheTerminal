@@ -43,6 +43,10 @@ class Terminal:
     # Freeze progress bar size
     _PROGRESS_BAR_SIZE = 30
 
+    # Key repeat delay
+    _KEY_REPEAT_DELAY = 50
+    _KEY_REPEAT_INITIAL_DELAY = 500
+
     def __init__(self, programs, prompt='$ ', time=300, depends=None):
         """Initialize the class."""
         # Public attributes
@@ -64,6 +68,11 @@ class Terminal:
         # Freeze attributes
         self._freeze_start = None
         self._freeze_time = None
+
+        # Repeat key presses when certain keys are held.
+        # Held key is a tuple of (key, key_unicode, start time)
+        self._held_key = None
+        self._key_last_repeat = None
 
         # Create instances of the programs that have been registered.
         self._programs = {c: programs[c](self) for c in programs}
@@ -245,6 +254,7 @@ class Terminal:
         if key not in (pygame.K_UP, pygame.K_DOWN):
             self._cmd_history.reset_navigation()
 
+        repeat_on_hold = False
         if ctrl_c_pressed:
             # If we are in a program, then abort it
             if self._current_program:
@@ -257,6 +267,7 @@ class Terminal:
                 self._complete_input()
         elif key == pygame.K_BACKSPACE:
             self._current_line = self._current_line[:-1]
+            repeat_on_hold = True
         elif key in (pygame.K_UP, pygame.K_DOWN):
             # Currently not supported in a program
             if self._current_program is None:
@@ -265,6 +276,16 @@ class Terminal:
             self._tab_complete()
         elif key_unicode in Terminal._ACCEPTED_CHARS:
             self._current_line += key_unicode
+            repeat_on_hold = True
+
+        # If this is a key that should be repeated when held, then setup the
+        # the attributes
+        if repeat_on_hold:
+            self._held_key = (key, key_unicode, self._timer.time)
+
+    def on_keyrelease(self):
+        self._held_key = None
+        self._key_last_repeat = None
 
     def on_mouseclick(self, button, pos):
         """Handle a user mouse click."""
@@ -359,6 +380,18 @@ class Terminal:
 
             # Reset current line to prompt
             self._reset_prompt()
+
+        # See whether a key is held, and repeat it
+        if self._held_key is not None:
+            key, key_unicode, start = self._held_key
+            if self._key_last_repeat is None:
+                last, delay = start, Terminal._KEY_REPEAT_INITIAL_DELAY
+            else:
+                last, delay = self._key_last_repeat, Terminal._KEY_REPEAT_DELAY
+
+            if (self._timer.time - last) > delay:
+                self._key_last_repeat = self._timer.time
+                self.on_keypress(key, key_unicode)
 
     def completed(self):
         """Indicate whether the player has been successful."""
