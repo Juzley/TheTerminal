@@ -10,6 +10,7 @@ import pygame
 
 import timer
 import util
+import mouse
 from programs.program import BadInput
 
 
@@ -75,7 +76,7 @@ class Terminal:
         self._key_last_repeat = None
 
         # Create instances of the programs that have been registered.
-        self._programs = {c: programs[c](self) for c in programs}
+        self._programs = {c: p(self) for c, p in programs.items()}
         self._current_program = None
         self._depends = {} if depends is None else depends
 
@@ -292,6 +293,11 @@ class Terminal:
         if self._current_program:
             self._current_program.on_mouseclick(button, pos)
 
+    def on_mousemove(self, pos):
+        """Handle a user mouse move."""
+        if self._current_program:
+            self._current_program.on_mousemove(pos)
+
     def on_active_event(self, active_event):
         """Handle a window active event."""
         if active_event.input_focus_change:
@@ -356,6 +362,11 @@ class Terminal:
         text = self._font.render('{}:{:02}'.format(minutes, seconds),
                                  True, (255, 255, 255))
         pygame.display.get_surface().blit(text, (0, 0))
+
+        # Make sure cursor is an arrow if we are not in a program. This should
+        # be a no-op if it is already an arrow.
+        if self._current_program is None:
+            mouse.current.set_cursor(mouse.Cursor.ARROW)
 
     def run(self):
         """Run terminal logic."""

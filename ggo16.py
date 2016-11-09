@@ -2,6 +2,8 @@
 
 
 import pygame
+
+import mouse
 from gamestate import GameStateManager
 from mainmenu import MainMenu
 
@@ -12,6 +14,7 @@ def setup():
     pygame.display.set_mode([800, 600],
                             pygame.DOUBLEBUF | pygame.HWSURFACE,
                             24)
+    mouse.current.set_cursor(mouse.Cursor.ARROW)
 
 
 def run():

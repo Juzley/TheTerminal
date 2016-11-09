@@ -2,7 +2,7 @@
 
 import pygame
 
-from util import MouseButton
+import mouse
 from . import program
 
 
@@ -56,11 +56,17 @@ class TestGraphical(program.TerminalProgram):
 
     def on_mouseclick(self, button, pos):
         """Detect whether the user clicked the program."""
-        if (button == MouseButton.LEFT and
+        if (button == mouse.Button.LEFT and
                 self._get_chip_code(pos) != TestGraphical._NO_CHIP):
             self._clicked = True
             self._terminal.output(["SYSTEM ALERT: Hardware security module "
                                    "disabled."])
+
+    def on_mousemove(self, pos):
+        if self._get_chip_code(pos) != TestGraphical._NO_CHIP:
+            mouse.current.set_cursor(mouse.Cursor.HAND)
+        else:
+            mouse.current.set_cursor(mouse.Cursor.ARROW)
 
     def completed(self):
         """Indicate whether the program was completed."""
