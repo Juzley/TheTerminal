@@ -22,12 +22,12 @@ class MainMenu(Menu):
 
         self._items = [
             MenuItem(item_id=MainMenu.Items.START_GAME,
-                     pos=(0, 0),
+                     pos=(None, 200),
                      text='Start Game',
                      text_size=40,
                      colour=(255, 255, 255)),
             MenuItem(item_id=MainMenu.Items.QUIT,
-                     pos=(0, 40),
+                     pos=(None, 240),
                      text='Quit',
                      text_size=40,
                      colour=(255, 255, 255))

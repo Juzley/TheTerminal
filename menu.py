@@ -19,6 +19,13 @@ class MenuItem:
         font = pygame.font.Font(None, text_size)
         self._text = font.render(text, True, colour)
 
+        # If the position is None, that means center
+        if self._pos[0] is None:
+            text_width = self._text.get_rect()[2]
+            surface_width = pygame.display.get_surface().get_rect()[2]
+            self._pos = (int((surface_width / 2) - (text_width / 2)),
+                         self._pos[1])
+
     def collidepoint(self, pos):
         """Determine whether a given point is within this menu item."""
         return self._text.get_rect().move(self._pos).collidepoint(pos)
