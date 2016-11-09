@@ -6,8 +6,9 @@ import mainmenu
 import timer
 import util
 from gamestate import GameState
-from programs.program import PasswordGuess, TestGraphical
+from programs.program import TestGraphical
 from programs.hexedit import HexEditor
+from programs.password import PasswordGuess
 from terminal import Terminal
 
 
