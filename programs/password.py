@@ -19,7 +19,9 @@ class PasswordGuess(program.TerminalProgram):
         'rewt': ['maple', 'pearl', 'lapel', 'myths', 'cycle', 'apple', 'ladle',
                  'ample', 'maize', 'capel'],
         '00142331': ['trice', 'racer', 'tours', 'glaze', 'trail', 'raise',
-                     'slick', 'track', 'grace', 'trace']
+                     'slick', 'track', 'grace', 'trace'],
+        '00143231': ['court', 'truce', 'fords', 'flirt', 'cruel', 'craft',
+                     'tours', 'chart', 'fours', 'count']
     }
 
     def __init__(self, terminal):
