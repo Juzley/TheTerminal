@@ -96,7 +96,7 @@ class HexEditor(program.TerminalProgram):
     def text_input(self, line):
         if self._file is None:
             if not self._validate_filename(line):
-                raise program.BadInput('Unknown file {}'.format(line))
+                raise program.BadInput("Cannot find file '{}'".format(line))
             self._get_file(line)
 
         elif self._row is None:
