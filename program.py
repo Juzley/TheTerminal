@@ -342,10 +342,11 @@ class HexEditor(TerminalProgram):
                 self._guessed = True
             else:
                 self._terminal.output(["SYSTEM ERROR: corruption detected in "
-                                       "file '{}', reverting modifications!"
+                                       "file '{}', repairing!"
                                        .format(self._filename)])
                 self._row = None
                 self._col = None
+                self._terminal.freeze(10 * 1000)
 
     def _open_file(self, filename):
         self._file = self._files[filename]

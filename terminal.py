@@ -37,6 +37,9 @@ class Terminal:
     # The coordinates to start drawing text.
     _TEXT_START = (45, 525)
 
+    # Freeze progress bar size
+    _PROGRESS_BAR_SIZE = 30
+
     def __init__(self, programs, prompt='$ ', time=300, depends=None):
         """Initialize the class."""
         self._buf = deque(maxlen=Terminal._BUF_SIZE)
@@ -51,6 +54,8 @@ class Terminal:
         self._timeleft = time * 1000
         self._has_focus = True
         self._depends = {} if depends is None else depends
+        self._freeze_start = None
+        self._freeze_time = None
         self.locked = False
 
         self._bezel = util.load_image(Terminal._BEZEL_IMAGE)
@@ -147,8 +152,11 @@ class Terminal:
                 self._cmd_history.appendleft(cmd)
             self._process_command(cmd)
 
-        # Reset the prompt, unless a program is running in which case see
-        # whether it has a prompt.
+        # Reset the prompt
+        self._reset_prompt()
+
+    def _reset_prompt(self):
+        # Use current program's prompt if it has one
         if self._current_program and self._current_program.prompt is not None:
             self._current_line = self._current_program.prompt
         elif self._current_program:
@@ -158,6 +166,10 @@ class Terminal:
 
     def on_keypress(self, key, key_unicode):
         """Handle a user keypress."""
+        # Ignore all input if in freeze mode
+        if self._freeze_time is not None:
+            return
+
         # Detect ctrl+c
         ctrl_c_pressed = (key == pygame.K_c and
                           pygame.key.get_mods() & pygame.KMOD_CTRL)
@@ -229,11 +241,26 @@ class Terminal:
         # NB Output is expected to be a list of lines.
         self._add_to_buf(output)
 
+    def freeze(self, time):
+        """Freeze terminal for 'time' ms, displaying progress bar."""
+        self._freeze_start = self._timer.time
+        self._freeze_time = time
+
     def draw(self):
         """Draw the terminal."""
+
+        # If terminal freeze is enabled, then update progress bar to indicate
+        # how long there is left to wait.
+        if self._freeze_time is not None:
+            done = ((self._timer.time -
+                     self._freeze_start) * 100) / self._freeze_time
+            remain = int((100 - done) * self._PROGRESS_BAR_SIZE / 100)
+            self._current_line = ("[" +
+                                  "!" * (self._PROGRESS_BAR_SIZE - remain) +
+                                  " " * remain + "]")
+
         # Draw the buffer.
         y_coord = Terminal._TEXT_START[1]
-
         for line in itertools.chain([self._current_line], self._buf):
             text = self._font.render(line, True, Terminal._TEXT_COLOUR)
             pygame.display.get_surface().blit(
@@ -281,6 +308,15 @@ class Terminal:
         self._timeleft -= self._timer.frametime
         if self._timeleft <= 0:
             self.locked = True
+
+        # See whether terminal can be unfrozen
+        if (self._freeze_time is not None and
+                self._timer.time > self._freeze_start + self._freeze_time):
+            self._freeze_time = None
+            self._freeze_start = None
+
+            # Reset current line to prompt
+            self._reset_prompt()
 
     def completed(self):
         """Indicate whether the player has been successful."""
