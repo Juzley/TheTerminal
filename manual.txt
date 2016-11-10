@@ -31,10 +31,14 @@ on-board expansion chips. These will prevent us from gaining access unless we
 can somehow disable them. Luckily we were able to 'obtain' a copy of the
 hardware specifications, which should help you bypass this protection.
 
+Be careful - booting the system with an incorrect hardware configuration may
+affect the system clock, which may reduce the amount of time you have before
+you are logged out.
+
 Each system may have one or more security chip on its motherboard, with an
 associated pull-down resistor. In order to bypass the security system, you
-must remove the chip, its resistor, or both, based on the information in the
-following tables.
+must remove the chip, its pull-down resistor, or both, based on the information
+in the following tables.
 
 Table 1:
 Use the last character of the security chip's identifier and the value of the
