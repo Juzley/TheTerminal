@@ -22,7 +22,7 @@ class Terminal:
                        string.punctuation + " ")
     _BUF_SIZE = 100
     _HISTORY_SIZE = 50
-    _VISIBLE_LINES = 30 # TODO: Variable based on resolution.
+    _VISIBLE_LINES = 30  # TODO: Variable based on resolution.
 
     # Constants related to drawing the terminal text.
     _TEXT_SIZE = 16
@@ -96,7 +96,7 @@ class Terminal:
         self._bezel_text = bezel_font.render(self.id_string, True,
                                              (255, 255, 255))
 
-        self.reboot(first_boot=True)
+        self.reboot()
 
     def _process_command(self, cmd):
         """Process a completed command."""
@@ -222,16 +222,14 @@ class Terminal:
     def _run_reboot(self):
         """Handle scrolling text as part of a reboot."""
         if self._rebooting and self._reboot_update_time <= self._timer.time:
-            line = self._reboot_buf.popleft()
+            pause, line = self._reboot_buf.popleft()
             self.output([line])
 
             if not self._reboot_buf:
                 self._rebooting = False
             else:
-                # TODO: Make it possible to specify different delay times for
-                # different lines - prob store a delay time with each line in
-                # the reboot buffer.
-                self._reboot_update_time += 20
+                residual = self._timer.time - self._reboot_update_time
+                self._reboot_update_time = self._timer.time + pause - residual
 
     def get_current_line(self, include_prompt=False):
         if include_prompt:
@@ -336,46 +334,53 @@ class Terminal:
         """Reduce the available time by 'time' seconds."""
         self._timeleft -= time * 1000
 
-    def reboot(self, msg="", first_boot=False):
+    def reboot(self, msg=""):
         """Simulate a reboot."""
         # Clear the buffer.
         self._buf.clear()
 
         self._rebooting = True
+        self._reboot_update_time = self._timer.time
 
         # Display welcome message.
+        PAUSE_LEN = 20
         self._reboot_buf.extend([
-            "-" * 60,
-            "Mainframe terminal",
-            "",
-            "You have {}s to login before terminal is locked down.".format(
-                round(self._timeleft / 1000)),
-            "",
-            "Tip of the day: press ctrl+c to cancel current command.",
-            "-" * 60])
+            (PAUSE_LEN, "-" * 60),
+            (PAUSE_LEN, "Mainframe terminal"),
+            (PAUSE_LEN, ""),
+            (PAUSE_LEN,
+             "You have {}s to login before terminal is locked down.".format(
+                round(self._timeleft / 1000))),
+            (PAUSE_LEN, ""),
+            (PAUSE_LEN,
+             "Tip of the day: press ctrl+c to cancel current command."),
+            (PAUSE_LEN, "-" * 60)])
 
-        if not first_boot:
-            self._reboot_buf.extend(
-                ["", "SYSTEM NOTIFICATION: System rebooted!"])
         if msg:
-            self._reoobt_buf.extend([msg])
+            self._reboot_buf.extend([
+                (PAUSE_LEN * 25, ""),
+                (PAUSE_LEN * 50, msg)])
 
-        end_msgs = ["Type 'help' for available commands"]
+        end_msgs = [(PAUSE_LEN, "Type 'help' for available commands")]
 
         # Push banner to top, leaving space for end messages, and 1 extra
         # syslog at end if the current program was successful.
         blank_lines = (Terminal._VISIBLE_LINES -
-                       len(self._buf) - len(end_msgs))
+                       len(self._reboot_buf) - len(end_msgs))
         if (self._current_program is not None and
                 self._current_program.completed()):
             blank_lines -= 1
-        self._reboot_buf.extend([""] * blank_lines + end_msgs)
+        self._reboot_buf.extend([(PAUSE_LEN, "")] * blank_lines + end_msgs)
 
     def draw(self):
         """Draw the terminal."""
-        # If terminal freeze is enabled, then update progress bar to indicate
-        # how long there is left to wait, using this as the current line.
-        if self._freeze_time is not None:
+        if self._rebooting:
+            # If we're rebooting, don't draw the prompt
+            current_line = ""
+        elif self._freeze_time is not None:
+            # If terminal freeze is enabled, then update progress bar to
+            # indicate how long there is left to wait, using this as the
+            # current line.
             done = ((self._timer.time -
                      self._freeze_start) * 100) / self._freeze_time
             remain = int((100 - done) * self._PROGRESS_BAR_SIZE / 100)
@@ -400,9 +405,10 @@ class Terminal:
             y_coord -= Terminal._TEXT_SIZE
 
         # Determine whether the cursor is on
-        if (self._timer.time % (Terminal._CURSOR_ON_MS +
+        if (not self._rebooting and
+            (self._timer.time % (Terminal._CURSOR_ON_MS +
                                 Terminal._CURSOR_OFF_MS) <
-                Terminal._CURSOR_ON_MS):
+                Terminal._CURSOR_ON_MS)):
             curr_line_size = self._font.size(current_line)
             pygame.draw.rect(pygame.display.get_surface(),
                              Terminal._TEXT_COLOUR,
