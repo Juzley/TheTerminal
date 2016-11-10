@@ -22,7 +22,7 @@ class Terminal:
                        string.punctuation + " ")
     _BUF_SIZE = 100
     _HISTORY_SIZE = 50
-    _VISIBLE_LINES = 30
+    _VISIBLE_LINES = 30 # TODO: Variable based on resolution.
 
     # Constants related to drawing the terminal text.
     _TEXT_SIZE = 16
@@ -74,6 +74,11 @@ class Terminal:
         # Freeze attributes
         self._freeze_start = None
         self._freeze_time = None
+
+        # Reboot attributes
+        self._rebooting = False
+        self._reboot_update_time = 0
+        self._reboot_buf = deque()
 
         # Repeat key presses when certain keys are held.
         # Held key is a tuple of (key, key_unicode, start time)
@@ -214,6 +219,20 @@ class Terminal:
                     self.output([self.get_current_line(True),
                                  "  ".join(matches)])
 
+    def _run_reboot(self):
+        """Handle scrolling text as part of a reboot."""
+        if self._rebooting and self._reboot_update_time <= self._timer.time:
+            line = self._reboot_buf.popleft()
+            self.output([line])
+
+            if not self._reboot_buf:
+                self._rebooting = False
+            else:
+                # TODO: Make it possible to specify different delay times for
+                # different lines - prob store a delay time with each line in
+                # the reboot buffer.
+                self._reboot_update_time += 20
+
     def get_current_line(self, include_prompt=False):
         if include_prompt:
             # See if the current program has a prompt. Will be None if it
@@ -234,8 +253,8 @@ class Terminal:
 
     def on_keypress(self, key, key_unicode):
         """Handle a user keypress."""
-        # Ignore all input if in freeze mode
-        if self._freeze_time is not None:
+        # Ignore all input if in freeze mode, or we are rebooting.
+        if self._freeze_time is not None or self._rebooting:
             return
 
         # Detect ctrl+c
@@ -322,8 +341,10 @@ class Terminal:
         # Clear the buffer.
         self._buf.clear()
 
+        self._rebooting = True
+
         # Display welcome message.
-        self.output([
+        self._reboot_buf.extend([
             "-" * 60,
             "Mainframe terminal",
             "",
@@ -334,9 +355,10 @@ class Terminal:
             "-" * 60])
 
         if not first_boot:
-            self.output(["", "SYSTEM NOTIFICATION: System rebooted!"])
+            self._reboot_buf.extend(
+                ["", "SYSTEM NOTIFICATION: System rebooted!"])
         if msg:
-            self.output([msg])
+            self._reoobt_buf.extend([msg])
 
         end_msgs = ["Type 'help' for available commands"]
 
@@ -347,7 +369,7 @@ class Terminal:
         if (self._current_program is not None and
                 self._current_program.completed()):
             blank_lines -= 1
-        self.output([""] * blank_lines + end_msgs)
+        self._reboot_buf.extend([""] * blank_lines + end_msgs)
 
     def draw(self):
         """Draw the terminal."""
@@ -411,6 +433,9 @@ class Terminal:
 
     def run(self):
         """Run terminal logic."""
+        # Run the reboot if one is in progress.
+        self._run_reboot()
+
         # Check whether the current program (if there is one) has exited.
         if self._current_program and self._current_program.exited():
             # If it exited because it was successfully completed, then display
