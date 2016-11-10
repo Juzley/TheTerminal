@@ -363,16 +363,24 @@ class Terminal:
 
         end_msgs = [(PAUSE_LEN, "Type 'help' for available commands")]
 
-        # Push banner to top, leaving space for end messages, and 1 extra
-        # syslog at end if the current program was successful.
+        # Push banner to top, leaving space for end messages.
         blank_lines = (Terminal._VISIBLE_LINES -
                        len(self._reboot_buf) - len(end_msgs))
-        if (self._current_program is not None and
-                self._current_program.completed()):
-            blank_lines -= 1
         self._reboot_buf.extend([(PAUSE_LEN, "")] * blank_lines + end_msgs)
 
     def draw(self):
+        """Draw terminal"""
+
+        # If the current program is a graphical one, draw it now, else draw
+        # monitor contents.
+        if self._current_program and self._current_program.is_graphical():
+            self._current_program.draw()
+        else:
+            self._draw_contents()
+
+        self._draw_bezel()
+
+    def _draw_contents(self):
         """Draw the terminal."""
         if self._rebooting:
             # If we're rebooting, don't draw the prompt
@@ -406,9 +414,9 @@ class Terminal:
 
         # Determine whether the cursor is on
         if (not self._rebooting and
-            (self._timer.time % (Terminal._CURSOR_ON_MS +
-                                Terminal._CURSOR_OFF_MS) <
-                Terminal._CURSOR_ON_MS)):
+                (self._timer.time % (Terminal._CURSOR_ON_MS +
+                                        Terminal._CURSOR_OFF_MS) <
+                     Terminal._CURSOR_ON_MS)):
             curr_line_size = self._font.size(current_line)
             pygame.draw.rect(pygame.display.get_surface(),
                              Terminal._TEXT_COLOUR,
@@ -417,10 +425,7 @@ class Terminal:
                               Terminal._CURSOR_WIDTH, curr_line_size[1]),
                              0 if self._has_focus else 1)
 
-        # If the current program is a graphical one, draw it now.
-        if self._current_program and self._current_program.is_graphical():
-            self._current_program.draw()
-
+    def _draw_bezel(self):
         # Draw the bezel.
         pygame.display.get_surface().blit(self._bezel, self._bezel.get_rect())
         pygame.display.get_surface().blit(self._bezel_text,
@@ -445,9 +450,11 @@ class Terminal:
         # Check whether the current program (if there is one) has exited.
         if self._current_program and self._current_program.exited():
             # If it exited because it was successfully completed, then display
-            # syslog.
-            if self._current_program.completed():
+            # syslog, unless it is graphical (as they will handle it themselves)
+            if (self._current_program.completed() and
+                    not self._current_program.is_graphical()):
                 self.output([self._current_program.success_syslog])
+
             self._current_program = None
 
             # Display the prompt again.

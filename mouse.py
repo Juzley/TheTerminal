@@ -67,5 +67,5 @@ class Mouse:
             self._current_cursor = cursor_num
 
 
-# Current Mouse
+"""Current mouse state."""
 current = Mouse()
