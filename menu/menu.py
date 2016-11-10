@@ -2,7 +2,7 @@
 
 
 import pygame
-
+import util
 import mouse
 from gamestate import GameState
 
@@ -97,6 +97,106 @@ class Menu(GameState):
             mouse.current.set_cursor(mouse.Cursor.HAND)
         else:
             mouse.current.set_cursor(mouse.Cursor.ARROW)
+
+    def _on_choose(self, item):
+        """Handle activation of a menu item."""
+        pass
+
+
+class CLIMenu(GameState):
+
+    """A menu designed to look like a CLI."""
+
+    # TODO: Should probably share some of this with the Terminal class.
+    _TEXT_SIZE = 16
+    _TEXT_FONT = 'media/whitrabt.ttf'
+    _TEXT_COLOUR = (20, 200, 20)
+    _TEXT_START = (45, 50)
+    _BEZEL_IMAGE = 'media/bezel.png'
+
+    def __init__(self, mgr, buf):
+        """Initialize the class."""
+        super().__init__()
+        self._mgr = mgr
+
+        self._bezel = util.load_image(CLIMenu._BEZEL_IMAGE)
+        self._font = pygame.font.Font(CLIMenu._TEXT_FONT, CLIMenu._TEXT_SIZE)
+        self._selected_index = 0
+        self._items = []
+
+        # Create a '<' image to mark the selected item.
+        self._select_marker = self._font.render(' <', True,
+                                                CLIMenu._TEXT_COLOUR)
+        self._buf = []
+        y_coord = CLIMenu._TEXT_START[1]
+        for line, item in buf:
+            # Render all the text up front, so that we can use the resulting
+            # surfaces for hit-detection - we store a tuple containing the
+            # surface, its coordinates, and the menu item it represents,
+            # so that we know which item was hit by mouse events.
+            text = self._font.render(line, True, CLIMenu._TEXT_COLOUR)
+            self._buf.append((text, (CLIMenu._TEXT_START[0], y_coord), item))
+            y_coord += CLIMenu._TEXT_SIZE
+
+            if item:
+                self._items.append(item)
+
+    def run(self, events):
+        """Handle events."""
+        for event in events:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                self._on_mouseclick(event)
+            elif event.type == pygame.MOUSEMOTION:
+                self._on_mousemove(event)
+            elif event.type == pygame.KEYDOWN:
+                self._on_keypress(event)
+
+    def draw(self):
+        """Draw the menu."""
+        # Draw the text
+        for line, coords, item in self._buf:
+            if line:
+                pygame.display.get_surface().blit(line, coords)
+
+            if item == self._items[self._selected_index]:
+                pygame.display.get_surface().blit(
+                    self._select_marker,
+                    (coords[0] + line.get_rect().w, coords[1]))
+
+        # Draw the bezel
+        pygame.display.get_surface().blit(self._bezel, self._bezel.get_rect())
+
+    def _hit_item(self, pos):
+        """Determine whether a given point hits a menu item."""
+        # Only consider the lines associated with menu items.
+        for line, coords, item in [l for l in self._buf if l[2]]:
+            if line.get_rect().move(coords).collidepos(pos):
+                print(item)
+                return item
+
+        return None
+
+    def _on_keypress(self, event):
+        if event.key in [pygame.K_UP, pygame.K_LEFT]:
+            if self._selected_index > 0:
+                self._selected_index -= 1
+        elif event.key in [pygame.K_DOWN, pygame.K_RIGHT]:
+            if self._selected_index < len(self._items) - 1:
+                self._selected_index += 1
+        elif event.key in [pygame.K_RETURN, pygame.K_KP_ENTER]:
+            self._on_choose(self._items[self._selected_index])
+
+    def _on_mouseclick(self, event):
+        """Determine whether we've clicked on a menu item."""
+        item = self._hit_item(self, event.pos)
+        if item:
+            self._on_choose(self, item)
+
+    def _on_mousemove(self, event):
+        """Determine if we've moused over a menu item."""
+        item = self._hit_item(self, event.pos)
+        if item:
+            self._selected_index = self._items.index(item)
 
     def _on_choose(self, item):
         """Handle activation of a menu item."""
