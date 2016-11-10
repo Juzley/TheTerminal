@@ -52,15 +52,15 @@ chip's pull-down resistor to determine the correction action.
 20 kOhms | C           | C           | B            | R
 30 kOhms | R           | R           | C            | C
 40 kOhms | B           | N           | R            | C
-50 kOhms | T2, row 1   | T2 - row 4  | N            | T2 - row 3
-60 kOhms | T2, row 5   | C           | T2 - row 2   | T2 - row 6
+50 kOhms | T2, row 1   | T2, row 4   | N            | T2, row 3
+60 kOhms | T2, row 5   | C           | T2, row 2    | T2, row 6
 
 Key:
 N: remove nothing.
 C: remove the chip.
 R: remove the resistor.
 B: remove both.
-T2 - row #: Consult table 2, looking at the specified row.
+T2, row #: Consult table 2, looking at the specified row.
 
 
 Table 2:
@@ -68,6 +68,7 @@ Use the row given by table 1, and the first character of the terminal name to
 determine the correct action.
          | Odd number  | Even number | Zero         | Letter
 ---------|-------------|-------------|--------------|--------------
+Row 1    | C           | N           | R            | C
 Row 2    | R           | C           | R            | C
 Row 3    | R           | B           | C            | R
 Row 4    | C           | R           | C            | R
@@ -92,4 +93,3 @@ yellow-blue-blue-red   | 30 kOhms
 red-blue-blue-yellow   | 40 kOhms
 white-red-blue-white   | 50 kOhms
 white-black-blue-white | 60 kOhms
-Row 1    | C           | N           | R            | C

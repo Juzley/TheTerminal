@@ -47,23 +47,79 @@ BoardDefinition("media/motherboard.png",
                 ((210, 10), (210, 100)),
                 ((210, 210), (210, 300)))
 
+
 """Chip codes parameters"""
 CHIP_CODE_LENGTHS = (4, 5, 5, 5, 6, 7, 7, 7)
 CHIP_CODE_CHARS = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
-CHIP_CODE_END_CHARS =  ("0", "1", "2", "3", "A", "A", "B", "C")
+CHIP_CODE_END_CHARS = ("0", "0", "1", "2", "3", "4", "A", "B")
 
 
 """Resistor codes"""
-RESISTOR_CODES = ("rryg", "rByg", "ybbr", "rbby", "wrbw", "wBbw")
+RESISTOR_CODES = {
+    "rryg": 10,
+    "rByg": 20,
+    "ybbr": 30,
+    "rbby": 40,
+    "wrbw": 50,
+    "wBbw": 60,
+}
+
+
+# Rows are: ohms
+# Columns are: chip code last char - Odd, even, zero, letter
+RULES_TABLE1 = {
+    10: ["N", "C", "R", "B"],
+    20: ["C", "C", "B", "R"],
+    30: ["R", "R", "C", "C"],
+    40: ["B", "N", "R", "C"],
+    50: [1,    4,  "N",   3],
+    60: [5,   "C",   2,   6],
+}
+
+
+# Rows are: row numbers referred to from table1
+# Columns are: terminal name last char - Odd, even, zero, letter
+RULES_TABLE2 = {
+    1: ["C", "N", "R", "C"],
+    2: ["R", "C", "R", "C"],
+    3: ["R", "B", "C", "R"],
+    4: ["C", "R", "C", "R"],
+    5: ["N", "C", "R", "B"],
+    6: ["C", "C", "C", "R"],
+}
+
+
+# Get column in rules table based on chip/terminal code
+def col_from_code(code):
+    # Look at last character, return:
+    #   0 if odd
+    #   1 if even
+    #   2 if zero
+    #   3 if letter
+    try:
+        num = int(code[-1], 10)
+    except ValueError:
+        num = None
+
+    if num is None:
+        return 3
+    elif num == 0:
+        return 2
+    elif num % 2 == 0:
+        return 1
+    else:
+        return 0
 
 
 class ComponentPair:
 
     """Pair of chip and resister components that are validated together."""
 
-    def __init__(self, chip_code, resistor_code, chip_pos, resistor_pos):
+    def __init__(self, terminal_id,
+                 chip_code, resistor_code, chip_pos, resistor_pos):
         self._chip = Chip(chip_code, chip_pos)
         self._resistor = Resistor(resistor_code, resistor_pos)
+        self._terminal_id = terminal_id
 
     def setup_draw(self, surface):
         self._chip.setup_draw(surface)
@@ -88,9 +144,32 @@ class ComponentPair:
         Is this component group in a correct state?
 
         """
-        # TODO: implement code checking logic from manual
-        return (("g" in self._resistor.code) == self._resistor.disabled and
-                ("A" in self._chip.code) == self._chip.disabled)
+        actions = {
+            "N": (lambda: not self._chip.disabled and
+                  not self._resistor.disabled),
+            "C": (lambda: self._chip.disabled and
+                  not self._resistor.disabled),
+            "R": (lambda: not self._chip.disabled and
+                  self._resistor.disabled),
+            "B": (lambda: self._chip.disabled and
+                  self._resistor.disabled),
+        }
+
+        # First get the action based on resister code
+        action = self._action_from_table(RULES_TABLE1,
+                                         RESISTOR_CODES[self._resistor.code],
+                                         self._chip.code)
+        if action in actions:
+            return actions[action]()
+        else:
+            # We have a row in table2, so get action based on terminal id
+            action = self._action_from_table(RULES_TABLE2,
+                                             action,
+                                             self._terminal_id)
+            return actions[action]()
+
+    def _action_from_table(self, table, key, code):
+        return table[key][col_from_code(code)]
 
 
 class HardwareInspect(program.TerminalProgram):
@@ -212,23 +291,24 @@ class HardwareInspect(program.TerminalProgram):
                          self._button_rect,
                          1)
 
-    @staticmethod
-    def _create_component_pairs(board_def):
+    def _create_component_pairs(self, board_def):
         component_pairs = []
 
         def chip_code():
-            len = random.choice(CHIP_CODE_LENGTHS)
             code = ""
-            for _ in range(len - 1):
+            for _ in range(random.choice(CHIP_CODE_LENGTHS) - 1):
                 code += random.choice(CHIP_CODE_CHARS)
             code += random.choice(CHIP_CODE_END_CHARS)
             return code
 
+        resistor_codes = list(RESISTOR_CODES.keys())
+
         # Keep generating sets until we get one that has a pair that isn't
         # correct yet
         while len([c for c in component_pairs if not c.is_correct]) == 0:
-            component_pairs = [ComponentPair(chip_code(),
-                                             random.choice(RESISTOR_CODES),
+            component_pairs = [ComponentPair(self._terminal.id_string,
+                                             chip_code(),
+                                             random.choice(resistor_codes),
                                              c_pos, r_pos)
                                for c_pos, r_pos in board_def.positions]
 
@@ -308,7 +388,7 @@ class Resistor(Component):
         "b": (70, 70, 230),
         "y": (220, 200, 90),
         "B": (0, 0, 0),
-        "w": (220, 220, 220), # White won't work, so use grey
+        "w": (220, 220, 220),  # White won't work, so use grey
     }
 
     _LINE_WIDTH = 5
