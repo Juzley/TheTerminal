@@ -7,16 +7,19 @@ out the passwords. Below are our best guesses for the passwords of each user -
 perhaps with a bit of extra work you can work which are correct?
 
 You will have a number of attempts to log in before the password is reset.
-Using our hacked login program, you will be able to see how many characters
-were correct (the correct letter in the correct place) for each attempt. You
+Using our cracked login program, you will be able to see how many characters
+were correct - the right letter in the right position - for each attempt. You
 should be able to work out the password using this information.
 
-User    | Possible Passwords
---------|----------------------------------------------------------------------
-root    | flask, great, asked, tarts, force, gleam, think, brick, flute, brisk,
-        | freak, blast, feast, flick, flank 
---------|----------------------------------------------------------------------
-ro0t    | tusks, blush, askew, train, asset, burns, tries, turns, basks, busks
---------|----------------------------------------------------------------------
-rewt    | maple, pearl, lapel, myths, cycle, apple, ladle, ample, maize, capel
---------|----------------------------------------------------------------------
+User     | Possible Passwords
+---------|---------------------------------------------------------------------
+root     | flask, great, asked, tarts, force, gleam, think, brick, flute,
+         | brisk, freak, blast, feast, flick, flank 
+---------|---------------------------------------------------------------------
+ro0t     | tusks, blush, askew, train, asset, burns, tries, turns, basks, busks
+---------|---------------------------------------------------------------------
+rewt     | maple, pearl, lapel, myths, cycle, apple, ladle, ample, maize, capel
+---------|---------------------------------------------------------------------
+00142331 | trice, racer, tours, glaze, trail, raise, slick, track, grace, trace
+---------|---------------------------------------------------------------------
+00143231 | court, truce, fords, flirt, cruel, craft, tours, chart, fours, count 

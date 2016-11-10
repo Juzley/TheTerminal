@@ -52,6 +52,9 @@ class Terminal:
         """Initialize the class."""
         # Public attributes
         self.locked = False
+        self.id_string = ''.join(
+            random.choice(string.ascii_uppercase + string.digits)
+            for _ in range(5))
 
         # Current line without prompt. If current line with prompt is required,
         # use get_current_line(True)
@@ -83,21 +86,11 @@ class Terminal:
         # Draw the monitor bezel
         self._bezel = util.load_image(Terminal._BEZEL_IMAGE)
         bezel_font = pygame.font.Font(None, Terminal._BEZEL_TEXT_SIZE)
-        bezel_label = ''.join(
-            random.choice(string.ascii_uppercase + string.digits)
-            for _ in range(5))
-        self._bezel_text = bezel_font.render(bezel_label, True, (255, 255, 255))
+        self._bezel_text = bezel_font.render(self.id_string, True,
+                                             (255, 255, 255))
 
-        # Display welcome message
-        self.output([
-            "-" * 60,
-            "Mainframe terminal",
-            "",
-            "You have {}s to login before terminal is locked down.".format(
-                time),
-            "",
-            "Tip of the day: press ctrl+c to cancel current command.",
-            "-" * 60] + [""] * 20 + ["Type 'help' for available commands"])
+
+        self.reboot()
 
     def _process_command(self, cmd):
         """Process a completed command."""
@@ -313,9 +306,33 @@ class Terminal:
         self._freeze_start = self._timer.time
         self._freeze_time = time
 
+    def reduce_time(self, time):
+        """Reduce the available time by 'time' seconds."""
+        self._timeleft -= time * 1000
+
+    def reboot(self, msg=""):
+        """Simulate a reboot."""
+        # Clear the buffer.
+        self._buf.clear()
+
+        # Display welcome message.
+        self.output([
+            "-" * 60,
+            "Mainframe terminal",
+            "",
+            "You have {}s to login before terminal is locked down.".format(
+                round(self._timeleft / 1000)),
+            "",
+            "Tip of the day: press ctrl+c to cancel current command.",
+            "-" * 60])
+
+        if msg:
+            self.output([msg])
+
+        self.output([""] * 20 + ["Type 'help' for available commands"])
+
     def draw(self):
         """Draw the terminal."""
-
         # If terminal freeze is enabled, then update progress bar to indicate
         # how long there is left to wait, using this as the current line.
         if self._freeze_time is not None:

@@ -6,7 +6,7 @@ import mainmenu
 import timer
 import util
 from gamestate import GameState
-from programs.hardware import Motherboard
+from programs.hardware import HardwareInspect, Motherboard
 from programs.hexedit import HexEditor
 from programs.password import PasswordGuess
 from terminal import Terminal
@@ -85,7 +85,8 @@ class GameplayState(GameState):
         self._terminal = Terminal(
             programs={
                 'login': PasswordGuess,
-                'inspect': Motherboard,
+                'inspect': HardwareInspect,
+                'inspect2': Motherboard,
                 'hexedit': HexEditor},
             depends={
                 'login': ('hexedit', 'inspect'),
