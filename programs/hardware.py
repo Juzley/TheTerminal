@@ -12,23 +12,28 @@ class Element:
     """Base class representing a hardware element on a motherboard."""
 
     def __init__(self, filename, pos, correct):
-        self.clicked = False
+        self.disabled = False
         self.correct = correct
         self._surface = pygame.image.load(filename).convert_alpha()
         self._pos = pos
 
-    def draw(self,):
-        if not self.clicked:
-            screen = pygame.display.get_surface()
-            screen.blit(self._surface, self._pos)
+    def draw(self):
+        screen = pygame.display.get_surface()
+        screen.blit(self._surface, self._pos)
+        if self.disabled:
+            rect = self._surface.get_rect()
+            overlay = pygame.Surface((rect[2], rect[3]))
+            overlay.fill((0, 0, 0))
+            overlay.set_alpha(100)
+            screen.blit(overlay, self._pos)
+
+    def toggle(self):
+        self.disabled = not self.disabled
 
     def contains(self, pos):
-        if self.clicked:
-            return False
-        else:
-            x, y, width, height = self._surface.get_rect()
-            return (self._pos[0] <= pos[0] <= self._pos[0] + width and
-                    self._pos[1] <= pos[1] <= self._pos[1] + height)
+        x, y, width, height = self._surface.get_rect()
+        return (self._pos[0] <= pos[0] <= self._pos[0] + width and
+                self._pos[1] <= pos[1] <= self._pos[1] + height)
 
 
 class Resistor1(Element):
@@ -70,7 +75,7 @@ class Motherboard(program.TerminalProgram):
     _BOARD_POS = (80, 50)
 
     _BUTTON_POS = (500, 510)
-    _BUTTON_TEXT = "Test hardware"
+    _BUTTON_TEXT = "Reboot system"
     _BUTTON_COLOUR = (255, 255, 255)
 
     def __init__(self, terminal):
@@ -101,6 +106,7 @@ class Motherboard(program.TerminalProgram):
         ]
 
         self._completed = False
+        self._exited = False
 
     @classmethod
     def is_graphical(cls):
@@ -118,6 +124,7 @@ class Motherboard(program.TerminalProgram):
     def start(self):
         # Reset board
         self._reset_board()
+        self._exited = False
 
     def draw(self):
         """Draw the program."""
@@ -136,17 +143,26 @@ class Motherboard(program.TerminalProgram):
             # Find the element clicked
             element = self._get_element(pos)
             if element is not None:
-                element.clicked = True
+                element.toggle()
             elif self._is_in_button(pos):
-                # If all the correct elements have been correctly clicked,
+                # If all the correct elements have been correctly disabled,
                 # and no incorrect ones have, then we are done!
+                #
+                # If nothing has been disabled, then just reboot
                 if len([e for e in self._elements
-                        if e.clicked != e.correct]) == 0:
-                    self._terminal.output(
-                        ["SYSTEM ALERT: Hardware security module disabled."])
+                        if e.disabled]) == 0:
+                    self._terminal.reboot()
+                    self._exited = True
+                elif len([e for e in self._elements
+                          if e.disabled != e.correct]) == 0:
+                    self._terminal.reboot("SYSTEM WARNING: Hardware security "
+                                          "module disabled.")
                     self._completed = True
                 else:
-                    self._reset_board()
+                    self._exited = True
+                    self._terminal.reboot("<r>SYSTEM ALERT: Hardware error:"
+                                          " clock skew detected. Recovering")
+                    self._terminal.reduce_time(10)
 
     def on_mousemove(self, pos):
         if self._get_element(pos) is not None or self._is_in_button(pos):
@@ -160,7 +176,7 @@ class Motherboard(program.TerminalProgram):
 
     def exited(self):
         """Indicate whether the program has exited."""
-        return self.completed()
+        return self.completed() or self._exited
 
     def _get_element(self, pos):
         elements = [e for e in self._elements if e.contains(pos)]
@@ -177,7 +193,7 @@ class Motherboard(program.TerminalProgram):
 
     def _reset_board(self):
         for element in self._elements:
-            element.clicked = False
+            element.disabled = False
 
 
 class HardwareInspect(program.TerminalProgram):
@@ -277,11 +293,11 @@ class HardwareInspect(program.TerminalProgram):
                 self._exited = True
                 # See if the user disabled the correct chips.
                 if self._current_chips == self._required_chips:
-                    self._terminal.reboot("SYSTEM ALERT: Hardware security"
+                    self._terminal.reboot("SYSTEM WARNING: Hardware security"
                                           " module disabled.")
                     self._completed = True
                 else:
-                    self._terminal.reboot("SYSTEM ALERT: Hardware error:"
+                    self._terminal.reboot("<r>SYSTEM ALERT: Hardware error:"
                                           " clock skew detected. Recovering")
                     self._terminal.reduce_time(10)
 

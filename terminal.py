@@ -27,6 +27,7 @@ class Terminal:
     _TEXT_SIZE = 16
     _TEXT_FONT = 'media/whitrabt.ttf'
     _TEXT_COLOUR = (20, 200, 20)
+    _TEXT_COLOUR_RED = (200, 20, 20)
 
     # Constants related to cursor
     _CURSOR_WIDTH = 6
@@ -90,7 +91,7 @@ class Terminal:
                                              (255, 255, 255))
 
 
-        self.reboot()
+        self.reboot(first_boot=True)
 
     def _process_command(self, cmd):
         """Process a completed command."""
@@ -250,11 +251,13 @@ class Terminal:
 
         repeat_on_hold = False
         if ctrl_c_pressed:
+            current_line = self.get_current_line(True)
+
             # If we are in a program, then abort it
             if self._current_program:
                 self._current_program.on_abort()
                 self._current_program = None
-            self.output([self.get_current_line(True) + "^C"])
+            self.output([current_line + "^C"])
             self._reset_prompt()
         elif key in [pygame.K_RETURN, pygame.K_KP_ENTER]:
             if self.get_current_line(True):
@@ -310,7 +313,7 @@ class Terminal:
         """Reduce the available time by 'time' seconds."""
         self._timeleft -= time * 1000
 
-    def reboot(self, msg=""):
+    def reboot(self, msg="", first_boot=False):
         """Simulate a reboot."""
         # Clear the buffer.
         self._buf.clear()
@@ -325,11 +328,13 @@ class Terminal:
             "",
             "Tip of the day: press ctrl+c to cancel current command.",
             "-" * 60])
-
+        if not first_boot:
+            self.output(["", "SYSTEM NOTIFICATION: System rebooted!"])
         if msg:
             self.output([msg])
 
-        self.output([""] * 20 + ["Type 'help' for available commands"])
+        self.output([""] * (28 - len(self._buf))
+                    + ["Type 'help' for available commands"])
 
     def draw(self):
         """Draw the terminal."""
@@ -348,7 +353,13 @@ class Terminal:
         # Draw the buffer.
         y_coord = Terminal._TEXT_START[1]
         for line in itertools.chain([current_line], self._buf):
-            text = self._font.render(line, True, Terminal._TEXT_COLOUR)
+            # If line starts with a colour code, then change colour
+            if line.startswith("<r>"):
+                colour = Terminal._TEXT_COLOUR_RED
+                line = line[3:]
+            else:
+                colour = Terminal._TEXT_COLOUR
+            text = self._font.render(line, True, colour)
             pygame.display.get_surface().blit(
                 text, (Terminal._TEXT_START[0], y_coord))
             y_coord -= Terminal._TEXT_SIZE

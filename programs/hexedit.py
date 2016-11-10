@@ -131,12 +131,12 @@ class HexEditor(program.TerminalProgram):
                 raise program.BadInput("Not a number")
 
             if self._file.validate(self._row, self._col, val):
-                self._terminal.output(['SYSTEM ALERT: Software lock '
+                self._terminal.output(['SYSTEM WARNING: Software lock '
                                        'deactivated.'])
                 self._guessed = True
             else:
-                self._terminal.output(["SYSTEM ERROR: corruption detected in "
-                                       "file '{}', repairing!"
+                self._terminal.output(["<r>SYSTEM ERROR: corruption detected "
+                                       "in file '{}', repairing!"
                                        .format(self._filename)])
                 self._row = None
                 self._col = None
