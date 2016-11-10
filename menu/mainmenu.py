@@ -2,12 +2,12 @@
 
 
 import pygame
+from . import menu
 from gameplay import GameplayState
-from menu import MenuItem, Menu
 from enum import Enum, unique
 
 
-class MainMenu(Menu):
+class MainMenu(menu.Menu):
 
     """Class defining the main menu."""
 
@@ -21,16 +21,16 @@ class MainMenu(Menu):
         super().__init__()
 
         self._items = [
-            MenuItem(item_id=MainMenu.Items.START_GAME,
-                     pos=(None, 200),
-                     text='Start Game',
-                     text_size=40,
-                     colour=(255, 255, 255)),
-            MenuItem(item_id=MainMenu.Items.QUIT,
-                     pos=(None, 240),
-                     text='Quit',
-                     text_size=40,
-                     colour=(255, 255, 255))
+            menu.MenuItem(item_id=MainMenu.Items.START_GAME,
+                          pos=(None, 200),
+                          text='Start Game',
+                          text_size=40,
+                          colour=(255, 255, 255)),
+            menu.MenuItem(item_id=MainMenu.Items.QUIT,
+                          pos=(None, 240),
+                          text='Quit',
+                          text_size=40,
+                          colour=(255, 255, 255))
         ]
 
         self._font = pygame.font.Font(None, 40)

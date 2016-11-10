@@ -5,7 +5,7 @@ import pygame
 import timer
 import util
 from gamestate import GameState
-import menu.mainmenu as mainmenu
+import menu.mainmenu
 from programs.hardware import HardwareInspect, Motherboard
 from programs.hexedit import HexEditor
 from programs.password import PasswordGuess
@@ -41,7 +41,7 @@ class SuccessState(GameState):
         if self._timer.time >= SuccessState._WAIT_TIME:
             if len([e for e in events if e.type == pygame.KEYDOWN]) > 0:
                 # Return to the main menu.
-                self._mgr.pop_until(mainmenu.MainMenu)
+                self._mgr.pop_until(menu.mainmenu.MainMenu)
 
 
 class LostState(GameState):
@@ -73,7 +73,7 @@ class LostState(GameState):
         if self._timer.time >= LostState._WAIT_TIME:
             if len([e for e in events if e.type == pygame.KEYDOWN]) > 0:
                 # Return to the main menu.
-                self._mgr.pop_until(mainmenu.MainMenu)
+                self._mgr.pop_until(menu.mainmenu.MainMenu)
 
 
 class GameplayState(GameState):
