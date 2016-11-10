@@ -22,6 +22,7 @@ class Terminal:
                        string.punctuation + " ")
     _BUF_SIZE = 100
     _HISTORY_SIZE = 50
+    _VISIBLE_LINES = 30
 
     # Constants related to drawing the terminal text.
     _TEXT_SIZE = 16
@@ -101,9 +102,13 @@ class Terminal:
                 self._current_program = self._programs[cmd]
 
                 # Don't run the program if it is already completed
-                # TODO: Some kind of message here.
                 if not self._current_program.completed():
                     self._current_program.start()
+                else:
+                    self.output(["{} already disabled!"
+                                 .format(self._current_program.security_type)
+                                 .capitalize()])
+                    self._current_program = None
 
         elif cmd in ('help', '?'):
             sorted_cmds = sorted(self._programs.items(),
@@ -327,13 +332,22 @@ class Terminal:
             "",
             "Tip of the day: press ctrl+c to cancel current command.",
             "-" * 60])
+
         if not first_boot:
             self.output(["", "SYSTEM NOTIFICATION: System rebooted!"])
         if msg:
             self.output([msg])
 
-        self.output([""] * (28 - len(self._buf))
-                    + ["Type 'help' for available commands"])
+        end_msgs = ["Type 'help' for available commands"]
+
+        # Push banner to top, leaving space for end messages, and 1 extra
+        # syslog at end if the current program was successful.
+        blank_lines = (Terminal._VISIBLE_LINES -
+                       len(self._buf) - len(end_msgs))
+        if (self._current_program is not None and
+                self._current_program.completed()):
+            blank_lines -= 1
+        self.output([""] * blank_lines + end_msgs)
 
     def draw(self):
         """Draw the terminal."""
@@ -399,6 +413,10 @@ class Terminal:
         """Run terminal logic."""
         # Check whether the current program (if there is one) has exited.
         if self._current_program and self._current_program.exited():
+            # If it exited because it was successfully completed, then display
+            # syslog.
+            if self._current_program.completed():
+                self.output([self._current_program.success_syslog])
             self._current_program = None
 
             # Display the prompt again.

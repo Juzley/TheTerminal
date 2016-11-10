@@ -36,6 +36,14 @@ class TerminalProgram:
         """Return string indicating what security this program can bypass."""
         return "<empty>"
 
+    @property
+    def success_syslog(self):
+        return "SYSTEM WARNING: {} disabled.".format(self.security_type)
+
+    @property
+    def failure_prefix(self):
+        return "<r>SYSTEM ALERT: "
+
     def draw(self):
         """Draw the program, if it is graphical."""
         pass

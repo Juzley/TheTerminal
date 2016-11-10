@@ -14,7 +14,7 @@ class Component:
     def __init__(self, filename, pos, correct):
         self.disabled = False
         self.correct = correct
-        self._surface = pygame.image.load(filename).convert_alpha()
+        self._surface = util.load_image(filename)
         self._pos = pos
 
     def draw(self):
@@ -155,13 +155,13 @@ class Motherboard(program.TerminalProgram):
                     self._exited = True
                 elif len([c for c in self._components
                           if c.disabled != c.correct]) == 0:
-                    self._terminal.reboot("SYSTEM WARNING: Hardware security "
-                                          "module disabled.")
                     self._completed = True
+                    self._terminal.reboot()
                 else:
                     self._exited = True
-                    self._terminal.reboot("<r>SYSTEM ALERT: Hardware error:"
-                                          " clock skew detected. Recovering")
+                    self._terminal.reboot(self.failure_prefix +
+                                          "Hardware error: clock skew "
+                                          "detected. Recovering")
                     self._terminal.reduce_time(10)
 
     def on_mousemove(self, pos):
@@ -293,12 +293,12 @@ class HardwareInspect(program.TerminalProgram):
                 self._exited = True
                 # See if the user disabled the correct chips.
                 if self._current_chips == self._required_chips:
-                    self._terminal.reboot("SYSTEM WARNING: Hardware security"
-                                          " module disabled.")
                     self._completed = True
+                    self._terminal.reboot()
                 else:
-                    self._terminal.reboot("<r>SYSTEM ALERT: Hardware error:"
-                                          " clock skew detected. Recovering")
+                    self._terminal.reboot(self.failure_prefix +
+                                          "Hardware error: clock skew "
+                                          "detected. Recovering")
                     self._terminal.reduce_time(10)
 
             elif chip_code != HardwareInspect._NO_CHIP_CODE:
