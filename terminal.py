@@ -415,8 +415,8 @@ class Terminal:
         # Determine whether the cursor is on
         if (not self._rebooting and
                 (self._timer.time % (Terminal._CURSOR_ON_MS +
-                                        Terminal._CURSOR_OFF_MS) <
-                     Terminal._CURSOR_ON_MS)):
+                                     Terminal._CURSOR_OFF_MS) <
+                 Terminal._CURSOR_ON_MS)):
             curr_line_size = self._font.size(current_line)
             pygame.draw.rect(pygame.display.get_surface(),
                              Terminal._TEXT_COLOUR,

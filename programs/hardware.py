@@ -155,20 +155,21 @@ class ComponentPair:
                   self._resistor.disabled),
         }
 
-        # First get the action based on resister code
+        # First get the action based on resister value and chip code
         action = self._action_from_table(RULES_TABLE1,
                                          RESISTOR_CODES[self._resistor.code],
                                          self._chip.code)
         if action in actions:
             return actions[action]()
         else:
-            # We have a row in table2, so get action based on terminal id
+            # Action is table2 row, so get action based on this and terminal id
             action = self._action_from_table(RULES_TABLE2,
                                              action,
                                              self._terminal_id)
             return actions[action]()
 
-    def _action_from_table(self, table, key, code):
+    @staticmethod
+    def _action_from_table(table, key, code):
         return table[key][col_from_code(code)]
 
 
