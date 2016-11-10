@@ -90,7 +90,6 @@ class Terminal:
         self._bezel_text = bezel_font.render(self.id_string, True,
                                              (255, 255, 255))
 
-
         self.reboot(first_boot=True)
 
     def _process_command(self, cmd):

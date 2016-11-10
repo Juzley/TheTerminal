@@ -7,9 +7,9 @@ import util
 from . import program
 
 
-class Element:
+class Component:
 
-    """Base class representing a hardware element on a motherboard."""
+    """Base class representing a hardware component on a motherboard."""
 
     def __init__(self, filename, pos, correct):
         self.disabled = False
@@ -36,25 +36,25 @@ class Element:
                 self._pos[1] <= pos[1] <= self._pos[1] + height)
 
 
-class Resistor1(Element):
+class Resistor1(Component):
 
-    """Resister element."""
+    """Resister component."""
 
     def __init__(self, *args):
         super().__init__('media/resistor1.png', *args)
 
 
-class Resistor2(Element):
+class Resistor2(Component):
 
-    """Resister element."""
+    """Resister component."""
 
     def __init__(self, *args):
         super().__init__('media/resistor2.png', *args)
 
 
-class Chip(Element):
+class Chip(Component):
 
-    """Chip element."""
+    """Chip component."""
 
     def __init__(self, *args):
         super().__init__('media/chip.png', *args)
@@ -99,8 +99,8 @@ class Motherboard(program.TerminalProgram):
                          self._button_rect,
                          1)
 
-        # Create elements, positioning them relative to board
-        self._elements = [
+        # Create components, positioning them relative to board
+        self._components = [
             el((x + self._BOARD_POS[0], y + self._BOARD_POS[1]), c)
             for el, x, y, c in _MOTHERBOARD1
         ]
@@ -133,28 +133,28 @@ class Motherboard(program.TerminalProgram):
         screen.blit(self._background, (0, 0))
         screen.blit(self._board, self._BOARD_POS)
 
-        # Draw elements
-        for element in self._elements:
-            element.draw()
+        # Draw components
+        for component in self._components:
+            component.draw()
 
     def on_mouseclick(self, button, pos):
         """Detect whether the user clicked the program."""
         if button == mouse.Button.LEFT:
-            # Find the element clicked
-            element = self._get_element(pos)
-            if element is not None:
-                element.toggle()
+            # Find the component clicked
+            component = self._get_component(pos)
+            if component is not None:
+                component.toggle()
             elif self._is_in_button(pos):
-                # If all the correct elements have been correctly disabled,
+                # If all the correct components have been correctly disabled,
                 # and no incorrect ones have, then we are done!
                 #
                 # If nothing has been disabled, then just reboot
-                if len([e for e in self._elements
-                        if e.disabled]) == 0:
+                if len([c for c in self._components
+                        if c.disabled]) == 0:
                     self._terminal.reboot()
                     self._exited = True
-                elif len([e for e in self._elements
-                          if e.disabled != e.correct]) == 0:
+                elif len([c for c in self._components
+                          if c.disabled != c.correct]) == 0:
                     self._terminal.reboot("SYSTEM WARNING: Hardware security "
                                           "module disabled.")
                     self._completed = True
@@ -165,7 +165,7 @@ class Motherboard(program.TerminalProgram):
                     self._terminal.reduce_time(10)
 
     def on_mousemove(self, pos):
-        if self._get_element(pos) is not None or self._is_in_button(pos):
+        if self._get_component(pos) is not None or self._is_in_button(pos):
             mouse.current.set_cursor(mouse.Cursor.HAND)
         else:
             mouse.current.set_cursor(mouse.Cursor.ARROW)
@@ -178,10 +178,10 @@ class Motherboard(program.TerminalProgram):
         """Indicate whether the program has exited."""
         return self.completed() or self._exited
 
-    def _get_element(self, pos):
-        elements = [e for e in self._elements if e.contains(pos)]
-        if len(elements) > 0:
-            return elements[0]
+    def _get_component(self, pos):
+        match = [c for c in self._components if c.contains(pos)]
+        if len(match) > 0:
+            return match[0]
         else:
             return None
 
@@ -192,8 +192,8 @@ class Motherboard(program.TerminalProgram):
                 self._button_rect[1] + self._button_rect[3])
 
     def _reset_board(self):
-        for element in self._elements:
-            element.disabled = False
+        for component in self._components:
+            component.disabled = False
 
 
 class HardwareInspect(program.TerminalProgram):
