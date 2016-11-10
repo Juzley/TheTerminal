@@ -2,10 +2,10 @@
 
 import pygame
 
-import mainmenu
 import timer
 import util
 from gamestate import GameState
+import menu.mainmenu as mainmenu
 from programs.hardware import HardwareInspect, Motherboard
 from programs.hexedit import HexEditor
 from programs.password import PasswordGuess

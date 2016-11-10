@@ -5,7 +5,7 @@ import pygame
 
 import mouse
 from gamestate import GameStateManager
-from mainmenu import MainMenu
+from menu.mainmenu import MainMenu
 
 
 def setup():
