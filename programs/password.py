@@ -21,7 +21,9 @@ class PasswordGuess(program.TerminalProgram):
         '00142331': ['trice', 'racer', 'tours', 'glaze', 'trail', 'raise',
                      'slick', 'track', 'grace', 'trace'],
         '00143231': ['court', 'truce', 'fords', 'flirt', 'cruel', 'craft',
-                     'tours', 'chart', 'fours', 'count']
+                     'tours', 'chart', 'fours', 'count'],
+        '01043231': ['eagle', 'ariel', 'glare', 'gains', 'earns', 'gauge',
+                     'angle', 'early', 'agile', 'engle']
     }
 
     def __init__(self, terminal):
