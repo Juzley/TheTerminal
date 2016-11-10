@@ -4,6 +4,12 @@
 import pygame
 
 
+class Align:
+    LEFT = -1
+    CENTER = 0
+    RIGHT = 1
+
+
 class ActiveEvent:
 
     """

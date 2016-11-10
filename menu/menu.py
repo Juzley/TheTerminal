@@ -11,7 +11,8 @@ class MenuItem:
 
     """A single item in a menu."""
 
-    def __init__(self, item_id, pos, text, text_size, colour=(255, 255, 255)):
+    def __init__(self, item_id, pos, text, text_size,
+                 colour=(255, 255, 255), align=util.Align.CENTER):
         """Initialize the class."""
         self.item_id = item_id
         self._pos = pos
@@ -19,12 +20,16 @@ class MenuItem:
         font = pygame.font.Font(None, text_size)
         self._text = font.render(text, True, colour)
 
-        # If the position is None, that means center
-        if self._pos[0] is None:
-            text_width = self._text.get_rect()[2]
-            surface_width = pygame.display.get_surface().get_rect()[2]
+        # Handle alignment
+        text_width = self._text.get_rect()[2]
+        surface_width = pygame.display.get_surface().get_rect()[2]
+        if align == util.Align.LEFT:
+            self._pos = (0, self._pos[1])
+        elif align == util.Align.CENTER:
             self._pos = (int((surface_width / 2) - (text_width / 2)),
                          self._pos[1])
+        else:
+            self._pos = (surface_width - text_width, self._pos[1])
 
     def collidepoint(self, pos):
         """Determine whether a given point is within this menu item."""
@@ -78,12 +83,14 @@ class Menu(GameState):
             if self._selected_index < len(self._items) - 1:
                 self._selected_index += 1
         elif event.key in [pygame.K_RETURN, pygame.K_KP_ENTER]:
+            mouse.current.set_cursor(mouse.Cursor.ARROW)
             self._on_choose(self._items[self._selected_index])
 
     def _on_mouseclick(self, event):
         """Handle a mouse click."""
         if event.button == mouse.Button.LEFT:
             for item in [i for i in self._items if i.collidepoint(event.pos)]:
+                mouse.current.set_cursor(mouse.Cursor.ARROW)
                 self._on_choose(item)
 
     def _on_mousemove(self, event):
@@ -183,12 +190,14 @@ class CLIMenu(GameState):
             if self._selected_index < len(self._items) - 1:
                 self._selected_index += 1
         elif event.key in [pygame.K_RETURN, pygame.K_KP_ENTER]:
+            mouse.current.set_cursor(mouse.Cursor.ARROW)
             self._on_choose(self._items[self._selected_index])
 
     def _on_mouseclick(self, event):
         """Determine whether we've clicked on a menu item."""
         item = self._hit_item(event.pos)
         if item:
+            mouse.current.set_cursor(mouse.Cursor.ARROW)
             self._on_choose(item)
 
     def _on_mousemove(self, event):
@@ -196,6 +205,9 @@ class CLIMenu(GameState):
         item = self._hit_item(event.pos)
         if item:
             self._selected_index = self._items.index(item)
+            mouse.current.set_cursor(mouse.Cursor.HAND)
+        else:
+            mouse.current.set_cursor(mouse.Cursor.ARROW)
 
     def _on_choose(self, item):
         """Handle activation of a menu item."""
