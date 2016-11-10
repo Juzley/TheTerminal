@@ -2,7 +2,7 @@
 
 import pygame
 
-import mainmenu
+import menu.mainmenu
 import timer
 import util
 from gamestate import GameState
@@ -41,7 +41,7 @@ class SuccessState(GameState):
         if self._timer.time >= SuccessState._WAIT_TIME:
             if len([e for e in events if e.type == pygame.KEYDOWN]) > 0:
                 # Return to the main menu.
-                self._mgr.pop_until(mainmenu.MainMenu)
+                self._mgr.pop_until(menu.mainmenu.MainMenu)
 
 
 class LostState(GameState):
