@@ -47,14 +47,14 @@ BoardDefinition("media/motherboard.png",
                 ((210, 10), (210, 100)),
                 ((210, 210), (210, 300)))
 
-"""Chip codes"""
-# TODO: proper chip codes
-CHIP_CODES = ("15835A", "3445", "453463", "3455345", "445BC")
+"""Chip codes parameters"""
+CHIP_CODE_LENGTHS = (4, 5, 5, 5, 6, 7, 7, 7)
+CHIP_CODE_CHARS = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
+CHIP_CODE_END_CHARS =  ("0", "1", "2", "3", "A", "A", "B", "C")
 
 
 """Resistor codes"""
-# TODO: proper resistor codes
-RESISTOR_CODES = ("brrg", "bryb", "yyrr", "rrgr")
+RESISTOR_CODES = ("rryg", "rByg", "ybbr", "rbby", "wrbw", "wBbw")
 
 
 class ComponentPair:
@@ -216,10 +216,18 @@ class HardwareInspect(program.TerminalProgram):
     def _create_component_pairs(board_def):
         component_pairs = []
 
+        def chip_code():
+            len = random.choice(CHIP_CODE_LENGTHS)
+            code = ""
+            for _ in range(len - 1):
+                code += random.choice(CHIP_CODE_CHARS)
+            code += random.choice(CHIP_CODE_END_CHARS)
+            return code
+
         # Keep generating sets until we get one that has a pair that isn't
         # correct yet
         while len([c for c in component_pairs if not c.is_correct]) == 0:
-            component_pairs = [ComponentPair(random.choice(CHIP_CODES),
+            component_pairs = [ComponentPair(chip_code(),
                                              random.choice(RESISTOR_CODES),
                                              c_pos, r_pos)
                                for c_pos, r_pos in board_def.positions]
@@ -298,8 +306,9 @@ class Resistor(Component):
         "r": (190, 50, 50),
         "g": (110, 175, 55),
         "b": (70, 70, 230),
-        "y": (220, 190, 90),
-
+        "y": (220, 200, 90),
+        "B": (0, 0, 0),
+        "w": (220, 220, 220), # White won't work, so use grey
     }
 
     _LINE_WIDTH = 5
@@ -310,7 +319,9 @@ class Resistor(Component):
     def create_image(self):
         self._image = util.load_image('media/resistor.png')
 
-        # Create a surfance to draw the lines on
+        # Create a surface to draw the lines on, so we can blend it with the
+        # resistor and have it ignore the portions of the lines outside the
+        # resistor
         height = self._image.get_rect()[3]
         surface = pygame.Surface((self._AREA_WIDTH, height))
         surface.fill((255, 255, 255))

@@ -68,10 +68,9 @@ Use the row given by table 1, and the first character of the terminal name to
 determine the correct action.
          | Odd number  | Even number | Zero         | Letter
 ---------|-------------|-------------|--------------|--------------
-Row 1    | C           | N           | R            | C
 Row 2    | R           | C           | R            | C
-Row 3    | R           | B           | C            | R 
-Row 4    | C           | R           | C            | R 
+Row 3    | R           | B           | C            | R
+Row 4    | C           | R           | C            | R
 Row 5    | N           | C           | R            | B
 Row 6    | C           | C           | C            | R
 
@@ -93,3 +92,4 @@ yellow-blue-blue-red   | 30 kOhms
 red-blue-blue-yellow   | 40 kOhms
 white-red-blue-white   | 50 kOhms
 white-black-blue-white | 60 kOhms
+Row 1    | C           | N           | R            | C
