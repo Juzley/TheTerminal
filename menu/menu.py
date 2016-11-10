@@ -170,8 +170,7 @@ class CLIMenu(GameState):
         """Determine whether a given point hits a menu item."""
         # Only consider the lines associated with menu items.
         for line, coords, item in [l for l in self._buf if l[2]]:
-            if line.get_rect().move(coords).collidepos(pos):
-                print(item)
+            if line.get_rect().move(coords).collidepoint(pos):
                 return item
 
         return None
@@ -188,13 +187,13 @@ class CLIMenu(GameState):
 
     def _on_mouseclick(self, event):
         """Determine whether we've clicked on a menu item."""
-        item = self._hit_item(self, event.pos)
+        item = self._hit_item(event.pos)
         if item:
-            self._on_choose(self, item)
+            self._on_choose(item)
 
     def _on_mousemove(self, event):
         """Determine if we've moused over a menu item."""
-        item = self._hit_item(self, event.pos)
+        item = self._hit_item(event.pos)
         if item:
             self._selected_index = self._items.index(item)
 
