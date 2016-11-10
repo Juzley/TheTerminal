@@ -47,6 +47,12 @@ BoardDefinition("media/motherboard.png",
                 ((210, 10), (210, 100)),
                 ((210, 210), (210, 300)))
 
+BoardDefinition("media/motherboard.png",
+                [("media/cpu.png", (420, 240))],
+                ((10, 10), (10, 100)),
+                ((110, 210), (110, 300)),
+                ((210, 10), (210, 100)))
+
 
 """Chip codes parameters"""
 CHIP_CODE_LENGTHS = (4, 5, 5, 5, 6, 7, 7, 7)
@@ -60,8 +66,8 @@ RESISTOR_CODES = {
     "rByg": 20,
     "ybbr": 30,
     "rbby": 40,
-    "wrbw": 50,
-    "wBbw": 60,
+    "grbg": 50,
+    "gBbg": 60,
 }
 
 
@@ -389,12 +395,11 @@ class Resistor(Component):
         "b": (70, 70, 230),
         "y": (220, 200, 90),
         "B": (0, 0, 0),
-        "w": (220, 220, 220),  # White won't work, so use grey
     }
 
     _LINE_WIDTH = 5
     _BACKGROUND_COLOUR = (216, 192, 169)
-    _AREA_START = 42
+    _AREA_START = 43
     _AREA_WIDTH = 94
 
     def create_image(self):

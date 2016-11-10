@@ -91,5 +91,5 @@ red-red-yellow-green   | 10 kOhms
 red-black-yellow-green | 20 kOhms
 yellow-blue-blue-red   | 30 kOhms
 red-blue-blue-yellow   | 40 kOhms
-white-red-blue-white   | 50 kOhms
-white-black-blue-white | 60 kOhms
+green-red-blue-green   | 50 kOhms
+green-black-blue-green | 60 kOhms
