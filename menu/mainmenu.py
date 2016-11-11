@@ -2,12 +2,12 @@
 
 
 import pygame
-from . import menu
-from gameplay import GameplayState
+from .menu import Menu, MenuItem
+from .level import LevelMenu
 from enum import Enum, unique
 
 
-class MainMenu(menu.Menu):
+class MainMenu(Menu):
 
     """Class defining the main menu."""
 
@@ -21,16 +21,16 @@ class MainMenu(menu.Menu):
         super().__init__()
 
         self._items = [
-            menu.MenuItem(item_id=MainMenu.Items.START_GAME,
-                          pos=(None, 200),
-                          text='Start Game',
-                          text_size=40,
-                          colour=(255, 255, 255)),
-            menu.MenuItem(item_id=MainMenu.Items.QUIT,
-                          pos=(None, 240),
-                          text='Quit',
-                          text_size=40,
-                          colour=(255, 255, 255))
+            MenuItem(item_id=MainMenu.Items.START_GAME,
+                     pos=(0, 200),
+                     text='Start Game',
+                     text_size=40,
+                     colour=(255, 255, 255)),
+            MenuItem(item_id=MainMenu.Items.QUIT,
+                     pos=(0, 240),
+                     text='Quit',
+                     text_size=40,
+                     colour=(255, 255, 255))
         ]
 
         self._font = pygame.font.Font(None, 40)
@@ -39,7 +39,7 @@ class MainMenu(menu.Menu):
     def _on_choose(self, item):
         """Handle activation of a menu item."""
         if item.item_id == MainMenu.Items.START_GAME:
-            self._mgr.push(GameplayState(self._mgr))
+            self._mgr.push(LevelMenu(self._mgr))
         elif item.item_id == MainMenu.Items.QUIT:
             # The main menu should be the last gamestate on the stack, so
             # popping it should cause the game to exit.
