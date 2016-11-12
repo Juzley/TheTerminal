@@ -119,6 +119,7 @@ class CLIMenu(GameState):
     _TEXT_FONT = 'media/whitrabt.ttf'
     _TEXT_COLOUR = (20, 200, 20)
     _TEXT_START = (45, 50)
+    _CMD_TEXT_POS = (45, 525)
     _BEZEL_IMAGE = 'media/bezel.png'
 
     def __init__(self, mgr, buf):
@@ -130,23 +131,35 @@ class CLIMenu(GameState):
         self._font = pygame.font.Font(CLIMenu._TEXT_FONT, CLIMenu._TEXT_SIZE)
         self._selected_index = 0
         self._items = []
+        self._cmds = {}
 
         # Create a '<' image to mark the selected item.
         self._select_marker = self._font.render(' <', True,
                                                 CLIMenu._TEXT_COLOUR)
         self._buf = []
         y_coord = CLIMenu._TEXT_START[1]
-        for line, item in buf:
+        for line, item, cmd_str in buf:
             # Render all the text up front, so that we can use the resulting
-            # surfaces for hit-detection - we store a tuple containing the
-            # surface, its coordinates, and the menu item it represents,
-            # so that we know which item was hit by mouse events.
+            # surfaces for hit-detection - we store a tuple containing:
+            #   - The surface,
+            #   - Its coordinates,
+            #   - The menu item it represents, if any
             text = self._font.render(line, True, CLIMenu._TEXT_COLOUR)
+
             self._buf.append((text, (CLIMenu._TEXT_START[0], y_coord), item))
             y_coord += CLIMenu._TEXT_SIZE
 
-            if item:
+            # Note that the 'is not None' here is because 0 is an allowed
+            # item index.
+            if item is not None:
                 self._items.append(item)
+
+                # If there's a command string associated with this item,
+                # render the text and store it in a dictionary mapping the
+                # item ID to the cmd text
+                if cmd_str:
+                    self._cmds[item] = self._font.render(
+                        cmd_str, True, CLIMenu._TEXT_COLOUR)
 
     def run(self, events):
         """Handle events."""
@@ -160,15 +173,22 @@ class CLIMenu(GameState):
 
     def draw(self):
         """Draw the menu."""
+        selected_item = self._items[self._selected_index]
+
         # Draw the text
         for line, coords, item in self._buf:
             if line:
                 pygame.display.get_surface().blit(line, coords)
 
-            if item == self._items[self._selected_index]:
+            if item == selected_item:
                 pygame.display.get_surface().blit(
                     self._select_marker,
                     (coords[0] + line.get_rect().w, coords[1]))
+
+        # Draw the command string
+        if selected_item in self._cmds:
+            pygame.display.get_surface().blit(self._cmds[selected_item],
+                                              CLIMenu._CMD_TEXT_POS)
 
         # Draw the bezel
         pygame.display.get_surface().blit(self._bezel, self._bezel.get_rect())

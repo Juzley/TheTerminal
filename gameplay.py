@@ -5,9 +5,6 @@ import pygame
 import timer
 import util
 from gamestate import GameState
-from programs.hardware import HardwareInspect
-from programs.hexedit import HexEditor
-from programs.password import PasswordGuess
 from terminal import Terminal
 
 
@@ -79,16 +76,12 @@ class GameplayState(GameState):
 
     """Gamestate implementation for the core gameplay."""
 
-    def __init__(self, mgr, level):
+    def __init__(self, mgr, level_info):
         """Initialize the class."""
         self._terminal = Terminal(
-            programs={
-                'login': PasswordGuess,
-                'inspect': HardwareInspect,
-                'hexedit': HexEditor},
-            depends={
-                'login': ('hexedit', 'inspect'),
-            })
+            programs=level_info['programs'],
+            time=level_info['time'],
+            depends=level_info['depends'])
         self._mgr = mgr
 
     def run(self, events):

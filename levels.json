@@ -1,0 +1,21 @@
+{
+    "Level 1": {
+        "time": 60,
+        "programs": {
+            "login": "PasswordGuess"
+        },
+        "depends" : {}
+    },
+    "Level 2":  {
+        "time": 180,
+        "programs": {
+            "login": "PasswordGuess",
+            "inspect": "HardwareInspect",
+            "hexedit": "HexEditor"
+        },
+        "depends": {
+            "login" : ["hexedit", "inspect"]
+        }
+    }
+}
+
