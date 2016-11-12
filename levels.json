@@ -16,6 +16,13 @@
         "depends": {
             "login" : ["hexedit", "inspect"]
         }
+    },
+    "Level 3": {
+        "time": 50,
+        "programs": {
+            "login": "ImagePassword"
+        },
+        "depends": {}
     }
 }
 
