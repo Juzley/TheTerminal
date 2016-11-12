@@ -18,9 +18,7 @@ class MainMenu(Menu):
 
     def __init__(self, mgr):
         """Initialize the class."""
-        super().__init__()
-
-        self._items = [
+        super().__init__(items=[
             MenuItem(item_id=MainMenu.Items.START_GAME,
                      pos=(0, 200),
                      text='Start Game',
@@ -31,7 +29,7 @@ class MainMenu(Menu):
                      text='Quit',
                      text_size=40,
                      colour=(255, 255, 255))
-        ]
+        ])
 
         self._font = pygame.font.Font(None, 40)
         self._mgr = mgr
