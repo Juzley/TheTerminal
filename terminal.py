@@ -232,6 +232,7 @@ class Terminal:
                 self._reboot_update_time = self._timer.time + pause - residual
 
     def get_current_line(self, include_prompt=False):
+        """Get the current input line."""
         if include_prompt:
             # See if the current program has a prompt. Will be None if it
             # doesn't.
@@ -246,6 +247,7 @@ class Terminal:
             return self._current_line
 
     def set_current_line(self, line):
+        """Set the current input line."""
         # Don't need to add prompt - this gets added by get_current_line()
         self._current_line = line
 
@@ -302,6 +304,7 @@ class Terminal:
             self._held_key = (key, key_unicode, self._timer.time)
 
     def on_keyrelease(self):
+        """Handle the user releasing a key."""
         self._held_key = None
         self._key_last_repeat = None
 
@@ -369,8 +372,7 @@ class Terminal:
         self._reboot_buf.extend([(PAUSE_LEN, "")] * blank_lines + end_msgs)
 
     def draw(self):
-        """Draw terminal"""
-
+        """Draw terminal."""
         # If the current program is a graphical one, draw it now, else draw
         # monitor contents.
         if self._current_program and self._current_program.is_graphical():
@@ -498,20 +500,24 @@ class CommandHistory:
     """Class for storing and navigating a terminal's command history."""
 
     def __init__(self, terminal, maxlen):
+        """Intialize the class."""
         self._terminal = terminal
         self._history = deque(maxlen=maxlen)
         self._pos = -1
         self._saved_line = None
 
     def add_command(self, cmd):
+        """Add a command to the command history."""
         # Skip repeated commands
         if len(self._history) == 0 or self._history[0] != cmd:
             self._history.appendleft(cmd)
 
     def reset_navigation(self):
+        """Reset the position in the command history."""
         self._pos = -1
 
     def navigate(self, up):
+        """Navigate through the command history."""
         if up:
             if self._pos + 1 < len(self._history):
                 # If we are starting a history navigation, then save current
