@@ -382,6 +382,11 @@ class Terminal:
 
         self.draw_bezel()
 
+        # Make sure cursor is an arrow if we are not in a program. This should
+        # be a no-op if it is already an arrow.
+        if self._current_program is None:
+            mouse.current.set_cursor(mouse.Cursor.ARROW)
+
     def _draw_contents(self):
         """Draw the terminal."""
         if self._rebooting:
@@ -438,11 +443,6 @@ class Terminal:
         text = self._font.render('{}:{:02}'.format(minutes, seconds),
                                  True, (255, 255, 255))
         pygame.display.get_surface().blit(text, (0, 0))
-
-        # Make sure cursor is an arrow if we are not in a program. This should
-        # be a no-op if it is already an arrow.
-        if self._current_program is None:
-            mouse.current.set_cursor(mouse.Cursor.ARROW)
 
     def run(self):
         """Run terminal logic."""
