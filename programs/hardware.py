@@ -131,10 +131,10 @@ class ComponentPair:
         self._chip.setup_draw(surface)
         self._resistor.setup_draw(surface)
 
-    def get_component(self, pos):
-        if self._chip.contains(pos):
+    def hit_component(self, pos):
+        if self._chip.collidepoint(pos):
             return self._chip
-        elif self._resistor.contains(pos):
+        elif self._resistor.collidepoint(pos):
             return self._resistor
         else:
             return None
@@ -255,7 +255,7 @@ class HardwareInspect(program.TerminalProgram):
         return self.completed() or self._exited
 
     def on_mousemove(self, pos):
-        if self._get_component(pos) is not None or self._is_in_button(pos):
+        if self._hit_component(pos) is not None or self._is_in_button(pos):
             mouse.current.set_cursor(mouse.Cursor.HAND)
         else:
             mouse.current.set_cursor(mouse.Cursor.ARROW)
@@ -264,7 +264,7 @@ class HardwareInspect(program.TerminalProgram):
         """Detect whether the user clicked the program."""
         if button == mouse.Button.LEFT:
             # Find the component clicked
-            component = self._get_component(pos)
+            component = self._hit_component(pos)
             if component is not None:
                 component.toggle()
                 self._setup_draw()
@@ -328,15 +328,12 @@ class HardwareInspect(program.TerminalProgram):
             pair.setup_draw(self._draw_surface)
 
     def _is_in_button(self, pos):
-        return (self._button_rect[0] <= pos[0] <=
-                self._button_rect[0] + self._button_rect[2] and
-                self._button_rect[1] <= pos[1] <=
-                self._button_rect[1] + self._button_rect[3])
+        return self._button_rect.collidepoint(pos)
 
-    def _get_component(self, pos):
+    def _hit_component(self, pos):
         board_pos = self._screen_to_board_pos(pos)
         for pair in self._component_pairs:
-            component = pair.get_component(board_pos)
+            component = pair.hit_component(board_pos)
             if component is not None:
                 return component
 
@@ -379,10 +376,8 @@ class Component:
         else:
             surface.blit(self._image, self._pos)
 
-    def contains(self, pos):
-        x, y, width, height = self._image.get_rect()
-        return (self._pos[0] <= pos[0] <= self._pos[0] + width and
-                self._pos[1] <= pos[1] <= self._pos[1] + height)
+    def collidepoint(self, pos):
+        return self._image.get_rect().move(self._pos).collidepoint(pos)
 
 
 class Resistor(Component):

@@ -74,6 +74,16 @@ class ImagePassword(program.TerminalProgram):
         """Indicate that the program is graphical."""
         return True
 
+    @property
+    def help(self):
+        """Return the help string for the program."""
+        return "Run visual login program."
+
+    @property
+    def security_type(self):
+        """Return the security type for the program."""
+        return "visual authentication"
+
     def draw(self):
         """Draw the program."""
         for surf, coords, _ in self._buttons:

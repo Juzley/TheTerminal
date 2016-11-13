@@ -54,9 +54,9 @@ class Menu(GameState):
     menu screen is a separate gamestate.
     """
 
-    def __init__(self):
+    def __init__(self, items):
         """Initialize the class."""
-        self._items = []
+        self._items = items
         self._selected_index = 0
 
     def run(self, events):
@@ -196,7 +196,7 @@ class CLIMenu(GameState):
     def _hit_item(self, pos):
         """Determine whether a given point hits a menu item."""
         # Only consider the lines associated with menu items.
-        for line, coords, item in [l for l in self._buf if l[2]]:
+        for line, coords, item in [l for l in self._buf if l[2] is not None]:
             if line.get_rect().move(coords).collidepoint(pos):
                 return item
 
@@ -216,14 +216,14 @@ class CLIMenu(GameState):
     def _on_mouseclick(self, event):
         """Determine whether we've clicked on a menu item."""
         item = self._hit_item(event.pos)
-        if item:
+        if item is not None:
             mouse.current.set_cursor(mouse.Cursor.ARROW)
             self._on_choose(item)
 
     def _on_mousemove(self, event):
         """Determine if we've moused over a menu item."""
         item = self._hit_item(event.pos)
-        if item:
+        if item is not None:
             self._selected_index = self._items.index(item)
             mouse.current.set_cursor(mouse.Cursor.HAND)
         else:
