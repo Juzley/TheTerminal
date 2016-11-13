@@ -1,23 +1,13 @@
 from itertools import combinations, product
+from programs import ImagePassword
 
-DISLIKE_1 = {'A', 'B', 'C', 'D'}
-LIKE_1 = {'G', 'H'}
-
-DISLIKE_2 = {'A', 'B', 'E', 'F'}
-LIKE_2 = {'C', 'D'}
-
-DISLIKE_3 = {'A', 'C', 'J', 'I'}
-LIKE_3 = {'E', 'D'}
-
-
-def make_combinations(dislikes, likes):
+def make_combinations(likes, dislikes):
     result = []
     for p in product(combinations(dislikes, 3), likes):
         result.append(set(p[0] + (p[1],)))
     return result
 
-data = [(DISLIKE_1, LIKE_1), (DISLIKE_2, LIKE_2), (DISLIKE_3, LIKE_3)]
-combos = [make_combinations(d[0], d[1]) for d in data]
+combos = [make_combinations(d[0], d[1]) for d in ImagePassword._USER_INFO]
 
 dups = []
 for c1 in combos:

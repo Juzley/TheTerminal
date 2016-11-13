@@ -19,6 +19,12 @@ class Categories(Enum):
     CATS = 4
     DOGS = 5
     MUSIC = 6
+    SOCCER = 7
+    TENNIS = 8
+    FOOD = 9
+    COMPUTERS = 10
+    BOATS = 11
+    FISHING = 12
 
 
 class ImagePassword(program.TerminalProgram):
@@ -26,12 +32,18 @@ class ImagePassword(program.TerminalProgram):
     """The image password program."""
 
     _USER_INFO = [
-        ({Categories.CARS,
-          Categories.PLANES},
-         {Categories.FLOWERS,
-          Categories.CATS,
-          Categories.DOGS,
-          Categories.MUSIC})
+        ({Categories.SOCCER, Categories.TENNIS},
+         {Categories.CARS, Categories.PLANES, Categories.FLOWERS,
+          Categories.CATS}),
+        ({Categories.FLOWERS, Categories.CATS},
+         {Categories.CARS, Categories.PLANES, Categories.DOGS,
+          Categories.MUSIC}),
+        ({Categories.DOGS, Categories.CATS},
+         {Categories.CARS, Categories.FLOWERS, Categories.COMPUTERS,
+          Categories.FOOD}),
+        ({Categories.DOGS, Categories.CATS},
+         {Categories.CARS, Categories.PLANES, Categories.FISHING,
+          Categories.BOATS}),
     ]
 
     _BUTTON_COORDS = [
