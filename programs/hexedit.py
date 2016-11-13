@@ -36,7 +36,7 @@ class HexEditor(program.TerminalProgram):
     # set of allowed lines.
     _RAND_LINE_CHANCE = 0.25
 
-    _ROW_PROMPT = 'Edit row {}? (y/n)'
+    _ROW_PROMPT = 'Edit line {}? (y/n)'
     _COL_PROMPT = 'Edit col num: '
     _VAL_PROMPT = 'Change {:#04x} to (leave empty to cancel): '
 

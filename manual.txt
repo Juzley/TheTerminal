@@ -26,6 +26,50 @@ rewt     | maple, pearl, lapel, myths, cycle, apple, ladle, ample, maize, capel
 01043231 | eagle, ariel, glare, gains, earns, gauge, angle, early, agile, engle
 
 
+Image Password Guessing
+-----------------------
+Some organisations use images rather than text passwords in order to
+authenticate users. For image login processes, each user specifies two sets of
+images: A and B. The login screen presents the user with 4 images: 1 from
+category A and 3 from category B. In order to log in, the user must select
+the image from category A.
+
+Our research has shown that users always pick images representing things that
+they like for category A, and images representing their dislikes for category
+B. We've identified the likes and dislikes for several users - see if you can
+use this information to obtain access.
+
+User   | Likes          | Dislikes
+-------|----------------|--------------------------------
+User 1 | Soccer, Tennis | Cars, Planes, Flowers, Cats
+User 2 | Flowers, Cats  | Cars, Planes, Dogs, Music
+User 3 | Dogs, Cats     | Cars, Flowers, Computers, Food
+User 4 | Dogs, Cats     | Cars, Planes, Fishing, Boats
+
+
+Cracking
+--------
+You'll sometimes need to use a hex editor to crack security programs in order
+to bypass various checks. The hex editor shows the code of the program
+line-by-line. Each line is made up of 6 numbers in hexadecimal format.
+
+In order to crack a program, you will need to edit as many lines of code
+as possible to match one of the lines shown below. To avoid detection, you can
+only edit a single number in each line. If a line cannot be made to match one
+of the below options by editing a single number, then it must not be edited.
+
+Option 1:  0x1, 0x2, 0x3, 0x4, 0x5, 0x6
+Option 2:  0xa, 0xb, 0xc, 0xd, 0xe, 0xf
+Option 3:  0x1, 0xf, 0x2, 0xe, 0x3, 0xd
+Option 4:  0xf, 0x1, 0xe, 0x2, 0xd, 0x3
+Option 5:  0xb, 0xe, 0xe, 0xf, 0xe, 0xd
+Option 6:  0xd, 0xe, 0xa, 0xd, 0x0, 0x0
+Option 7:  0x5, 0x4, 0x3, 0x6, 0x7, 0x0
+Option 8:  0x9, 0x8, 0x8, 0x7, 0x4, 0x2
+Option 9:  0x2, 0x1, 0x9, 0x8, 0x1, 0x2
+Option 10: 0x8, 0x9, 0x7, 0x6, 0x2, 0x0
+
+
 Security Chips
 --------------
 Some of our target devices have hardware security support in the form of
