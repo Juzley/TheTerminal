@@ -1,6 +1,5 @@
 """Pause Menu implementation."""
 
-import pygame
 from .menu import Menu, MenuItem
 from .mainmenu import MainMenu
 from enum import Enum, unique
@@ -15,7 +14,7 @@ class PauseMenu(Menu):
         RESUME = 1
         QUIT = 2
 
-    def __init__(self, mgr):
+    def __init__(self, mgr, terminal):
         """Initialize the class."""
         super().__init__(items=[
             MenuItem(item_id=PauseMenu.Items.RESUME,
@@ -30,12 +29,24 @@ class PauseMenu(Menu):
                      colour=(20, 200, 20))
         ])
 
-        self._font = pygame.font.Font(None, 40)
+        self._terminal = terminal
         self._mgr = mgr
 
     def _on_choose(self, item):
         """Handle activation of a menu item."""
         if item.item_id == PauseMenu.Items.RESUME:
+            self._terminal.paused = False
             self._mgr.pop()
-        elif item.item_id == MainMenu.Items.QUIT:
+        elif item.item_id == PauseMenu.Items.QUIT:
             self._mgr.pop_until(MainMenu)
+
+    def run(self, events):
+        """Run the pause gamestate."""
+        # Run the terminal so that the timer updates.
+        self._terminal.run()
+        super().run(events)
+
+    def draw(self):
+        """Draw the menu."""
+        self._terminal.draw_bezel()
+        super().draw()

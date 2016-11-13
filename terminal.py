@@ -380,7 +380,7 @@ class Terminal:
         else:
             self._draw_contents()
 
-        self._draw_bezel()
+        self.draw_bezel()
 
     def _draw_contents(self):
         """Draw the terminal."""
@@ -427,8 +427,8 @@ class Terminal:
                               Terminal._CURSOR_WIDTH, curr_line_size[1]),
                              0 if self._has_focus else 1)
 
-    def _draw_bezel(self):
-        # Draw the bezel.
+    def draw_bezel(self):
+        """Draw the bezel."""
         pygame.display.get_surface().blit(self._bezel, self._bezel.get_rect())
         pygame.display.get_surface().blit(self._bezel_text,
                                           Terminal._BEZEL_TEXT_LOCATION)
@@ -446,6 +446,11 @@ class Terminal:
 
     def run(self):
         """Run terminal logic."""
+        self._timer.update()
+
+        if self.paused:
+            return
+
         # Run the reboot if one is in progress.
         self._run_reboot()
 
@@ -463,7 +468,6 @@ class Terminal:
             self._reset_prompt()
 
         # Check if the player ran out of time.
-        self._timer.update()
         self._timeleft -= self._timer.frametime
         if self._timeleft <= 0:
             self.locked = True
@@ -493,6 +497,16 @@ class Terminal:
         """Indicate whether the player has been successful."""
         return len([p for p in self._programs.values()
                     if not p.completed()]) == 0
+
+    @property
+    def paused(self):
+        """Pause the game."""
+        return self._timer.paused
+
+    @paused.setter
+    def paused(self, value):
+        """Unpause the game."""
+        self._timer.paused = value
 
 
 class CommandHistory:

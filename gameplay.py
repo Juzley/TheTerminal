@@ -89,7 +89,12 @@ class GameplayState(GameState):
         """Run the game."""
         for e in events:
             if e.type == pygame.KEYDOWN:
-                self._terminal.on_keypress(e.key, e.unicode)
+                if e.key == pygame.K_ESCAPE:
+                    self._terminal.paused = True
+                    self._mgr.push(menu.PauseMenu(self._mgr,
+                                                  self._terminal))
+                else:
+                    self._terminal.on_keypress(e.key, e.unicode)
             elif e.type == pygame.KEYUP:
                 self._terminal.on_keyrelease()
             elif e.type == pygame.MOUSEBUTTONDOWN:
@@ -100,7 +105,8 @@ class GameplayState(GameState):
                 self._terminal.on_active_event(util.ActiveEvent(e.state,
                                                                 e.gain))
 
-        self._terminal.run()
+        if not self._terminal.paused:
+            self._terminal.run()
 
         # The player is locked out, switch to the Lost gamestate.
         if self._terminal.locked:
