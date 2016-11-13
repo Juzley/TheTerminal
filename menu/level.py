@@ -33,7 +33,7 @@ class LevelMenu(menu.CLIMenu):
         buf = [
             ('$ cd levels', None, None),
             ('$ ls', None, None),
-            (' ..', LevelMenu.Items.BACK, '$ cd ..')
+            ('  ..', LevelMenu.Items.BACK, '$ cd ..')
         ]
 
         # Add each level as a menu item - we create a list of the levle names,
@@ -41,7 +41,7 @@ class LevelMenu(menu.CLIMenu):
         # For now sort the level names alphabetically, assuming that this will
         # give a good ordering in the menu.
         self._level_names = sorted(self._levels.keys())
-        buf.extend([(name, idx, '$ connect {}'.format(name)) for
+        buf.extend([('  ' + name, idx, '$ connect {}'.format(name)) for
                     idx, name in enumerate(self._level_names)])
 
         super().__init__(mgr, buf)
