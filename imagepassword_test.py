@@ -1,7 +1,10 @@
+"""A test tool to check the visual password program has unique solutions."""
 from itertools import combinations, product
 from programs import ImagePassword
 
+
 def make_combinations(likes, dislikes):
+    """Make all possible image combinations for a single user."""
     result = []
     for p in product(combinations(dislikes, 3), likes):
         result.append(set(p[0] + (p[1],)))

@@ -25,6 +25,7 @@ class Categories(Enum):
     COMPUTERS = 10
     BOATS = 11
     FISHING = 12
+    ARCHERY = 13
 
 
 class ImagePassword(program.TerminalProgram):
@@ -44,6 +45,9 @@ class ImagePassword(program.TerminalProgram):
         ({Categories.DOGS, Categories.CATS},
          {Categories.CARS, Categories.PLANES, Categories.FISHING,
           Categories.BOATS}),
+        ({Categories.CARS, Categories.FOOD},
+         {Categories.FISHING, Categories.SOCCER, Categories.COMPUTERS,
+          Categories.CATS})
     ]
 
     _BUTTON_COORDS = [
