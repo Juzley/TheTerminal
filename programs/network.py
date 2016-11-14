@@ -60,6 +60,8 @@ class NetworkManager(program.TerminalProgram):
     _SPACE_V = " "
     _ON_MS = 800
     _OFF_MS = 600
+    _REVERT_LINK_TIME = 200
+    _ERROR_INITIAL_WAIT = 2000
 
     def __init__(self, terminal):
         """Initialize the class."""
@@ -83,6 +85,15 @@ class NetworkManager(program.TerminalProgram):
 
         # Current location (set to start location in start)
         self._curr = (0, 0)
+
+        # Has an error occurred?
+        self._error_mode = False
+
+        # When was error mode started?
+        self._error_mode_start = None
+
+        # Time that last link was removed on error
+        self._last_revert_time = None
 
         # Parser the puzzle and solution
         self._puzzle = PuzzleParser(puzzle[0])
@@ -121,7 +132,32 @@ class NetworkManager(program.TerminalProgram):
                  "Network map:",
                  ""]
 
-        is_on = (self._terminal.time % (self._ON_MS + self._OFF_MS) <
+        # If error mode, start reversing the path
+        if self._error_mode:
+            if self._last_revert_time is None:
+                last_time, delay = self._error_mode_start, \
+                                   self._ERROR_INITIAL_WAIT
+            else:
+                last_time, delay = self._last_revert_time, \
+                                   self._REVERT_LINK_TIME
+            if last_time + delay < self._terminal.time:
+                # Find where we came from
+                from_node = self._visited_from[self._curr]
+
+                # Remove link
+                del self._visited_from[self._curr]
+
+                # Update position. If we have reached None, then start again
+                if from_node is None:
+                    self._error_mode = False
+                    self._last_revert_time = None
+                    self.start()
+                else:
+                    self._curr = from_node
+                    self._last_revert_time = self._terminal.time
+
+        is_on = (self._error_mode or
+                 self._terminal.time % (self._ON_MS + self._OFF_MS) <
                  self._ON_MS)
 
         # Draw the grid
@@ -144,7 +180,10 @@ class NetworkManager(program.TerminalProgram):
                     line += self._END_NODE
                 else:
                     line += self._NODE
-            lines.append("<w>" + line)
+            if self._error_mode:
+                lines.append("<r>" + line)
+            else:
+                lines.append("<w>" + line)
 
             # Now create gap between the row, drawing links to next row
             if r < self._puzzle.rows - 1:
@@ -158,11 +197,17 @@ class NetworkManager(program.TerminalProgram):
                     else:
                         line += self._SPACE_V
 
-                lines.append("<w>" + line)
+                if self._error_mode:
+                    lines.append("<r>" + line)
+                else:
+                    lines.append("<w>" + line)
 
         lines.append("")
-        lines.append("Use arrow keys to create a static route from source to "
-                     "dest.")
+        if self._error_mode:
+            lines.append("<r>Invalid route detected.")
+        else:
+            lines.append("Use arrow keys to create a static route from source "
+                         "to dest.")
 
         return reversed(lines)
 
@@ -185,6 +230,10 @@ class NetworkManager(program.TerminalProgram):
 
     def on_keypress(self, key, key_unicode):
         """Handle a user keypress (used for INTERACTIVE and GRAPHICAL)."""
+        # Ignore if in error mode
+        if self._error_mode:
+            return
+
         new_curr = None
         if key == pygame.K_UP:
             new_curr = (self._curr[0] - 1, self._curr[1])
@@ -201,24 +250,18 @@ class NetworkManager(program.TerminalProgram):
                 0 <= new_curr[1] < self._puzzle.cols and
                 new_curr not in self._visited_from):
             self._visited_from[new_curr] = self._curr
+
+            # Was this valid?
+            if not self._puzzle.is_connection_correct(new_curr, self._curr):
+                self._error_mode = True
+                self._error_mode_start = self._terminal.time
+
+            # Update current
             self._curr = new_curr
 
-        # If we have reached the destination then check result
-        if self._curr == self._puzzle.end:
-            failed = False
-            if len(self._visited_from) != self._puzzle.correct_link_count:
-                failed = True
-            else:
-                for node1, node2 in self._visited_from.items():
-                    if not self._puzzle.is_connection_correct(node1, node2):
-                        failed = True
-
-            if failed:
-                self._terminal.output([self.failure_prefix +
-                                       "connection to server failed"])
-                self._exited = True
-            else:
-                self._completed = True
+        # If we have reached the destination then we are done!
+        if not self._error_mode and self._curr == self._puzzle.end:
+            self._completed = True
 
     def _has_connection(self, node1, node2):
         if node1 in self._visited_from and self._visited_from[node1] == node2:
