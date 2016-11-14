@@ -159,8 +159,6 @@ class NetworkManager(program.TerminalProgram):
 
                 # Update position. If we have reached None, then start again
                 if from_node is None:
-                    self._error_mode = False
-                    self._last_revert_time = None
                     self.start()
                 else:
                     self._curr = from_node
@@ -223,6 +221,9 @@ class NetworkManager(program.TerminalProgram):
         return reversed(lines)
 
     def start(self):
+        # Make sure ctrl+c allowed again
+        self.allow_ctrl_c = True
+
         # Reset board
         self._visited_from = {}
         self._exited = False
@@ -230,6 +231,10 @@ class NetworkManager(program.TerminalProgram):
 
         # Mark the start node as visited
         self._visited_from[self._curr] = None
+
+        # Make sure error mode is turned off
+        self._error_mode = False
+        self._last_revert_time = None
 
     def completed(self):
         """Indicate whether the program was completed."""
@@ -288,6 +293,7 @@ class NetworkManager(program.TerminalProgram):
         self._error_mode = True
         self._error_msg = msg
         self._error_mode_start = self._terminal.time
+        self.allow_ctrl_c = False
 
 
 class PuzzleParser:

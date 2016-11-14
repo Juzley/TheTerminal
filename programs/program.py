@@ -24,6 +24,9 @@ class TerminalProgram:
         """Initialize the class."""
         self._terminal = terminal
 
+        # Is ctrl+c allowed to cancel this program at this point?
+        self.allow_ctrl_c = True
+
     @property
     def program_type(self):
         """Return the program type."""
