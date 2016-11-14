@@ -3,6 +3,7 @@
 
 import pygame
 
+import constants
 import mouse
 from gamestate import GameStateManager
 from menu import MainMenu
@@ -14,6 +15,7 @@ def setup():
     pygame.display.set_mode([800, 600],
                             pygame.DOUBLEBUF | pygame.HWSURFACE,
                             24)
+    pygame.display.set_caption(constants.GAMENAME)
     mouse.current.set_cursor(mouse.Cursor.ARROW)
 
 

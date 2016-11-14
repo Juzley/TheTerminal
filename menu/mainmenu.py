@@ -1,7 +1,7 @@
 """Main Menu Implementation."""
 
 
-import pygame
+import constants
 from .menu import Menu, MenuItem, CLIMenu
 from .level import LevelMenu
 from enum import Enum, unique
@@ -21,7 +21,7 @@ class MainMenu(CLIMenu):
         buf = [
             ('-' * 60, None, None),
             ('', None, None),
-            ('Welcome to <GameName>', None, None),
+            ('Welcome to {}'.format(constants.GAMENAME), None, None),
             ('', None, None),
             ('-' * 60, None, None),
             ('', None, None),

@@ -41,6 +41,7 @@ x x . . . D
 "11.0.0.1")
 
 
+"""List of available puzzles, to be chosen at random."""
 PUZZLES = (PUZZLE1, PUZZLE2, PUZZLE3)
 
 
@@ -53,14 +54,19 @@ class NetworkManager(program.TerminalProgram):
 
     _START_NODE = "S"
     _END_NODE = "D"
+
     _NODE = "o"
     _NODE_OFF = "."
+
     _LINK_H = ".."
     _LINK_V = ":"
+
     _SPACE_H = "  "
     _SPACE_V = " "
+
     _ON_MS = 800
     _OFF_MS = 600
+
     _REVERT_LINK_TIME = 200
     _ERROR_INITIAL_WAIT = 2000
 
@@ -81,7 +87,7 @@ class NetworkManager(program.TerminalProgram):
 
         # IP details
         self._source_ip = puzzle[1]
-        self._hostmask = puzzle[2]
+        self._subnet_mask = puzzle[2]
         self._dest_ip = puzzle[3]
 
         # Current location (set to start location in start)
@@ -129,7 +135,7 @@ class NetworkManager(program.TerminalProgram):
                  "-------------------------------",
                  "",
                  "Source IP: {}".format(self._source_ip),
-                 "Source hostmask: {}".format(self._hostmask),
+                 "Subnet mask: {}".format(self._subnet_mask),
                  "Destination IP: {}".format(self._dest_ip),
                  "",
                  "",
