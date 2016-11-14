@@ -28,8 +28,11 @@ class Terminal:
     _TEXT_SIZE = 16
     _TEXT_FONT = 'media/whitrabt.ttf'
     _TEXT_COLOUR = (20, 200, 20)
-    _TEXT_COLOUR_RED = (200, 20, 20)
-    _TEXT_COLOUR_WHITE = (255, 255, 255)
+    _TEXT_COLOURS = {
+        "g": (20, 200, 20),
+        "r": (200, 20, 20),
+        "w": (255, 255, 255),
+    }
 
     # Constants related to cursor
     _CURSOR_WIDTH = 6
@@ -427,12 +430,8 @@ class Terminal:
         y_coord = Terminal._TEXT_START[1]
         for line in itertools.chain([current_line], buf):
             # If line starts with a colour code, then change colour
-            # TODO: have a dict of colours and extract the colour char.
-            if line.startswith("<r>"):
-                colour = Terminal._TEXT_COLOUR_RED
-                line = line[3:]
-            elif line.startswith("<w>"):
-                colour = Terminal._TEXT_COLOUR_WHITE
+            if len(line) > 3 and line[0] + line[2] == "<>":
+                colour = Terminal._TEXT_COLOURS[line[1]]
                 line = line[3:]
             else:
                 colour = Terminal._TEXT_COLOUR
