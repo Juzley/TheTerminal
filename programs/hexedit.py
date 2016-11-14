@@ -16,25 +16,8 @@ class HexEditor(program.TerminalProgram):
         ENTER_VAL = 2
         FINISHED = 3
 
-    _ALLOWED_LINES = [
-        [0x1, 0x2, 0x3, 0x4, 0x5, 0x6],
-        [0xa, 0xb, 0xc, 0xd, 0xe, 0xf],
-        [0x1, 0xf, 0x2, 0xe, 0x3, 0xd],
-        [0xf, 0x1, 0xe, 0x2, 0xd, 0x3],
-        [0xb, 0xe, 0xe, 0xf, 0xe, 0xd],
-        [0xd, 0xe, 0xa, 0xd, 0x0, 0x0],
-        [0x5, 0x4, 0x3, 0x6, 0x7, 0x0],
-        [0x9, 0x8, 0x8, 0x7, 0x4, 0x2],
-        [0x2, 0x1, 0x9, 0x8, 0x1, 0x2],
-        [0x8, 0x9, 0x7, 0x6, 0x2, 0x0]
-    ]
-
     _MIN_FILE_LENGTH = 3
     _MAX_FILE_LENGTH = 5
-
-    # The chance that a line will be randomly-generated, not picked from the
-    # set of allowed lines.
-    _RAND_LINE_CHANCE = 0.25
 
     _ROW_PROMPT = 'Edit line {}? (y/n)'
     _COL_PROMPT = 'Edit col num: '
@@ -50,7 +33,8 @@ class HexEditor(program.TerminalProgram):
         self._row = 0
         self._col = 0
         self._state = HexEditor.States.QUERY_ROW
-        self._data = []
+        self._start_data = []
+        self._end_data = []
 
     @property
     def help(self):
@@ -71,14 +55,15 @@ class HexEditor(program.TerminalProgram):
             return HexEditor._COL_PROMPT
         elif self._state == HexEditor.States.ENTER_VAL:
             return HexEditor._VAL_PROMPT.format(
-                self._data[self._row][0][self._col])
+                self._start_data[self._row][self._col])
 
     def start(self):
         """Start the program."""
         self._row = 0
         self._col = 0
         self._state = HexEditor.States.QUERY_ROW
-        self._generate_data()
+        self._start_data = HexEditor._generate_data()
+        self._end_data = list(self._start_data)
         self._output_data()
 
     def completed(self):
@@ -105,7 +90,7 @@ class HexEditor(program.TerminalProgram):
             except ValueError:
                 raise program.BadInput('Not a number')
 
-            if self._col < 0 or self._col >= len(self._data[0][0]):
+            if self._col < 0 or self._col >= len(self._start_data[0]):
                 raise program.BadInput('Column out of range')
 
             self._state = HexEditor.States.ENTER_VAL
@@ -115,14 +100,10 @@ class HexEditor(program.TerminalProgram):
                 self._state = HexEditor.States.QUERY_ROW
             else:
                 try:
-                    self._data[self._row][0][self._col] = int(line, 16)
+                    self._end_data[self._row][self._col] = int(line, 16)
                 except ValueError:
                     raise program.BadInput('Not a number')
 
-                # Set the 'expected match' value for the row to True, so that we
-                # catch the situation where the player has modified a row that
-                # didn't match any of the rows in the manual.
-                self._data[self._row][1] = True
                 self._row += 1
                 self._state = HexEditor.States.QUERY_ROW
 
@@ -132,7 +113,7 @@ class HexEditor(program.TerminalProgram):
 
     def _check_finished(self):
         """Determine if edits are finished, and whether they were successful."""
-        if self._row == len(self._data):
+        if self._row == len(self._start_data):
             self._state = HexEditor.States.FINISHED
             if self._data_correct():
                 self._completed = True
@@ -143,59 +124,19 @@ class HexEditor(program.TerminalProgram):
                 self._terminal.freeze(HexEditor._FREEZE_TIME)
 
     @staticmethod
-    def _check_line(line):
-        for allowed in HexEditor._ALLOWED_LINES:
-            if line == allowed:
-                return True
-
-    @staticmethod
-    def _generate_matching_line():
-        line = list(random.choice(HexEditor._ALLOWED_LINES))
-
-        # Peturb one of the entries.
-        line[random.randrange(len(line))] = random.randrange(0x10)
-
-        return line
-
-    @staticmethod
     def _generate_random_line():
         return [random.randrange(0x10) for _ in range(6)]
 
     @staticmethod
-    def _expect_match(line):
-        for allowed in HexEditor._ALLOWED_LINES:
-
-            matched = 0
-            for pair in zip(line, allowed):
-                if pair[0] == pair[1]:
-                    matched += 1
-
-            if matched >= len(allowed) - 1:
-                return True
-
-        return False
-
-    def _generate_data(self):
+    def _generate_data():
         """Generate the data for the puzzle."""
-        # The data is represented as an array of two-element tuples, where the
-        # first element is a tuple containing the data, and the second element
-        # is a bool indicating whether we are expecting the line to match an
-        # allowed value.
-        for _ in range(random.randrange(HexEditor._MIN_FILE_LENGTH,
-                                        HexEditor._MAX_FILE_LENGTH)):
-            if random.random() < HexEditor._RAND_LINE_CHANCE:
-                data = self._generate_random_line()
-                # It's possible that we randomly generate a matching line,
-                # so check whether this is the case.
-                entry = [data, HexEditor._expect_match(data)]
-            else:
-                entry = [self._generate_matching_line(), True]
-
-            self._data.append(entry)
+        return [HexEditor._generate_random_line() for _ in
+                range(random.randrange(HexEditor._MIN_FILE_LENGTH,
+                                       HexEditor._MAX_FILE_LENGTH))]
 
     def _output_data(self):
         """Output the data on the screen."""
-        col_count = len(self._data[0][0])
+        col_count = len(self._start_data[0])
         self._terminal.output([""] +
                               [" " * 2 + " | " +
                                "  ".join("{:4}".format(i)
@@ -203,18 +144,72 @@ class HexEditor(program.TerminalProgram):
                               ["-" * (5 + 6 * col_count)])
         self._terminal.output(
             ["{:2} | ".format(idx) + "  ".join(
-                "{:#04x}".format(c) for c in row[0])
-             for idx, row in enumerate(self._data)] + [""])
+                "{:#04x}".format(c) for c in row)
+             for idx, row in enumerate(self._start_data)] + [""])
 
     def _data_correct(self):
         """Determine if the edits made to the data were correct."""
-        # Search for lines in the data which we are expecting to match an
-        # allowed line, but don't.
-        return len([l for l in self._data if l[1] and l[0] not in
-                    HexEditor._ALLOWED_LINES]) == 0
+        edited_previous = False
+        edits, edited_idx, edited_old, edited_new = [0, 0, 0]
+        for idx, (start, end) in enumerate(zip(self._start_data,
+                                               self._end_data)):
+            expect_edit = True
+            if idx == 0 or not edited_previous:
+                # This is the first line, or we didn't edit the previous line.
+                if start[0] < 7:
+                    # (d) in the manual
+                    if end[start[0]] != 0:
+                        return False
+                elif start.count(0) > 0:
+                    # (e) in the manual
+                    if end[start.index(0)] != 0xf:
+                        return False
+                else:
+                    # Count odd numbers.
+                    odds = [(i, v) for i, v in enumerate(start) if i % 2 == 1]
+                    if len(odds) > 3:
+                        # (f) in the manual
+                        if end[odds[0][0]] != start[odds[0][0]] - 1:
+                            return False
+                    else:
+                        # (x) in the manual - don't edit.
+                        expect_edit = False
+            elif idx + 1 == len(self._start_data):
+                # This is the last line - (j) in the manual
+                # The last value should match the total number of lines, and
+                # the rest of the line should be unedited.
+                if end[-1] != edits or end[:-1] != start[:-1]:
+                    return False
+            else:
+                # A middle line, and we edited the previous line.
+                if start[-1] < 7:
+                    # (g) in the manual
+                    if end[start[-1]] != edited_old:
+                        return False
+                elif start.count(0xf):
+                    # (h) in the manual
+                    if end[start.index(0xf)] != edited_idx:
+                        return False
+                elif start.count(edited_new):
+                    # (i) in the manual
+                    if end[start.index(edited_new)] != 0:
+                        return False
+                else:
+                    # (x) in the manual - don't edit.
+                    expect_edit = False
 
-    def _validate_filename(self, filename):
-        # TODO: come up with clues for what the filename should be and vary it.
-        # Could potentially have different sets of hex files for different
-        # filenames?
-        return filename == "login.dll"
+            edited_previous = start != end
+            if edited_previous:
+                edits += 1
+                edited_idx = [i for i, (s, e) in enumerate(zip(start, end))
+                              if s != e][0]
+                edited_old = start[edited_idx]
+                edited_new = end[edited_idx]
+
+            # Check that we didn't edit a line we didn't expect to.
+            # Note this doens't check that we didn't edit one we expected to -
+            # the lines might have matched originally.
+            if edited_previous and not expect_edit:
+                return False
+
+        return True

@@ -78,16 +78,16 @@ allow you to edit the lines of code one-by-one, replacing one value in the
 line with another value. Follow the rules below in order to determine the
 correct actions for each line:
 
-(a) If this is the first line in the program go to (c), else go to (b)
+(a) If this is the first line in the program go to (d), else go to (b)
 (b) If this is the last line go to (j), else go to (c)
 (c) If you made a change to the previous line, go to (g), else go to (d)
 (d) If the line starts with a number less than 7, replace the number in the
     column given by that number with a 0, else go to (e)
 (e) If the line contains one or more zeros (0x0), replace the first occurence
     with 15 (0xf), else go to (f)
-(f) If the line contains more than one of the same number, reduce the first
-    occurence by 1, else go to (x)
-(g) If the line ends with a number greater than 0x7, replace the number in the
+(f) If the line contains more than 3 odd numbers, reduce the first odd number
+    by 1, else go to (x)
+(g) If the line ends with a number less than 0x7, replace the number in the
     column given by that number with the value that was replaced in the
     previous line, else go to (i)
 (h) If the line contains one or more 15s (0xf), replace the first occurence
