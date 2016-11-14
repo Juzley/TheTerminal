@@ -11,7 +11,7 @@ import pygame
 import timer
 import util
 import mouse
-from programs.program import BadInput
+from programs.program import BadInput, TerminalProgram
 
 
 class Terminal:
@@ -29,6 +29,7 @@ class Terminal:
     _TEXT_FONT = 'media/whitrabt.ttf'
     _TEXT_COLOUR = (20, 200, 20)
     _TEXT_COLOUR_RED = (200, 20, 20)
+    _TEXT_COLOUR_WHITE = (255, 255, 255)
 
     # Constants related to cursor
     _CURSOR_WIDTH = 6
@@ -231,6 +232,10 @@ class Terminal:
                 residual = self._timer.time - self._reboot_update_time
                 self._reboot_update_time = self._timer.time + pause - residual
 
+    @property
+    def time(self):
+        return self._timer.time
+
     def get_current_line(self, include_prompt=False):
         """Get the current input line."""
         if include_prompt:
@@ -257,23 +262,13 @@ class Terminal:
         if self._freeze_time is not None or self._rebooting:
             return
 
-        # Detect ctrl+c
-        ctrl_c_pressed = (key == pygame.K_c and
-                          pygame.key.get_mods() & pygame.KMOD_CTRL)
-
-        # If we're displaying a graphical program, ignore keyboard input
-        # (unless it is ctrl+c)
-        if (self._current_program and
-                self._current_program.is_graphical() and
-                not ctrl_c_pressed):
-            return
-
         # Any typing other than arrows reset history navigation
         if key not in (pygame.K_UP, pygame.K_DOWN):
             self._cmd_history.reset_navigation()
 
-        repeat_on_hold = False
-        if ctrl_c_pressed:
+        # Abort whatever is running on ctrl+c
+        if (key == pygame.K_c and
+                pygame.key.get_mods() & pygame.KMOD_CTRL):
             current_line = self.get_current_line(True)
 
             # If we are in a program, then abort it
@@ -282,7 +277,20 @@ class Terminal:
                 self._current_program = None
             self.output([current_line + "^C"])
             self._reset_prompt()
-        elif key in [pygame.K_RETURN, pygame.K_KP_ENTER]:
+            return
+
+        # If we're displaying a graphical or interactive program, then pass
+        # keyboard handling to them
+        if (self._current_program and
+                self._current_program.program_type in
+                (TerminalProgram.Type.INTERACTIVE,
+                 TerminalProgram.Type.GRAPHICAL)):
+            self._current_program.on_keypress(key, key_unicode)
+            return
+
+        # Now handle terminal keyboard input
+        repeat_on_hold = False
+        if key in [pygame.K_RETURN, pygame.K_KP_ENTER]:
             if self.get_current_line(True):
                 self._complete_input()
         elif key == pygame.K_BACKSPACE:
@@ -375,7 +383,8 @@ class Terminal:
         """Draw terminal."""
         # If the current program is a graphical one, draw it now, else draw
         # monitor contents.
-        if self._current_program and self._current_program.is_graphical():
+        if (self._current_program and self._current_program.program_type is
+                TerminalProgram.Type.GRAPHICAL):
             self._current_program.draw()
         else:
             self._draw_contents()
@@ -405,12 +414,25 @@ class Terminal:
         else:
             current_line = self.get_current_line(True)
 
+        # If an interactive program is running, then display its buffer.
+        is_interactive = (self._current_program is not None and
+                          self._current_program.program_type is
+                          TerminalProgram.Type.INTERACTIVE)
+        if is_interactive:
+            buf = self._current_program.buf
+        else:
+            buf = self._buf
+
         # Draw the buffer.
         y_coord = Terminal._TEXT_START[1]
-        for line in itertools.chain([current_line], self._buf):
+        for line in itertools.chain([current_line], buf):
             # If line starts with a colour code, then change colour
+            # TODO: have a dict of colours and extract the colour char.
             if line.startswith("<r>"):
                 colour = Terminal._TEXT_COLOUR_RED
+                line = line[3:]
+            elif line.startswith("<w>"):
+                colour = Terminal._TEXT_COLOUR_WHITE
                 line = line[3:]
             else:
                 colour = Terminal._TEXT_COLOUR
@@ -419,8 +441,9 @@ class Terminal:
                 text, (Terminal._TEXT_START[0], y_coord))
             y_coord -= Terminal._TEXT_SIZE
 
-        # Determine whether the cursor is on
-        if (not self._rebooting and
+        # Determine whether the cursor is on. Do not draw for interactive
+        # programs.
+        if (not is_interactive and not self._rebooting and
                 (self._timer.time % (Terminal._CURSOR_ON_MS +
                                      Terminal._CURSOR_OFF_MS) <
                  Terminal._CURSOR_ON_MS)):
@@ -459,7 +482,8 @@ class Terminal:
             # If it exited because it was successfully completed, then display
             # syslog, unless it is graphical (as they will handle it themselves)
             if (self._current_program.completed() and
-                    not self._current_program.is_graphical()):
+                    self._current_program.program_type is not
+                    TerminalProgram.Type.GRAPHICAL):
                 self.output([self._current_program.success_syslog])
 
             self._current_program = None

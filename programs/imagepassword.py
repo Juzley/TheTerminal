@@ -81,10 +81,10 @@ class ImagePassword(program.TerminalProgram):
             surf.blit(text, (0, 0))
             self._buttons.append((surf, ImagePassword._BUTTON_COORDS[i], c))
 
-    @classmethod
-    def is_graphical(cls):
-        """Indicate that the program is graphical."""
-        return True
+    @property
+    def program_type(self):
+        """Return the program type."""
+        return program.TerminalProgram.Type.GRAPHICAL
 
     @property
     def help(self):

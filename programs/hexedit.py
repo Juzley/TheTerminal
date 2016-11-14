@@ -75,7 +75,6 @@ class HexEditor(program.TerminalProgram):
 
     def start(self):
         """Start the program."""
-        self._file = None
         self._row = 0
         self._col = 0
         self._state = HexEditor.States.QUERY_ROW

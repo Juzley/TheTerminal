@@ -226,10 +226,10 @@ class HardwareInspect(program.TerminalProgram):
         self._completed = False
         self._exited = False
 
-    @classmethod
-    def is_graphical(cls):
-        """Indicate that this is a graphical program."""
-        return True
+    @property
+    def program_type(self):
+        """Return the program type."""
+        return program.TerminalProgram.Type.GRAPHICAL
 
     @property
     def help(self):

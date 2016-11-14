@@ -23,6 +23,13 @@
             "login": "ImagePassword"
         },
         "depends": {}
+    },
+    "Level 4": {
+        "time": 50,
+        "programs": {
+            "network": "NetworkManager"
+        },
+        "depends": {}
     }
 }
 

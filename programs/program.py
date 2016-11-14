@@ -1,5 +1,7 @@
 """Base class definitions for use by programs."""
 
+from enum import Enum, unique
+
 
 class BadInput(Exception):
 
@@ -12,14 +14,20 @@ class TerminalProgram:
 
     """Base class for terminal programs."""
 
+    @unique
+    class Type(Enum):
+        TERMINAL = 1
+        INTERACTIVE = 2
+        GRAPHICAL = 3
+
     def __init__(self, terminal):
         """Initialize the class."""
         self._terminal = terminal
 
-    @classmethod
-    def is_graphical(cls):
-        """Indicate whether the program is graphical or not."""
-        return False
+    @property
+    def program_type(self):
+        """Return the program type."""
+        return TerminalProgram.Type.TERMINAL
 
     @property
     def prompt(self):
@@ -44,6 +52,11 @@ class TerminalProgram:
     def failure_prefix(self):
         return "<r>SYSTEM ALERT: "
 
+    @property
+    def buf(self):
+        """Terminal buffer contents for this interactive program."""
+        return []
+
     def draw(self):
         """Draw the program, if it is graphical."""
         pass
@@ -54,11 +67,15 @@ class TerminalProgram:
 
     def text_input(self, line):
         """
-        Handle a line of input from the terminal.
+        Handle a line of input from the terminal (Used for TERMINAL).
 
         Raises BadInput error on bad input.
 
         """
+        pass
+
+    def on_keypress(self, key, key_unicode):
+        """Handle a user keypress (used for INTERACTIVE and GRAPHICAL)."""
         pass
 
     def on_mouseclick(self, button, pos):
