@@ -5,7 +5,7 @@ import pygame
 
 import mouse
 from gamestate import GameStateManager
-from menu import CLIMainMenu
+from menu import MainMenu
 
 
 def setup():
@@ -20,7 +20,7 @@ def setup():
 def run():
     """Run the game loop."""
     gamestates = GameStateManager()
-    gamestates.push(CLIMainMenu(gamestates))
+    gamestates.push(MainMenu(gamestates))
 
     running = True
     while running:
