@@ -51,25 +51,53 @@ User 5 | Cars, Food     | Fishing, Soccer, Computers, Cats
 
 Cracking
 --------
-You'll sometimes need to use a hex editor to crack security programs in order
-to bypass various checks. The hex editor shows the code of the program
-line-by-line. Each line is made up of 6 numbers in hexadecimal format.
+You'll sometimes need to use a hex editor to crack sprograms in order to
+bypass security checks. The hex editor shows the code of the program
+line-by-line.
 
-In order to crack a program, you will need to edit as many lines of code
-as possible to match one of the lines shown below. To avoid detection, you can
-only edit a single number in each line. If a line cannot be made to match one
-of the below options by editing a single number, then it must not be edited.
+Each line is made up of 6 numbers in hexadecimal format. In hexidecimal format,
+the numbers from 10 to 16 are represented by the letters a to f. An '0x' prefix
+indicates that numbers are in hexidecimal format. The table below shows the
+mapping between hexidecimal and decimal numbers.
 
-Option 1:  0x1, 0x2, 0x3, 0x4, 0x5, 0x6
-Option 2:  0xa, 0xb, 0xc, 0xd, 0xe, 0xf
-Option 3:  0x1, 0xf, 0x2, 0xe, 0x3, 0xd
-Option 4:  0xf, 0x1, 0xe, 0x2, 0xd, 0x3
-Option 5:  0xb, 0xe, 0xe, 0xf, 0xe, 0xd
-Option 6:  0xd, 0xe, 0xa, 0xd, 0x0, 0x0
-Option 7:  0x5, 0x4, 0x3, 0x6, 0x7, 0x0
-Option 8:  0x9, 0x8, 0x8, 0x7, 0x4, 0x2
-Option 9:  0x2, 0x1, 0x9, 0x8, 0x1, 0x2
-Option 10: 0x8, 0x9, 0x7, 0x6, 0x2, 0x0
+  Hexidecimal | Decimal
+  ------------+--------
+  0x0 - 0x9   | 0 - 9
+  0xa         | 10
+  0xb         | 11
+  0xc         | 12
+  0xd         | 13
+  0xe         | 14
+  0xf         | 15
+  0x10        | 16
+  0x11        | 17
+
+In order to crack a program, you will need to modify the lines of code which
+make up the program according to the following rules. The hex editor will
+allow you to edit the lines of code one-by-one, replacing one value in the
+line with another value. Follow the rules below in order to determine the
+correct actions for each line:
+
+(a) If this is the first line in the program go to (c), else go to (b)
+(b) If this is the last line go to (j), else go to (c)
+(c) If you made a change to the previous line, go to (g), else go to (d)
+(d) If the line starts with a number less than 7, replace the number in the
+    column given by that number with a 0, else go to (e)
+(e) If the line contains one or more zeros (0x0), replace the first occurence
+    with 15 (0xf), else go to (f)
+(f) If the line contains more than one of the same number, reduce the first
+    occurence by 1, else go to (x)
+(g) If the line ends with a number greater than 0x7, replace the number in the
+    column given by that number with the value that was replaced in the
+    previous line, else go to (i)
+(h) If the line contains one or more 15s (0xf), replace the first occurence
+    with the number of the column in the last line which was edited, else go
+    to (i)
+(i) If the line contains one or more values which match the value inserted in
+    the previous line, replace the first occurence with zero, else go to ()
+(j) Replace the final value with the number of lines (excluding this line)
+    which have been modified.
+(x) Do not edit the line.
 
 
 Security Chips
