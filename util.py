@@ -60,3 +60,9 @@ def load_image(filename):
     """Load an image from disk, return a pygame Surface."""
     image = pygame.image.load(filename).convert_alpha()
     return image
+
+
+def center_align(w, h):
+    """Return coords to align an image in the center of the screen."""
+    return ((pygame.display.get_surface().get_rect().w - w) / 2,
+            (pygame.display.get_surface().get_rect().h - h) / 2)
