@@ -16,8 +16,32 @@ x x x x x D
 "255.255.255.0",
 "10.0.0.1")
 
+PUZZLE2 = ("""
+S . . G x x
+. . . . x x
+. x . . x x
+. . x . G .
+G . . x . .
+x x . . . D
+""",
+"192.168.1.15",
+"255.255.255.0",
+"11.0.0.1")
 
-PUZZLES = (PUZZLE1, )
+PUZZLE3 = ("""
+S . . G x x
+. . . . . x
+. x . . G x
+. . x . x .
+G . . . . .
+x x . . . D
+""",
+"192.168.1.15",
+"255.255.0.0",
+"11.0.0.1")
+
+
+PUZZLES = (PUZZLE1, PUZZLE2, PUZZLE3)
 
 
 class NetworkManager(program.TerminalProgram):
