@@ -41,6 +41,7 @@ x x . . . D
 "11.0.0.1")
 
 
+"""List of available puzzles, to be chosen at random."""
 PUZZLES = (PUZZLE1, PUZZLE2, PUZZLE3)
 
 
@@ -53,14 +54,19 @@ class NetworkManager(program.TerminalProgram):
 
     _START_NODE = "S"
     _END_NODE = "D"
+
     _NODE = "o"
     _NODE_OFF = "."
+
     _LINK_H = ".."
     _LINK_V = ":"
+
     _SPACE_H = "  "
     _SPACE_V = " "
+
     _ON_MS = 800
     _OFF_MS = 600
+
     _REVERT_LINK_TIME = 200
     _ERROR_INITIAL_WAIT = 2000
 
@@ -81,7 +87,7 @@ class NetworkManager(program.TerminalProgram):
 
         # IP details
         self._source_ip = puzzle[1]
-        self._hostmask = puzzle[2]
+        self._subnet_mask = puzzle[2]
         self._dest_ip = puzzle[3]
 
         # Current location (set to start location in start)
@@ -129,7 +135,7 @@ class NetworkManager(program.TerminalProgram):
                  "-------------------------------",
                  "",
                  "Source IP: {}".format(self._source_ip),
-                 "Source hostmask: {}".format(self._hostmask),
+                 "Subnet mask: {}".format(self._subnet_mask),
                  "Destination IP: {}".format(self._dest_ip),
                  "",
                  "",
@@ -153,8 +159,6 @@ class NetworkManager(program.TerminalProgram):
 
                 # Update position. If we have reached None, then start again
                 if from_node is None:
-                    self._error_mode = False
-                    self._last_revert_time = None
                     self.start()
                 else:
                     self._curr = from_node
@@ -217,6 +221,9 @@ class NetworkManager(program.TerminalProgram):
         return reversed(lines)
 
     def start(self):
+        # Make sure ctrl+c allowed again
+        self.allow_ctrl_c = True
+
         # Reset board
         self._visited_from = {}
         self._exited = False
@@ -224,6 +231,10 @@ class NetworkManager(program.TerminalProgram):
 
         # Mark the start node as visited
         self._visited_from[self._curr] = None
+
+        # Make sure error mode is turned off
+        self._error_mode = False
+        self._last_revert_time = None
 
     def completed(self):
         """Indicate whether the program was completed."""
@@ -282,6 +293,7 @@ class NetworkManager(program.TerminalProgram):
         self._error_mode = True
         self._error_msg = msg
         self._error_mode_start = self._terminal.time
+        self.allow_ctrl_c = False
 
 
 class PuzzleParser:
