@@ -36,15 +36,17 @@ the image from category A.
 
 Our research has shown that users always pick images representing things that
 they like for category A, and images representing their dislikes for category
-B. We've identified the likes and dislikes for several users - see if you can
-use this information to obtain access.
+B. We've used some social engineering techniques to identify the likes and
+dislikes for several users - see if you can use this information to obtain
+access.
 
 User   | Likes          | Dislikes
--------|----------------|--------------------------------
+-------|----------------|---------------------------------
 User 1 | Soccer, Tennis | Cars, Planes, Flowers, Cats
 User 2 | Flowers, Cats  | Cars, Planes, Dogs, Music
 User 3 | Dogs, Cats     | Cars, Flowers, Computers, Food
 User 4 | Dogs, Cats     | Cars, Planes, Fishing, Boats
+User 5 | Cars, Food     | Fishing, Soccer, Computers, Cats
 
 
 Cracking
