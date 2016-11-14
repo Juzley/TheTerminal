@@ -71,40 +71,21 @@ class NetworkManager(program.TerminalProgram):
         # Select the puzzle
         puzzle = random.choice(PUZZLES)
 
-        # Grid is indexed by row first, then column, and contains the node
-        # grid character.
-        self._grid = []
-
-        self._rows = 0
-        self._cols = 0
-
-        # Find starting location
-        for r in range(self._rows):
-            for c in range(self._cols):
-                if self._grid[r][c] == self._START_NODE:
-                    self._start = (r, c)
-
         # Track the nodes the user has visited, and which node it was visited
         # from. This allows us to build up the set of links the user has
         # entered.
         self._visited_from = {}
-
-        # Solution is a list of pairs of nodes that have a link. Use a list
-        # here, so we don't have to worry about the order the links are added
-        # (i.e. so we don't have to try and walk the links in order, we can
-        # just add them as each line of the puzzle is parsed).
-        self._solution = []
 
         # IP details
         self._source_ip = puzzle[1]
         self._hostmask = puzzle[2]
         self._dest_ip = puzzle[3]
 
-        # Current location
-        self._curr = None
+        # Current location (set to start location in start)
+        self._curr = (0, 0)
 
-        # Build the grid and solution from the puzzle
-        self._parse_puzzle(puzzle[0])
+        # Parser the puzzle and solution
+        self._puzzle = PuzzleParser(puzzle[0])
 
     @property
     def program_type(self):
@@ -144,9 +125,9 @@ class NetworkManager(program.TerminalProgram):
                  self._ON_MS)
 
         # Draw the grid
-        for r in range(self._rows):
+        for r in range(self._puzzle.rows):
             line = ""
-            for c in range(self._cols):
+            for c in range(self._puzzle.cols):
                 # See whether we need to draw a link to previous node
                 if c > 0:
                     if self._has_connection((r, c), (r, c - 1)):
@@ -157,14 +138,18 @@ class NetworkManager(program.TerminalProgram):
                 # Add character - remembering to make current location flash
                 if (r, c) == self._curr and not is_on:
                     line += self._NODE_OFF
+                elif (r, c) == self._puzzle.start:
+                    line += self._START_NODE
+                elif (r, c) == self._puzzle.end:
+                    line += self._END_NODE
                 else:
-                    line += self._grid[r][c]
+                    line += self._NODE
             lines.append("<w>" + line)
 
             # Now create gap between the row, drawing links to next row
-            if r < self._rows - 1:
+            if r < self._puzzle.rows - 1:
                 line = ""
-                for c in range(self._cols):
+                for c in range(self._puzzle.cols):
                     if c > 0:
                         line += self._SPACE_H
 
@@ -185,10 +170,10 @@ class NetworkManager(program.TerminalProgram):
         # Reset board
         self._visited_from = {}
         self._exited = False
-        self._curr = self._start
+        self._curr = self._puzzle.start
 
         # Mark the start node as visited
-        self._visited_from[self._start] = None
+        self._visited_from[self._curr] = None
 
     def completed(self):
         """Indicate whether the program was completed."""
@@ -212,20 +197,20 @@ class NetworkManager(program.TerminalProgram):
 
         # Move to this location if we can
         if (new_curr is not None and
-                0 <= new_curr[0] < self._rows and
-                0 <= new_curr[1] < self._cols and
+                0 <= new_curr[0] < self._puzzle.rows and
+                0 <= new_curr[1] < self._puzzle.cols and
                 new_curr not in self._visited_from):
             self._visited_from[new_curr] = self._curr
             self._curr = new_curr
 
         # If we have reached the destination then check result
-        if self._grid[self._curr[0]][self._curr[1]] == self._END_NODE:
+        if self._curr == self._puzzle.end:
             failed = False
-            if len(self._visited_from) != len(self._solution):
+            if len(self._visited_from) != self._puzzle.correct_link_count:
                 failed = True
             else:
                 for node1, node2 in self._visited_from.items():
-                    if not self._is_correct_connection(node1, node2):
+                    if not self._puzzle.is_connection_correct(node1, node2):
                         failed = True
 
             if failed:
@@ -235,81 +220,6 @@ class NetworkManager(program.TerminalProgram):
             else:
                 self._completed = True
 
-    def _parse_puzzle(self, puzzle):
-        def add_solution_link(node1, node2):
-            # Sanity check - a node can only be involved in 2 links!
-            usages = [(n1, n2) for n1, n2 in self._solution
-                      if n1 == node1 or n2 == node1]
-            if len(usages) > 1:
-                raise Exception("{} already used twice: {}"
-                                .format(node1, usages))
-
-            usages = [(n1, n2) for n1, n2 in self._solution
-                      if n1 == node2 or n2 == node2]
-            if len(usages) > 1:
-                raise Exception("{} already used twice: {}"
-                                .format(node2, usages))
-            self._solution.append((node1, node2))
-
-        # Create grid by walking solution, and build up solution dict
-        row = 0
-        for line in puzzle.split("\n"):
-            # Parse a node row
-            if self._NODE in line:
-                node_row = []
-                col = -1
-                while len(line) > 0:
-                    # Assume start node and end are all the same length
-                    if line[:len(self._NODE)] in (self._NODE,
-                                                  self._START_NODE,
-                                                  self._END_NODE):
-
-                        # Update current col
-                        col += 1
-                        node_row.append(line[:len(self._NODE)])
-
-                        # Remember starting location
-                        if line.startswith(self._START_NODE):
-                            self._start = (row, col)
-                        line = line[len(self._NODE):]
-
-                    elif line.startswith(self._LINK_H):
-                        add_solution_link((row, col + 1), (row, col))
-                        line = line[len(self._LINK_H):]
-                    elif line.startswith(self._SPACE_H):
-                        line = line[len(self._SPACE_H):]
-                    else:
-                        raise Exception("Unknown line contents: {}"
-                                        .format(line))
-
-                self._grid.append(node_row)
-                row += 1
-
-            # Parse a spacer row
-            else:
-                chars_since_col = None
-                col = -1
-                for char in line:
-                    # Are we due a node column?
-                    if (chars_since_col is None or
-                            chars_since_col == len(self._SPACE_H)):
-                        # Update current col
-                        col += 1
-                        chars_since_col = 0
-
-                        # Do we have a connector?
-                        if char == self._LINK_V:
-                            add_solution_link((row, col), (row - 1, col))
-                    else:
-                        chars_since_col += 1
-
-        # Set row and col count
-        self._rows = len(self._grid)
-        self._cols = len(self._grid[0])
-
-        # The starting location should be visited from None.
-        add_solution_link(self._start, None)
-
     def _has_connection(self, node1, node2):
         if node1 in self._visited_from and self._visited_from[node1] == node2:
             return True
@@ -318,6 +228,130 @@ class NetworkManager(program.TerminalProgram):
         else:
             return False
 
-    def _is_correct_connection(self, node1, node2):
+
+class PuzzleParser:
+
+    """Class to parse the puzzle solution from an ascii representation."""
+
+    _SPACE_CHAR = " "
+    _NODE_CHAR = "o"
+    _START_CHAR = "S"
+    _END_CHAR = "D"
+
+    def __init__(self, puzzle_data):
+        self.cols = 0
+        self.rows = 0
+        self.start = (0, 0)
+        self.end = (0, 0)
+
+        # Solution is a list of pairs of nodes that have a link. Use a list
+        # here, so we don't have to worry about the order the links are added
+        # (i.e. so we don't have to try and walk the links in order, we can
+        # just add them as each line of the puzzle is parsed).
+        self._solution = []
+
+        # Number of spaces between nodes
+        self._node_gap = 0
+
+        next_row_nodes = True
+        for line in puzzle_data.split("\n"):
+            # Ignore initial empty lines
+            if self.rows == 0 and not line:
+                continue
+            if next_row_nodes:
+                self.rows += 1
+                self._parse_node_row(line)
+                next_row_nodes = False
+            else:
+                self._parse_spacer_row(line)
+                next_row_nodes = True
+
+        # Add a connection from None to start
+        self._add_solution_link(None, self.start)
+
+    @property
+    def correct_link_count(self):
+        return len(self._solution)
+
+    def is_connection_correct(self, node1, node2):
         return ((node1, node2) in self._solution
                 or (node2, node1) in self._solution)
+
+    def _parse_node_row(self, line):
+        cols = 0
+        node_gap = 0
+        has_link = False
+        for idx, char in enumerate(line):
+            if char in (self._NODE_CHAR, self._START_CHAR, self._END_CHAR):
+                cols += 1
+
+                # See whether this is the start or end
+                if char == self._START_CHAR:
+                    self.start = (self.rows - 1, cols - 1)
+                elif char == self._END_CHAR:
+                    self.end = (self.rows - 1, cols - 1)
+
+                # Record the link if there was one
+                if has_link:
+                    self._add_solution_link((self.rows - 1, cols - 1),
+                                            (self.rows - 1, cols - 2))
+
+                # If this isn't first node, then record the node gap
+                if idx != 0:
+                    if self._node_gap == 0:
+                        self._node_gap = node_gap
+                    elif node_gap != self._node_gap:
+                        raise Exception("Row {} has gap {} != {}"
+                                        .format(self.rows - 1,
+                                                node_gap, self._node_gap))
+
+                # Reset!
+                has_link = False
+                node_gap = 0
+            elif char != self._SPACE_CHAR:
+                has_link = True
+                node_gap += 1
+            else:
+                node_gap += 1
+
+        # Make sure cols agrees with global
+        if self.cols == 0:
+            self.cols = cols
+        elif self.cols != cols:
+            raise Exception("Row {} has cols {} != {}"
+                            .format(self.rows - 1, cols, self.cols))
+
+    def _parse_spacer_row(self, line):
+        chars_since_col = None
+        cols = 0
+        for char in line:
+            # Are we due a node column?
+            if (chars_since_col is None or
+                        chars_since_col == self._node_gap):
+                # Update current col
+                cols += 1
+                chars_since_col = 0
+
+                # Do we have a connector to the next row?
+                if char != self._SPACE_CHAR:
+                    self._add_solution_link((self.rows - 1, cols - 1),
+                                            (self.rows, cols - 1))
+            else:
+                chars_since_col += 1
+
+        # Make sure cols is not large than global. It can be less in the case
+        # the row wasn't finished off with spaces.
+        if self.cols < cols:
+            raise Exception("Spacer row {} has cols {} > {}"
+                            .format(self.rows - 1, cols, self.cols))
+
+    def _add_solution_link(self, node1, node2):
+        # Sanity check - a node can only be involved in 2 links!
+        for node in (node1, node2):
+            usages = [(n1, n2) for n1, n2 in self._solution
+                      if n1 == node or n2 == node]
+            if len(usages) > 1:
+                raise Exception("{} already used twice: {}"
+                                .format(node, usages))
+
+        self._solution.append((node1, node2))
