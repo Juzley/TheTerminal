@@ -397,7 +397,8 @@ class Resistor(Component):
     _AREA_WIDTH = 94
 
     def create_image(self):
-        self._image = load_image('media/resistor.png')
+        # Take a copy as we are going to edit it!
+        self._image = load_image('media/resistor.png').copy()
 
         # Create a surface to draw the lines on, so we can blend it with the
         # resistor and have it ignore the portions of the lines outside the
