@@ -17,12 +17,12 @@ class HexEditor(program.TerminalProgram):
         ENTER_VAL = 2
         FINISHED = 3
 
-    _MIN_FILE_LENGTH = 3
+    _MIN_FILE_LENGTH = 4
     _MAX_FILE_LENGTH = 5
 
     _ROW_PROMPT = 'Edit line {}? (y/n) '
     _COL_PROMPT = 'Edit col num: '
-    _VAL_PROMPT = 'Change {:#04x} to (leave empty to cancel): '
+    _VAL_PROMPT = 'Change {d} to (leave empty to cancel): '
 
     # How long is the freeze time (in ms) when a mistake is made
     _FREEZE_TIME = 5 * 1000
@@ -101,7 +101,7 @@ class HexEditor(program.TerminalProgram):
                 self._state = HexEditor.States.QUERY_ROW
             else:
                 try:
-                    self._end_data[self._row][self._col] = int(line, 16)
+                    self._end_data[self._row][self._col] = int(line)
                     print('Line {}: col {} {}->{}'.format(
                         self._row, self._col,
                         self._start_data[self._row][self._col],
@@ -131,7 +131,7 @@ class HexEditor(program.TerminalProgram):
     @staticmethod
     def _generate_data():
         """Generate the data for the puzzle."""
-        return [[random.randrange(0x10) for _ in range(6)] for _ in
+        return [[random.randrange(10) for _ in range(6)] for _ in
                 range(random.randrange(HexEditor._MIN_FILE_LENGTH,
                                        HexEditor._MAX_FILE_LENGTH))]
 
@@ -140,12 +140,12 @@ class HexEditor(program.TerminalProgram):
         """Return the program's text output."""
         col_count = len(self._start_data[0])
         lines = ["" + " " * 2 + " | " + "  ".join(
-                        "{:4}".format(i) for i in range(col_count)),
-                 "-" * (5 + 6 * col_count)]
+                        "{:2}".format(i) for i in range(col_count)),
+                 "-" * (5 + 4 * col_count)]
 
         lines.extend(
             ["{:2} | ".format(idx) + "  ".join(
-                "{:#04x}".format(c) for c in row)
+                "{:2d}".format(c) for c in row)
              for idx, row in enumerate(self._end_data)] + [""])
 
         return reversed(lines)
