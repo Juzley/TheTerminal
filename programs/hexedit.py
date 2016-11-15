@@ -2,6 +2,7 @@
 
 import random
 from enum import Enum, unique
+from copy import deepcopy
 from . import program
 
 
@@ -66,7 +67,7 @@ class HexEditor(program.TerminalProgram):
         self._col = 0
         self._state = HexEditor.States.QUERY_ROW
         self._start_data = HexEditor._generate_data()
-        self._end_data = list(self._start_data)
+        self._end_data = deepcopy(self._start_data)
 
     def completed(self):
         """Indicate whether the user has guessed the password."""
@@ -101,6 +102,10 @@ class HexEditor(program.TerminalProgram):
             else:
                 try:
                     self._end_data[self._row][self._col] = int(line, 16)
+                    print('Line {}: col {} {}->{}'.format(
+                        self._row, self._col,
+                        self._start_data[self._row][self._col],
+                        self._end_data[self._row][self._col]))
                 except ValueError:
                     raise program.BadInput('Not a number')
 
@@ -141,7 +146,7 @@ class HexEditor(program.TerminalProgram):
         lines.extend(
             ["{:2} | ".format(idx) + "  ".join(
                 "{:#04x}".format(c) for c in row)
-             for idx, row in enumerate(self._start_data)] + [""])
+             for idx, row in enumerate(self._end_data)] + [""])
 
         return reversed(lines)
 
@@ -154,12 +159,16 @@ class HexEditor(program.TerminalProgram):
             expect_edit = True
             if idx == 0 or not edited_previous:
                 # This is the first line, or we didn't edit the previous line.
-                if start[0] < 7:
+                if start[0] < 6:
                     # (d) in the manual
+                    print('d - Line {} starts with {}, col {} {}->0'.format(
+                        idx, start[0], start[0], start[start[0]]))
                     if end[start[0]] != 0:
                         return False
                 elif start.count(0) > 0:
                     # (e) in the manual
+                    print('e - Line {} has {} 0s, col {} 0->15'.format(
+                        idx, start.count(0), start.index(0)))
                     if end[start.index(0)] != 0xf:
                         return False
                 else:
@@ -167,36 +176,54 @@ class HexEditor(program.TerminalProgram):
                     odds = [(i, v) for i, v in enumerate(start) if i % 2 == 1]
                     if len(odds) > 3:
                         # (f) in the manual
+                        print('f - Line {} has {} odds, col {} {}->{}'.format(
+                            idx, len(odds), odds[0][0], start[odds[0][0]],
+                            start[odds[0][0]] - 1))
                         if end[odds[0][0]] != start[odds[0][0]] - 1:
                             return False
                     else:
                         # (x) in the manual - don't edit.
+                        print('x- Line {}: do not edit'.format(idx))
                         expect_edit = False
             elif idx + 1 == len(self._start_data):
                 # This is the last line - (j) in the manual
                 # The last value should match the total number of lines, and
                 # the rest of the line should be unedited.
+                print('j - Line {}: col 5 {}->{}'.format(
+                    idx, start[-1], edits))
                 if end[-1] != edits or end[:-1] != start[:-1]:
                     return False
             else:
                 # A middle line, and we edited the previous line.
-                if start[-1] < 7:
+                if start[-1] < 6:
                     # (g) in the manual
+                    print('g - Line {} ends with {}: col {} {}->{}'.format(
+                        idx, start[-1], start[-1], start[start[-1]],
+                        edited_old))
                     if end[start[-1]] != edited_old:
                         return False
                 elif start.count(0xf):
                     # (h) in the manual
+                    print('h - Line {} has {} 0xfs: col {} {}->{}'.format(
+                        idx, start.count(0xf), start.index(0xf),
+                        start[start.index(0xf)], edited_idx))
                     if end[start.index(0xf)] != edited_idx:
                         return False
                 elif start.count(edited_new):
                     # (i) in the manual
+                    print('i - Line {} has {} {}s: col {} {}->0'.format(
+                        idx, start.count(edited_new), edited_new,
+                        start.index(edited_new),
+                        start[start.index(edited_new)]))
                     if end[start.index(edited_new)] != 0:
                         return False
                 else:
                     # (x) in the manual - don't edit.
+                    print('x- Line {}: do not edit'.format(idx))
                     expect_edit = False
 
             edited_previous = start != end
+            print('edited line: {}'.format(edited_previous))
             if edited_previous:
                 edits += 1
                 edited_idx = [i for i, (s, e) in enumerate(zip(start, end))

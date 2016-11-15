@@ -81,20 +81,20 @@ correct actions for each line:
 (a) If this is the first line in the program go to (d), else go to (b)
 (b) If this is the last line go to (j), else go to (c)
 (c) If you made a change to the previous line, go to (g), else go to (d)
-(d) If the line starts with a number less than 7, replace the number in the
+(d) If the line starts with a number less than 0x6, replace the number in the
     column given by that number with a 0, else go to (e)
 (e) If the line contains one or more zeros (0x0), replace the first occurence
     with 15 (0xf), else go to (f)
 (f) If the line contains more than 3 odd numbers, reduce the first odd number
     by 1, else go to (x)
-(g) If the line ends with a number less than 0x7, replace the number in the
+(g) If the line ends with a number less than 0x6, replace the number in the
     column given by that number with the value that was replaced in the
-    previous line, else go to (i)
+    previous line, else go to (h)
 (h) If the line contains one or more 15s (0xf), replace the first occurence
     with the number of the column in the last line which was edited, else go
     to (i)
 (i) If the line contains one or more values which match the value inserted in
-    the previous line, replace the first occurence with zero, else go to ()
+    the previous line, replace the first occurence with zero, else go to (x)
 (j) Replace the final value with the number of lines (excluding this line)
     which have been modified.
 (x) Do not edit the line.
