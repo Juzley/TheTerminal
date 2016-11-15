@@ -59,6 +59,9 @@ class ImagePassword(program.TerminalProgram):
 
     _BUTTON_SIZE = 100
 
+    """The properties of this program."""
+    PROPERTIES = program.ProgramProperties(is_graphical=True)
+
     def __init__(self, terminal):
         """Initialize the class."""
         super().__init__(terminal)
@@ -84,11 +87,6 @@ class ImagePassword(program.TerminalProgram):
             surf.fill((0, 0, 255))
             surf.blit(text, (0, 0))
             self._buttons.append((surf, ImagePassword._BUTTON_COORDS[i], c))
-
-    @property
-    def program_type(self):
-        """Return the program type."""
-        return program.TerminalProgram.Type.GRAPHICAL
 
     @property
     def help(self):

@@ -70,6 +70,11 @@ class NetworkManager(program.TerminalProgram):
     _REVERT_LINK_TIME = 200
     _ERROR_INITIAL_WAIT = 2000
 
+    """The properties of this program."""
+    PROPERTIES = program.ProgramProperties(intercept_keypress=True,
+                                           alternate_buf=True,
+                                           hide_cursor=True)
+
     def __init__(self, terminal):
         """Initialize the class."""
         super().__init__(terminal)
@@ -109,11 +114,6 @@ class NetworkManager(program.TerminalProgram):
         self._puzzle = PuzzleParser(puzzle[0])
 
     @property
-    def program_type(self):
-        """Return the program type."""
-        return program.TerminalProgram.Type.INTERACTIVE
-
-    @property
     def help(self):
         """Get the help string for the program."""
         return "Manage network connectivity."
@@ -125,7 +125,8 @@ class NetworkManager(program.TerminalProgram):
 
     @property
     def success_syslog(self):
-        return "SYSTEM WARNING: network connectivity to server established"
+        return "{} network connectivity to server established".format(
+            self.SUCCESS_PREFIX)
 
     @property
     def buf(self):

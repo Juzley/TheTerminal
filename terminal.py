@@ -12,7 +12,7 @@ import constants
 import timer
 import util
 import mouse
-from programs.program import BadInput, TerminalProgram
+from programs.program import BadInput
 
 
 class Terminal:
@@ -287,12 +287,11 @@ class Terminal:
             self._reset_prompt()
             return
 
-        # If we're displaying a graphical or interactive program, then pass
-        # keyboard handling to them
-        if (self._current_program and
-                self._current_program.program_type in
-                (TerminalProgram.Type.INTERACTIVE,
-                 TerminalProgram.Type.GRAPHICAL)):
+        # If we're displaying a graphical program, or the program wants to
+        # handle its own keypresses, then pass key to them
+        if (self._current_program is not None and
+                (self._current_program.PROPERTIES.is_graphical or
+                 self._current_program.PROPERTIES.intercept_keypress)):
             self._current_program.on_keypress(key, key_unicode)
             return
 
@@ -391,8 +390,8 @@ class Terminal:
         """Draw terminal."""
         # If the current program is a graphical one, draw it now, else draw
         # monitor contents.
-        if (self._current_program and self._current_program.program_type is
-                TerminalProgram.Type.GRAPHICAL):
+        if (self._current_program and
+                self._current_program.PROPERTIES.is_graphical):
             self._current_program.draw()
         else:
             self._draw_contents()
@@ -422,11 +421,9 @@ class Terminal:
         else:
             current_line = self.get_current_line(True)
 
-        # If an interactive program is running, then display its buffer.
-        is_interactive = (self._current_program is not None and
-                          self._current_program.program_type is
-                          TerminalProgram.Type.INTERACTIVE)
-        if is_interactive:
+        # If program has its own buf, then use it
+        if (self._current_program is not None and
+                self._current_program.PROPERTIES.alternate_buf):
             buf = self._current_program.buf
         else:
             buf = self._buf
@@ -445,9 +442,10 @@ class Terminal:
                 text, (Terminal._TEXT_START[0], y_coord))
             y_coord -= Terminal._TEXT_SIZE
 
-        # Determine whether the cursor is on. Do not draw for interactive
-        # programs.
-        if (not is_interactive and not self._rebooting and
+        # Determine whether the cursor is on.
+        if ((self._current_program is None or
+                not self._current_program.PROPERTIES.hide_cursor) and
+                not self._rebooting and
                 (self._timer.time % (Terminal._CURSOR_ON_MS +
                                      Terminal._CURSOR_OFF_MS) <
                  Terminal._CURSOR_ON_MS)):
@@ -484,10 +482,9 @@ class Terminal:
         # Check whether the current program (if there is one) has exited.
         if self._current_program and self._current_program.exited():
             # If it exited because it was successfully completed, then display
-            # syslog, unless it is graphical (as they will handle it themselves)
+            # syslog, unless the program is going to do it itself
             if (self._current_program.completed() and
-                    self._current_program.program_type is not
-                    TerminalProgram.Type.GRAPHICAL):
+                    not self._current_program.PROPERTIES.suppress_success):
                 self.output([self._current_program.success_syslog])
 
             self._current_program = None

@@ -2,7 +2,7 @@
 
 
 import constants
-from .menu import Menu, MenuItem, CLIMenu
+from .menu import CLIMenu
 from .level import LevelMenu
 from enum import Enum, unique
 
