@@ -8,6 +8,7 @@ from collections import deque
 
 import pygame
 
+import constants
 import timer
 import util
 import mouse
@@ -26,12 +27,12 @@ class Terminal:
 
     # Constants related to drawing the terminal text.
     _TEXT_SIZE = 16
-    _TEXT_FONT = 'media/whitrabt.ttf'
-    _TEXT_COLOUR = (20, 200, 20)
+    _TEXT_FONT = constants.TERMINAL_FONT
+    _TEXT_COLOUR = constants.TEXT_COLOUR
     _TEXT_COLOURS = {
-        "g": (20, 200, 20),
-        "r": (200, 20, 20),
-        "w": (255, 255, 255),
+        "g": constants.TEXT_COLOUR,
+        "r": constants.TEXT_COLOUR_RED,
+        "w": constants.TEXT_COLOUR_WHITE,
     }
 
     # Constants related to cursor
