@@ -37,6 +37,11 @@ class HexEditor(program.TerminalProgram):
         self._end_data = []
 
     @property
+    def program_type(self):
+        """Return the program type."""
+        return program.TerminalProgram.Type.INTERACTIVE
+
+    @property
     def help(self):
         """Return the help string."""
         return "Modify raw software data."
@@ -64,7 +69,6 @@ class HexEditor(program.TerminalProgram):
         self._state = HexEditor.States.QUERY_ROW
         self._start_data = HexEditor._generate_data()
         self._end_data = list(self._start_data)
-        self._output_data()
 
     def completed(self):
         """Indicate whether the user has guessed the password."""
@@ -77,7 +81,7 @@ class HexEditor(program.TerminalProgram):
     def text_input(self, line):
         """Handle editor commands."""
         # Remove any leading whitespace and convert to lowercase.
-        line = line.lstrip().lower()
+        line = self._input.lstrip().lower()
 
         if self._state == HexEditor.States.QUERY_ROW:
             if line.startswith('y'):
@@ -124,28 +128,26 @@ class HexEditor(program.TerminalProgram):
                 self._terminal.freeze(HexEditor._FREEZE_TIME)
 
     @staticmethod
-    def _generate_random_line():
-        return [random.randrange(0x10) for _ in range(6)]
-
-    @staticmethod
     def _generate_data():
         """Generate the data for the puzzle."""
-        return [HexEditor._generate_random_line() for _ in
+        return [[random.randrange(0x10) for _ in range(6)] for _ in
                 range(random.randrange(HexEditor._MIN_FILE_LENGTH,
                                        HexEditor._MAX_FILE_LENGTH))]
 
-    def _output_data(self):
-        """Output the data on the screen."""
+    @property
+    def buf(self):
+        """Return the program's text output."""
         col_count = len(self._start_data[0])
-        self._terminal.output([""] +
-                              [" " * 2 + " | " +
-                               "  ".join("{:4}".format(i)
-                                         for i in range(col_count))] +
-                              ["-" * (5 + 6 * col_count)])
-        self._terminal.output(
+        lines = ["" + " " * 2 + " | " + "  ".join(
+                        "{:4}".format(i) for i in range(col_count)),
+                 "-" * (5 + 6 * col_count)]
+
+        lines.extend(
             ["{:2} | ".format(idx) + "  ".join(
                 "{:#04x}".format(c) for c in row)
              for idx, row in enumerate(self._start_data)] + [""])
+
+        return reversed(lines)
 
     def _data_correct(self):
         """Determine if the edits made to the data were correct."""
