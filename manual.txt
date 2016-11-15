@@ -53,24 +53,7 @@ Cracking
 --------
 You'll sometimes need to use a hex editor to crack sprograms in order to
 bypass security checks. The hex editor shows the code of the program
-line-by-line.
-
-Each line is made up of 6 numbers in hexadecimal format. In hexidecimal format,
-the numbers from 10 to 16 are represented by the letters a to f. An '0x' prefix
-indicates that numbers are in hexidecimal format. The table below shows the
-mapping between hexidecimal and decimal numbers.
-
-  Hexidecimal | Decimal
-  ------------+--------
-  0x0 - 0x9   | 0 - 9
-  0xa         | 10
-  0xb         | 11
-  0xc         | 12
-  0xd         | 13
-  0xe         | 14
-  0xf         | 15
-  0x10        | 16
-  0x11        | 17
+line-by-line. Each line is made up of 6 numbers.
 
 In order to crack a program, you will need to modify the lines of code which
 make up the program according to the following rules. The hex editor will
@@ -81,16 +64,16 @@ correct actions for each line:
 (a) If this is the first line in the program go to (d), else go to (b)
 (b) If this is the last line go to (j), else go to (c)
 (c) If you made a change to the previous line, go to (g), else go to (d)
-(d) If the line starts with a number less than 0x6, replace the number in the
+(d) If the line starts with a number less than 6, replace the number in the
     column given by that number with a 0, else go to (e)
-(e) If the line contains one or more zeros (0x0), replace the first occurence
-    with 15 (0xf), else go to (f)
+(e) If the line contains one or more zeros, replace the first occurence
+    with 9, else go to (f)
 (f) If the line contains more than 3 odd numbers, reduce the first odd number
     by 1, else go to (x)
-(g) If the line ends with a number less than 0x6, replace the number in the
+(g) If the line ends with a number less than 6, replace the number in the
     column given by that number with the value that was replaced in the
     previous line, else go to (h)
-(h) If the line contains one or more 15s (0xf), replace the first occurence
+(h) If the line contains one or more 9s, replace the first occurence
     with the number of the column in the last line which was edited, else go
     to (i)
 (i) If the line contains one or more values which match the value inserted in
