@@ -4,8 +4,8 @@ import pygame
 import random
 
 import mouse
-import util
 from . import program
+from media import load_image, load_font
 
 
 class BoardDefinition:
@@ -201,11 +201,11 @@ class HardwareInspect(program.TerminalProgram):
         self._component_pairs = self._create_component_pairs(board_def)
 
         # Create the board
-        self._board = util.load_image(board_def.filename)
+        self._board = load_image(board_def.filename)
 
         # Add the static assets
         for filename, pos in board_def.assets:
-            image = util.load_image(filename)
+            image = load_image(filename)
             self._board.blit(image, pos)
 
         # Set the board position
@@ -215,7 +215,7 @@ class HardwareInspect(program.TerminalProgram):
                            self._BOARD_Y)
 
         # Create the button
-        font = pygame.font.Font(None, 40)
+        font = load_font(None, 40)
         self._button_text = font.render(self._BUTTON_TEXT, True,
                                         self._BUTTON_COLOUR)
         button_rect = self._button_text.get_rect()
@@ -398,7 +398,7 @@ class Resistor(Component):
     _AREA_WIDTH = 94
 
     def create_image(self):
-        self._image = util.load_image('media/resistor.png')
+        self._image = load_image('media/resistor.png')
 
         # Create a surface to draw the lines on, so we can blend it with the
         # resistor and have it ignore the portions of the lines outside the
@@ -430,10 +430,10 @@ class Chip(Component):
     """Chip component."""
 
     def create_image(self):
-        self._image = util.load_image('media/chip.png')
+        self._image = load_image('media/chip.png')
 
         # Add code to the chip
-        font = pygame.font.Font(None, 20)
+        font = load_font(None, 20)
         text = font.render(self.code, True, (0, 0, 0))
 
         image_rect = self._image.get_rect()

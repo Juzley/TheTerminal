@@ -6,6 +6,7 @@ import mouse
 from itertools import combinations
 from enum import Enum, unique
 from . import program
+from media import load_font
 
 
 @unique
@@ -76,7 +77,7 @@ class ImagePassword(program.TerminalProgram):
 
         # Build the buttons
         self._buttons = []
-        font = pygame.font.Font(None, 30)
+        font = load_font(None, 30)
         for i, c in enumerate(choices):
             text = font.render(c.name, True, (255, 255, 255))
             surf = pygame.Surface((ImagePassword._BUTTON_SIZE,

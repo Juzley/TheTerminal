@@ -5,6 +5,7 @@ import pygame
 import util
 import mouse
 from gamestate import GameState
+from media import load_image, load_font
 
 
 class MenuItem:
@@ -17,7 +18,7 @@ class MenuItem:
         self.item_id = item_id
         self._pos = pos
 
-        font = pygame.font.Font(None, text_size)
+        font = load_font(None, text_size)
         self._text = font.render(text, True, colour)
 
         # Handle alignment
@@ -127,8 +128,8 @@ class CLIMenu(GameState):
         super().__init__()
         self._mgr = mgr
 
-        self._bezel = util.load_image(CLIMenu._BEZEL_IMAGE)
-        self._font = pygame.font.Font(CLIMenu._TEXT_FONT, CLIMenu._TEXT_SIZE)
+        self._bezel = load_image(CLIMenu._BEZEL_IMAGE)
+        self._font = load_font(CLIMenu._TEXT_FONT, CLIMenu._TEXT_SIZE)
         self._selected_index = 0
         self._items = []
         self._cmds = {}

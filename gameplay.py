@@ -4,10 +4,11 @@ import pygame
 
 import timer
 import util
-from gamestate import GameState
-from terminal import Terminal
 import menu
 import constants
+from gamestate import GameState
+from terminal import Terminal
+from media import load_font
 
 
 class SuccessState(GameState):
@@ -25,13 +26,13 @@ class SuccessState(GameState):
         self._timer = timer.Timer()
         self._terminal = terminal
 
-        font = pygame.font.Font(SuccessState._FONT,
-                                SuccessState._MAIN_TEXT_HEIGHT)
+        font = load_font(SuccessState._FONT,
+                         SuccessState._MAIN_TEXT_HEIGHT)
         self._login_text = font.render('Access Granted', True,
                                        constants.TEXT_COLOUR)
 
-        font = pygame.font.Font(SuccessState._FONT,
-                                SuccessState._CONTINUE_TEXT_HEIGHT)
+        font = load_font(SuccessState._FONT,
+                         SuccessState._CONTINUE_TEXT_HEIGHT)
         self._continue_text = font.render('Press any key to continue', True,
                                           constants.TEXT_COLOUR)
 
@@ -77,13 +78,13 @@ class LostState(GameState):
         self._timer = timer.Timer()
         self._terminal = terminal
 
-        font = pygame.font.Font(LostState._FONT,
-                                LostState._MAIN_TEXT_HEIGHT)
+        font = load_font(LostState._FONT,
+                         LostState._MAIN_TEXT_HEIGHT)
         self._login_text = font.render('You have been locked out', True,
                                        constants.TEXT_COLOUR_RED)
 
-        font = pygame.font.Font(LostState._FONT,
-                                LostState._CONTINUE_TEXT_HEIGHT)
+        font = load_font(LostState._FONT,
+                         LostState._CONTINUE_TEXT_HEIGHT)
         self._continue_text = font.render('Press any key to continue', True,
                                           constants.TEXT_COLOUR_RED)
 

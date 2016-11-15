@@ -10,8 +10,8 @@ import pygame
 
 import constants
 import timer
-import util
 import mouse
+from media import load_font, load_image
 from programs.program import BadInput, TerminalProgram
 
 
@@ -69,7 +69,7 @@ class Terminal:
         self._buf = deque(maxlen=Terminal._BUF_SIZE)
         self._prompt = prompt
         self._cmd_history = CommandHistory(self, maxlen=Terminal._HISTORY_SIZE)
-        self._font = pygame.font.Font(Terminal._TEXT_FONT, Terminal._TEXT_SIZE)
+        self._font = load_font(Terminal._TEXT_FONT, Terminal._TEXT_SIZE)
         self._has_focus = True
 
         # Timer attributes
@@ -96,8 +96,8 @@ class Terminal:
         self._depends = {} if depends is None else depends
 
         # Draw the monitor bezel
-        self._bezel = util.load_image(Terminal._BEZEL_IMAGE)
-        bezel_font = pygame.font.Font(None, Terminal._BEZEL_TEXT_SIZE)
+        self._bezel = load_image(Terminal._BEZEL_IMAGE)
+        bezel_font = load_font(None, Terminal._BEZEL_TEXT_SIZE)
         self._bezel_text = bezel_font.render(self.id_string, True,
                                              (255, 255, 255))
 
