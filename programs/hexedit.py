@@ -19,12 +19,15 @@ class HexEditor(program.TerminalProgram):
     _MIN_FILE_LENGTH = 3
     _MAX_FILE_LENGTH = 5
 
-    _ROW_PROMPT = 'Edit line {}? (y/n)'
+    _ROW_PROMPT = 'Edit line {}? (y/n) '
     _COL_PROMPT = 'Edit col num: '
     _VAL_PROMPT = 'Change {:#04x} to (leave empty to cancel): '
 
     # How long is the freeze time (in ms) when a mistake is made
     _FREEZE_TIME = 5 * 1000
+
+    """The properties of this program."""
+    PROPERTIES = program.ProgramProperties(alternate_buf=True)
 
     def __init__(self, terminal):
         """Initialize the class."""
@@ -35,11 +38,6 @@ class HexEditor(program.TerminalProgram):
         self._state = HexEditor.States.QUERY_ROW
         self._start_data = []
         self._end_data = []
-
-    @property
-    def program_type(self):
-        """Return the program type."""
-        return program.TerminalProgram.Type.INTERACTIVE
 
     @property
     def help(self):
@@ -81,8 +79,6 @@ class HexEditor(program.TerminalProgram):
     def text_input(self, line):
         """Handle editor commands."""
         # Remove any leading whitespace and convert to lowercase.
-        line = self._input.lstrip().lower()
-
         if self._state == HexEditor.States.QUERY_ROW:
             if line.startswith('y'):
                 self._state = HexEditor.States.ENTER_COL
@@ -152,7 +148,7 @@ class HexEditor(program.TerminalProgram):
     def _data_correct(self):
         """Determine if the edits made to the data were correct."""
         edited_previous = False
-        edits, edited_idx, edited_old, edited_new = [0, 0, 0]
+        edits, edited_idx, edited_old, edited_new = (0, 0, 0, 0)
         for idx, (start, end) in enumerate(zip(self._start_data,
                                                self._end_data)):
             expect_edit = True

@@ -10,6 +10,30 @@ class BadInput(Exception):
     pass
 
 
+class ProgramProperties:
+
+    """Class that indicates the program properties"""
+
+    def __init__(self,
+                 intercept_keypress=False,
+                 alternate_buf=False,
+                 hide_cursor=False,
+                 suppress_success=False,
+                 is_graphical=False):
+
+        # If graphical, then set correct properties
+        if is_graphical:
+            intercept_keypress = True
+            alternate_buf = False
+            hide_cursor = True
+
+        self.intercept_keypress = intercept_keypress
+        self.alternate_buf = alternate_buf
+        self.hide_cursor = hide_cursor
+        self.suppress_success = suppress_success
+        self.is_graphical = is_graphical
+
+
 class TerminalProgram:
 
     """Base class for terminal programs."""
@@ -20,17 +44,17 @@ class TerminalProgram:
         INTERACTIVE = 2
         GRAPHICAL = 3
 
+    """The properties of this program."""
+    PROPERTIES = ProgramProperties()
+
+    SUCCESS_PREFIX = "SYSTEM INFO:"
+
     def __init__(self, terminal):
         """Initialize the class."""
         self._terminal = terminal
 
         # Is ctrl+c allowed to cancel this program at this point?
         self.allow_ctrl_c = True
-
-    @property
-    def program_type(self):
-        """Return the program type."""
-        return TerminalProgram.Type.TERMINAL
 
     @property
     def prompt(self):
@@ -49,7 +73,7 @@ class TerminalProgram:
 
     @property
     def success_syslog(self):
-        return "SYSTEM WARNING: {} disabled.".format(self.security_type)
+        return "{} {} disabled.".format(self.SUCCESS_PREFIX, self.security_type)
 
     @property
     def failure_prefix(self):

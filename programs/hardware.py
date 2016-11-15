@@ -188,6 +188,10 @@ class HardwareInspect(program.TerminalProgram):
     _BUTTON_TEXT = "Reboot system"
     _BUTTON_COLOUR = (255, 255, 255)
 
+    """The properties of this program."""
+    PROPERTIES = program.ProgramProperties(is_graphical=True,
+                                           suppress_success=True)
+
     def __init__(self, terminal):
         """Initialize the class."""
         super().__init__(terminal)
@@ -225,11 +229,6 @@ class HardwareInspect(program.TerminalProgram):
 
         self._completed = False
         self._exited = False
-
-    @property
-    def program_type(self):
-        """Return the program type."""
-        return program.TerminalProgram.Type.GRAPHICAL
 
     @property
     def help(self):
