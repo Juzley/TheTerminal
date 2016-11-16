@@ -22,7 +22,7 @@ class HexEditor(program.TerminalProgram):
 
     _ROW_PROMPT = 'Edit line {}? (y/n) '
     _COL_PROMPT = 'Edit col num: '
-    _VAL_PROMPT = 'Change {d} to (leave empty to cancel): '
+    _VAL_PROMPT = 'Change {} to (leave empty to cancel): '
 
     # How long is the freeze time (in ms) when a mistake is made
     _FREEZE_TIME = 5 * 1000
