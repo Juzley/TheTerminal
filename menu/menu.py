@@ -4,6 +4,7 @@
 import pygame
 import util
 import mouse
+import constants
 from gamestate import GameState
 from media import load_image, load_font
 
@@ -117,7 +118,7 @@ class CLIMenu(GameState):
 
     # TODO: Should probably share some of this with the Terminal class.
     _TEXT_SIZE = 16
-    _TEXT_FONT = 'media/whitrabt.ttf'
+    _TEXT_FONT = constants.TERMINAL_FONT
     _TEXT_COLOUR = (20, 200, 20)
     _TEXT_START = (45, 50)
     _CMD_TEXT_POS = (45, 525)

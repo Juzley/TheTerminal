@@ -11,12 +11,17 @@ class Decrypt(program.TerminalProgram):
     # For each font, we have a dictionary mapping from the character in the font
     # to what the correct decryption is.
     _FONTS = [
-        ('media/Arrows.ttf',
+        ('media/fonts/Arrows.ttf',
          {'a': 'a', 'b': 'b', 'c': 'c', 'd': 'd', 'e': 'e', 'f': 'f', 'g': 'g',
-          'h': 'h', 'A': 'i', 'B': 'j', 'C': 'k', 'D': 'l', 'E': 'm', 'F': 'n',
-          'G': 'o', 'H': 'p', 'y': 'q', 'z': 'r', 'Y': 's', 'Z': 't', 'm': 'u',
-          'n': 'v', 'Q': 'w', 'R': 'x', 'S': 'y', 'T': 'z'}),
-        ('media/MageScript.otf', {c: c for c in string.ascii_lowercase}),
+          'h': 'h', 'i': 'A', 'j': 'B', 'k': 'C', 'l': 'D', 'm': 'E', 'n': 'F',
+          'o': 'G', 'p': 'H', 'q': 'y', 'r': 'z', 's': 'Y', 't': 'Z', 'u': 'm',
+          'v': 'n', 'w': 'Q', 'x': 'R', 'y': 'S', 'z': 'y'}),
+        ('media/fonts/Gobotronic.otf',
+         {'a': 'n', 'b': 'o', 'c': 'p', 'd': 'q', 'e': 'r', 'f': 's', 'g': 't',
+          'h': 'u', 'i': 'v', 'j': 'w', 'k': 'x', 'l': 'y', 'm': 'z', 'n': 'N',
+          'o': 'O', 'p': 'P', 'q': 'Q', 'r': 'R', 's': 'S', 't': 'T', 'u': 'U',
+          'v': 'V', 'w': 'W', 'x': 'X', 'y': 'Y', 'z': 'Z'}),
+        ('media/fonts/MageScript.otf', {c: c for c in string.ascii_lowercase}),
      ]
 
     _TEXT_SIZE = 40
@@ -38,11 +43,11 @@ class Decrypt(program.TerminalProgram):
         """Start the program."""
         self._fontname, self._cypher = random.choice(Decrypt._FONTS)
         load_font(self._fontname, Decrypt._TEXT_SIZE)
-        self._enc_string = ''.join(
+        self._dec_string = ''.join(
             [random.choice(list(self._cypher.keys())) for _ in
              range(random.randrange(Decrypt._MIN_LENGTH,
                                     Decrypt._MAX_LENGTH + 1))])
-        self._dec_string = ''.join([self._cypher[e] for e in self._enc_string])
+        self._enc_string = ''.join([self._cypher[e] for e in self._dec_string])
         self._terminal.output(['<s {}><f {}>{}'.format(
             Decrypt._TEXT_SIZE, self._fontname, self._enc_string)])
 
