@@ -8,6 +8,9 @@ from . import program
 
 
 class Decrypt(program.TerminalProgram):
+
+    """Program class for the decryption puzzle."""
+
     # For each font, we have a dictionary mapping from the character in the font
     # to what the correct decryption is.
     _FONTS = [
@@ -32,6 +35,7 @@ class Decrypt(program.TerminalProgram):
     _TEXT_SIZE = 40
     _MIN_LENGTH = 4
     _MAX_LENGTH = 12
+    _FREEZE_TIME = 2 * 1000
 
     def __init__(self, terminal):
         """Initialize the class."""
@@ -56,12 +60,34 @@ class Decrypt(program.TerminalProgram):
         self._terminal.output(['<s {}><f {}>{}'.format(
             Decrypt._TEXT_SIZE, self._fontname, self._enc_string)])
 
+    @property
+    def help(self):
+        """Return the help string."""
+        return "Decrypt filesystem."
+
+    @property
+    def security_type(self):
+        """Return the security type."""
+        return "filesystem encryption."
+
+    @property
+    def prompt(self):
+        """Return the prompt."""
+        return "Enter decryption key: "
+
     def exited(self):
+        """Indicate whether the program has exited."""
         return self._correct
 
     def completed(self):
+        """Indicate whether the task was completed."""
         return self._correct
 
     def text_input(self, line):
-        if line == self._enc_string:
+        """Check whether the correct password was entered."""
+        if line == self._dec_string:
             self._correct = True
+        else:
+            self._terminal.output([self.failure_prefix +
+                                   "decryption failed, reversing!"])
+            self._terminal.freeze(Decrypt._FREEZE_TIME)
