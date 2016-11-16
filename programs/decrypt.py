@@ -21,6 +21,11 @@ class Decrypt(program.TerminalProgram):
           'h': 'u', 'i': 'v', 'j': 'w', 'k': 'x', 'l': 'y', 'm': 'z', 'n': 'N',
           'o': 'O', 'p': 'P', 'q': 'Q', 'r': 'R', 's': 'S', 't': 'T', 'u': 'U',
           'v': 'V', 'w': 'W', 'x': 'X', 'y': 'Y', 'z': 'Z'}),
+        ('media/fonts/PigpenCipher.otf',
+         {'a': 'n', 'b': 'z', 'c': 'q', 'd': 'o', 'e': 'e', 'f': 'g', 'g': 'm',
+          'h': 'u', 'i': 'v', 'j': 'p', 'k': 'x', 'l': 'k', 'm': 'f', 'n': 'b',
+          'o': 'y', 'p': 'i', 'q': 'l', 'r': 'r', 's': 'c', 't': 't', 'u': 'w',
+          'v': 'h', 'w': 'd', 'x': 's', 'y': 'a', 'z': 'j'}),
         ('media/fonts/MageScript.otf', {c: c for c in string.ascii_lowercase}),
      ]
 

@@ -5,7 +5,7 @@ from pygame import Surface
 from pygame.font import Font
 from programs import Decrypt
 
-_TEXT_HEIGHT = 60
+_TEXT_HEIGHT = 40
 _VERTICAL_SPACING = 5
 _VERTICAL_PADDING = 5
 _HORIZONTAL_SPACING = 20
@@ -17,7 +17,7 @@ def render_font(font, charmap):
     renders = [font.render(c, True, (0, 0, 0)) for _, c in
                sorted(charmap.items())]
     surf = Surface((max([r.get_rect().w for r in renders]),
-                    _TEXT_HEIGHT * len(renders)))
+                    (_TEXT_HEIGHT + _VERTICAL_SPACING) * len(renders)))
     surf.fill((255, 255, 255))
 
     y = _VERTICAL_PADDING
