@@ -10,8 +10,12 @@ class Decrypt(program.TerminalProgram):
     # For each font, we have a dictionary mapping from the character in the font
     # to what the correct decryption is.
     _FONTS = [
-        ('media/Arrows.ttf', {'a': 'a'})
-    ]
+        ('media/Arrows.ttf',
+         {'a': 'a', 'b': 'b', 'c': 'c', 'd': 'd', 'e': 'e', 'f': 'f', 'g': 'g',
+          'h': 'h', 'A': 'i', 'B': 'j', 'C': 'k', 'D': 'l', 'E': 'm', 'F': 'n',
+          'G': 'o', 'H': 'p', 'y': 'q', 'z': 'r', 'Y': 's', 'Z': 't', 'm': 'u',
+          'n': 'v', 'Q': 'w', 'R': 'x', 'S': 'y', 'T': 'z'})
+     ]
 
     _TEXT_SIZE = 32
     _MIN_LENGTH = 4
