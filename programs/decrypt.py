@@ -10,7 +10,7 @@ class Decrypt(program.TerminalProgram):
     # For each font, we have a dictionary mapping from the character in the font
     # to what the correct decryption is.
     _FONTS = [
-        ('media/CRUX.ttf', {'a': 'a'})
+        ('media/Arrows.ttf', {'a': 'a'})
     ]
 
     _MIN_LENGTH = 4
@@ -35,8 +35,6 @@ class Decrypt(program.TerminalProgram):
              range(random.randrange(Decrypt._MIN_LENGTH,
                                     Decrypt._MAX_LENGTH + 1))])
         self._dec_string = ''.join([self._cypher[e] for e in self._enc_string])
-
-        self._enc_string = self._terminal._ACCEPTED_CHARS
         self._terminal.output(['<f {}>{}'.format(self._font, self._enc_string)])
 
     def exited(self):
