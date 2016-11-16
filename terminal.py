@@ -1,5 +1,6 @@
 """Module containing the terminal class, the main gameplay logic."""
 
+import re
 import itertools
 import random
 import string
@@ -26,7 +27,7 @@ class Terminal:
     _VISIBLE_LINES = 30  # TODO: Variable based on resolution.
 
     # Constants related to drawing the terminal text.
-    _TEXT_SIZE = 16
+    TEXT_SIZE = 16
     _TEXT_FONT = constants.TERMINAL_FONT
     _TEXT_COLOUR = constants.TEXT_COLOUR
     _TEXT_COLOURS = {
@@ -69,7 +70,7 @@ class Terminal:
         self._buf = deque(maxlen=Terminal._BUF_SIZE)
         self._prompt = prompt
         self._cmd_history = CommandHistory(self, maxlen=Terminal._HISTORY_SIZE)
-        self._font = load_font(Terminal._TEXT_FONT, Terminal._TEXT_SIZE)
+        self._font = load_font(Terminal._TEXT_FONT, Terminal.TEXT_SIZE)
         self._has_focus = True
 
         # Timer attributes
@@ -432,16 +433,27 @@ class Terminal:
         # Draw the buffer.
         y_coord = Terminal._TEXT_START[1]
         for line in itertools.chain([current_line], buf):
+            # If the line starts with a font code, then change font.
+            # Note that the way this is currently written, you can't specify
+            # both a font and a colour
+            m = re.match(r'<f ([^>]+)>', line)
+            if m:
+                font = load_font(m.group(1), Terminal.TEXT_SIZE)
+                line = line[len(m.group(0)):]
+            else:
+                font = self._font
+
             # If line starts with a colour code, then change colour
-            if len(line) > 3 and line[0] + line[2] == "<>":
-                colour = Terminal._TEXT_COLOURS[line[1]]
-                line = line[3:]
+            m = re.match(r'<(.)>', line)
+            if m:
+                colour = Terminal._TEXT_COLOURS[m.group(1)]
+                line = line[len(m.group(0)):]
             else:
                 colour = Terminal._TEXT_COLOUR
-            text = self._font.render(line, True, colour)
+            text = font.render(line, True, colour)
             pygame.display.get_surface().blit(
                 text, (Terminal._TEXT_START[0], y_coord))
-            y_coord -= Terminal._TEXT_SIZE
+            y_coord -= Terminal.TEXT_SIZE
 
         # Determine whether the cursor is on.
         if ((self._current_program is None or

@@ -30,6 +30,13 @@
             "network": "NetworkManager"
         },
         "depends": {}
+    },
+    "Level 5": {
+        "time": 120,
+        "programs": {
+            "decrypt": "Decrypt"
+        },
+        "depends": {}
     }
 }
 

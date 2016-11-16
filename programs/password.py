@@ -1,7 +1,6 @@
 """Password program classes."""
 
 import random
-
 from . import program
 
 
