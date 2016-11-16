@@ -13,6 +13,7 @@ class Decrypt(program.TerminalProgram):
         ('media/Arrows.ttf', {'a': 'a'})
     ]
 
+    _TEXT_SIZE = 32
     _MIN_LENGTH = 4
     _MAX_LENGTH = 12
 
@@ -23,7 +24,7 @@ class Decrypt(program.TerminalProgram):
 
         self._font, self._cypher = random.choice(Decrypt._FONTS)
         # Preload the font.
-        load_font(self._font, self._terminal.TEXT_SIZE)
+        load_font(self._font, Decrypt._TEXT_SIZE)
 
         self._enc_string = ""
         self._dec_string = ""
@@ -35,7 +36,8 @@ class Decrypt(program.TerminalProgram):
              range(random.randrange(Decrypt._MIN_LENGTH,
                                     Decrypt._MAX_LENGTH + 1))])
         self._dec_string = ''.join([self._cypher[e] for e in self._enc_string])
-        self._terminal.output(['<f {}>{}'.format(self._font, self._enc_string)])
+        self._terminal.output(['<s {}><f {}>{}'.format(
+            Decrypt._TEXT_SIZE, self._font, self._enc_string)])
 
     def exited(self):
         return self._correct

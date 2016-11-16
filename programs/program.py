@@ -77,7 +77,7 @@ class TerminalProgram:
 
     @property
     def failure_prefix(self):
-        return "<r>SYSTEM ALERT: "
+        return "<c r>SYSTEM ALERT: "
 
     @property
     def buf(self):

@@ -190,9 +190,9 @@ class NetworkManager(program.TerminalProgram):
                 else:
                     line += self._NODE
             if self._error_mode:
-                lines.append("<r>" + line)
+                lines.append("<c r>" + line)
             else:
-                lines.append("<w>" + line)
+                lines.append("<c w>" + line)
 
             # Now create gap between the row, drawing links to next row
             if r < self._puzzle.rows - 1:
@@ -207,13 +207,13 @@ class NetworkManager(program.TerminalProgram):
                         line += self._SPACE_V
 
                 if self._error_mode:
-                    lines.append("<r>" + line)
+                    lines.append("<c r>" + line)
                 else:
-                    lines.append("<w>" + line)
+                    lines.append("<c w>" + line)
 
         lines.append("")
         if self._error_mode:
-            lines.append("<r>Invalid route detected: {}"
+            lines.append("<c r>Invalid route detected: {}"
                          .format(self._error_msg))
         else:
             lines.append("Use arrow keys to create a static route from source "

@@ -27,7 +27,7 @@ class Terminal:
     _VISIBLE_LINES = 30  # TODO: Variable based on resolution.
 
     # Constants related to drawing the terminal text.
-    TEXT_SIZE = 16
+    _TEXT_SIZE = 16
     _TEXT_FONT = constants.TERMINAL_FONT
     _TEXT_COLOUR = constants.TEXT_COLOUR
     _TEXT_COLOURS = {
@@ -47,7 +47,7 @@ class Terminal:
     _BEZEL_TEXT_LOCATION = (680, 576)
 
     # The coordinates to start drawing text.
-    _TEXT_START = (45, 525)
+    _TEXT_START = (45, 541)
 
     # Freeze progress bar size
     _PROGRESS_BAR_SIZE = 30
@@ -70,7 +70,7 @@ class Terminal:
         self._buf = deque(maxlen=Terminal._BUF_SIZE)
         self._prompt = prompt
         self._cmd_history = CommandHistory(self, maxlen=Terminal._HISTORY_SIZE)
-        self._font = load_font(Terminal._TEXT_FONT, Terminal.TEXT_SIZE)
+        self._font = load_font(Terminal._TEXT_FONT, Terminal._TEXT_SIZE)
         self._has_focus = True
 
         # Timer attributes
@@ -433,27 +433,40 @@ class Terminal:
         # Draw the buffer.
         y_coord = Terminal._TEXT_START[1]
         for line in itertools.chain([current_line], buf):
-            # If the line starts with a font code, then change font.
-            # Note that the way this is currently written, you can't specify
-            # both a font and a colour
-            m = re.match(r'<f ([^>]+)>', line)
-            if m:
-                font = load_font(m.group(1), Terminal.TEXT_SIZE)
+            # Set defaults before checking whether the line overrides.
+            colour = Terminal._TEXT_COLOUR
+            size = Terminal._TEXT_SIZE
+            fontname = ""
+
+            # Look for any font commands at the start of the line.
+            pattern = re.compile(r'<(. [^>]+?)>')
+            m = pattern.match(line)
+            while m:
+                # Don't display the commands
                 line = line[len(m.group(0)):]
+                cmd, arg = m.group(1).split()
+                if cmd == 'c':
+                    # Change the colour code.
+                    colour = Terminal._TEXT_COLOURS[arg]
+                elif cmd == 's':
+                    size = int(arg)
+                elif cmd == 'f':
+                    # Don't load the font yet, as we need to know which
+                    # size to load, and the size cmd might come after the
+                    # font command
+                    fontname = arg
+
+                m = pattern.match(line)
+
+            if fontname:
+                font = load_font(fontname, size)
             else:
                 font = self._font
 
-            # If line starts with a colour code, then change colour
-            m = re.match(r'<(.)>', line)
-            if m:
-                colour = Terminal._TEXT_COLOURS[m.group(1)]
-                line = line[len(m.group(0)):]
-            else:
-                colour = Terminal._TEXT_COLOUR
+            y_coord -= size
             text = font.render(line, True, colour)
             pygame.display.get_surface().blit(
                 text, (Terminal._TEXT_START[0], y_coord))
-            y_coord -= Terminal.TEXT_SIZE
 
         # Determine whether the cursor is on.
         if ((self._current_program is None or
@@ -466,7 +479,7 @@ class Terminal:
             pygame.draw.rect(pygame.display.get_surface(),
                              Terminal._TEXT_COLOUR,
                              (Terminal._TEXT_START[0] + curr_line_size[0] + 1,
-                              Terminal._TEXT_START[1] - 1,
+                              Terminal._TEXT_START[1] - curr_line_size[1] - 1,
                               Terminal._CURSOR_WIDTH, curr_line_size[1]),
                              0 if self._has_focus else 1)
 
