@@ -430,7 +430,8 @@ class Chip(Component):
     """Chip component."""
 
     def create_image(self):
-        self._image = load_image('media/chip.png')
+        # Take a copy as we are going to edit it!
+        self._image = load_image('media/chip.png').copy()
 
         # Add code to the chip
         font = load_font(None, 20)
