@@ -261,6 +261,10 @@ class Square:
         FLAGGED = 2
         REVEALED = 3
 
+    _FLAG_HEIGHT_FACTOR = 0.7
+    _FLAG_POLE_WIDTH = 3
+    _FLAG_SIZE_FACTOR = 0.6
+
     def __init__(self, square_type, rect):
         # Square type
         self.type = square_type
@@ -268,7 +272,7 @@ class Square:
         # Current state
         self.state = self.State.HIDDEN
 
-        # Rectange representing the square's position on the board.
+        # Rectangle representing the square's position on the board.
         self.rect = rect
 
         # List of neighbour squares
@@ -285,14 +289,14 @@ class Square:
         }
 
         self._surfaces[Square.State.HIDDEN].fill((180, 180, 180))
-        self._surfaces[Square.State.FLAGGED].fill((20, 200, 20))
+        self._surfaces[Square.State.FLAGGED].fill((180, 180, 180))
         self._surfaces[Square.State.REVEALED].fill((255, 255, 255))
 
         for surface in self._surfaces.values():
             pygame.draw.rect(surface, (0, 0, 0),
                              (0, 0, self.rect[2], self.rect[3]), 1)
 
-        # If we are a mine, then add mine
+        # If we are a mine, then add mine to revealed square
         if self.type == Square.Type.MINE:
             center = (int(self.rect[2] / 2), int(self.rect[3] / 2))
             pygame.draw.circle(self._surfaces[Square.State.REVEALED],
@@ -300,6 +304,22 @@ class Square:
                                center,
                                center[0] - 2,
                                0)
+
+        # Add a flag to the flagged square
+        flag = self._surfaces[Square.State.FLAGGED]
+        pole_length = int(self.rect[3] * self._FLAG_HEIGHT_FACTOR)
+        flag_size = int(pole_length * self._FLAG_SIZE_FACTOR)
+        pole_gap = int((self.rect[3] - pole_length) / 2)
+        x_coord = int(self.rect[2] / 2 - flag_size / 2 +
+                      self._FLAG_POLE_WIDTH / 2)
+        pygame.draw.line(flag, (0, 0, 0),
+                         (x_coord, pole_gap),
+                         (x_coord, self.rect[3] - pole_gap),
+                         self._FLAG_POLE_WIDTH)
+        pygame.draw.rect(flag, (255, 20, 20),
+                         ((x_coord, pole_gap,
+                           flag_size, flag_size)),
+                         0)
 
     def get_surface(self):
         return self._surfaces[self.state]
