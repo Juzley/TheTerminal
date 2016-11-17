@@ -46,7 +46,7 @@ class Decrypt(program.TerminalProgram):
         self._correct = False
 
         self._fontname = ""
-        self._cyper = None
+        self._cypher = None
 
         self._enc_string = ""
         self._dec_string = ""

@@ -1,7 +1,5 @@
 """Base class definitions for use by programs."""
 
-from enum import Enum, unique
-
 
 class BadInput(Exception):
 
@@ -37,12 +35,6 @@ class ProgramProperties:
 class TerminalProgram:
 
     """Base class for terminal programs."""
-
-    @unique
-    class Type(Enum):
-        TERMINAL = 1
-        INTERACTIVE = 2
-        GRAPHICAL = 3
 
     """The properties of this program."""
     PROPERTIES = ProgramProperties()

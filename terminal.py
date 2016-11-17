@@ -479,7 +479,7 @@ class Terminal:
             pygame.draw.rect(pygame.display.get_surface(),
                              Terminal._TEXT_COLOUR,
                              (Terminal._TEXT_START[0] + curr_line_size[0] + 1,
-                              Terminal._TEXT_START[1] - curr_line_size[1] - 1,
+                              Terminal._TEXT_START[1] - curr_line_size[1] - 3,
                               Terminal._CURSOR_WIDTH, curr_line_size[1]),
                              0 if self._has_focus else 1)
 
