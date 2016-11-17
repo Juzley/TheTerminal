@@ -8,7 +8,7 @@ import menu
 import constants
 from gamestate import GameState
 from terminal import Terminal
-from media import load_font
+from resource import load_font
 
 
 class SuccessState(GameState):

@@ -6,7 +6,7 @@ import util
 import mouse
 import constants
 from gamestate import GameState
-from media import load_image, load_font
+from resource import load_image, load_font
 
 
 class MenuItem:
