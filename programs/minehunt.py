@@ -1,6 +1,7 @@
 
 import itertools
 import pygame
+import random
 from enum import Enum, unique
 
 import mouse
@@ -16,14 +17,27 @@ class MineHunt(program.TerminalProgram):
     PROPERTIES = program.ProgramProperties(is_graphical=True,
                                            suppress_success=True)
 
+    _BOARD_Y = 50
+    _FONT_SIZE = 40
+
     def __init__(self, terminal):
         """Initialize the class."""
         super().__init__(terminal)
 
         self._completed = False
         self._exited = False
+        self._board = Board(random.choice(BOARDS))
 
-        self._board = Board(BOARD1)
+        screen_rect = pygame.display.get_surface().get_rect()
+        self._board_pos = (int((screen_rect[2] / 2) - (self._board.width / 2)),
+                           self._BOARD_Y)
+
+        font = load_font(None, self._FONT_SIZE)
+        self._game_over_texts = [
+            font.render("Game over!!", True, (255, 255, 255)),
+            font.render("Press R to retry, or Q to quit",
+                        True, (255, 255, 255)),
+        ]
 
     @property
     def help(self):
@@ -42,6 +56,7 @@ class MineHunt(program.TerminalProgram):
 
     def start(self):
         # Reset board
+        self._board.reset()
         self._exited = False
 
     def completed(self):
@@ -54,34 +69,62 @@ class MineHunt(program.TerminalProgram):
 
     def on_keypress(self, key, key_unicode):
         """Handle a user keypress."""
-        pass
+        if self._board.hit_mine:
+            print(key)
+            if key == pygame.K_r:
+                self._board.reset()
+            elif key == pygame.K_q:
+                self._exited = True
 
     def on_mousemove(self, pos):
         pass
 
     def on_mouseclick(self, button, pos):
         """Detect whether the user clicked the program."""
-        self._board.on_mouseclick(button, pos)
+        board_pos = (pos[0] - self._board_pos[0], pos[1] - self._board_pos[1])
+        self._board.on_mouseclick(button, board_pos)
 
     def draw(self):
         """Draw the program."""
-        self._board.draw(pygame.display.get_surface())
+        screen = pygame.display.get_surface()
+        screen.blit(self._board.draw_surface,
+                    self._board_pos)
+
+        # Have we hit a mine? Draw game over text
+        # TODO: have a game surface and draw this on
+        if self._board.hit_mine:
+            screen_rect = screen.get_rect()
+            text_y = self._board_pos[1] + self._board.height + 5
+            for text in self._game_over_texts:
+                text_rect = text.get_rect()
+                text_x = int(screen_rect[2] / 2 - text_rect[2] / 2)
+                screen.blit(text, (text_x, text_y))
+
+                text_y += text_rect[3]
 
 
-BOARD1 = """
+BOARDS = (
+"""
 .....x
 x.....
 ......
-......
+...x..
 ......
 xx....
+""",
 """
+.....x...
+x........
+.........
+...x.....
+........x
+xx......x
+""")
 
 
 class Board:
-    _WIDTH = 390
-    _HEIGHT = 390
-    _BOARD_Y = 50
+    _MAX_WIDTH = 400
+    _MAX_HEIGHT = 400
 
     def __init__(self, board_str):
         # Board is a 2D array of Squares, indexed by row then col
@@ -94,28 +137,36 @@ class Board:
         # Square size
         self._square_size = 0
 
-        # Create the board
-        self._surface = pygame.Surface((self._WIDTH, self._HEIGHT))
-        self._surface.fill((255, 255, 255))
-
-        screen_rect = pygame.display.get_surface().get_rect()
-        board_rect = self._surface.get_rect()
-        self._pos = (int((screen_rect[2] / 2)
-                         - (board_rect[2] / 2)), self._BOARD_Y)
-
         # Surface for the next draw
-        self._draw_surface = None
+        self.draw_surface = None
+
+        # Have we hit a mine?
+        self.hit_mine = False
 
         # Create the board
         self._create_board(board_str)
 
+        # Set width and height
+        self.width = self._cols * self._square_size
+        self.height = self._rows * self._square_size
+
+        # Create the board
+        self._surface = pygame.Surface((self.width, self.height))
+        self._surface.fill((255, 255, 255))
+
         self._setup_draw()
 
-    def draw(self, surface):
-        surface.blit(self._draw_surface, self._pos)
+    def reset(self):
+        self.hit_mine = False
+        for square in itertools.chain.from_iterable(self._board):
+            square.state = Square.State.HIDDEN
+        self._setup_draw()
 
-    def on_mouseclick(self, button, screen_pos):
-        square = self._hit_square(self._screen_to_board_pos(screen_pos))
+    def on_mouseclick(self, button, pos):
+        if self.hit_mine:
+            return
+
+        square = self._hit_square(pos)
         if square is not None:
             if (button == mouse.Button.LEFT and
                     square.state == Square.State.HIDDEN):
@@ -131,13 +182,19 @@ class Board:
                 self._setup_draw()
 
     def _reveal_square(self, square):
-        # Set for this square, and if it doesn't have any bomb neighbours,
+        # Set for this square, and if it doesn't have any mine neighbours,
         # reveal them!
-        if square.state == Square.State.HIDDEN:
+        if (square.state == Square.State.HIDDEN and
+                square.type == Square.Type.EMPTY):
             square.state = Square.State.REVEALED
-            if square.bombs_nearby == 0:
+            if square.mines_nearby == 0:
                 for neighbour in square.neighbours:
                     self._reveal_square(neighbour)
+        elif (square.state == Square.State.HIDDEN and
+              square.type == Square.Type.MINE):
+            # We have revealed a Mine!
+            square.state = Square.State.REVEALED
+            self.hit_mine = True
 
     def _create_board(self, board_str):
         lines = [l for l in board_str.split("\n") if len(l) > 0]
@@ -145,8 +202,8 @@ class Board:
         self._cols = len(lines[0])
 
         # Work out square size
-        self._square_size = int(min(self._WIDTH / self._cols,
-                                    self._HEIGHT / self._rows))
+        self._square_size = int(min(self._MAX_WIDTH / self._cols,
+                                    self._MAX_HEIGHT / self._rows))
 
         def get_type(c):
             return Square.Type.MINE if c == "x" else Square.Type.EMPTY
@@ -182,15 +239,11 @@ class Board:
         return None
 
     def _setup_draw(self):
-        self._draw_surface = self._surface.copy()
+        self.draw_surface = self._surface.copy()
 
-        for row in self._board:
-            for square in row:
-                self._draw_surface.blit(square.get_surface(),
-                                        square.rect[:2])
-
-    def _screen_to_board_pos(self, screen_pos):
-        return screen_pos[0] - self._pos[0], screen_pos[1] - self._pos[1]
+        for square in itertools.chain.from_iterable(self._board):
+            self.draw_surface.blit(square.get_surface(),
+                                   square.rect[:2])
 
 
 class Square:
@@ -221,8 +274,8 @@ class Square:
         # List of neighbour squares
         self.neighbours = None
 
-        # Count of neighbours who are bombs
-        self.bombs_nearby = 0
+        # Count of neighbours who are mines
+        self.mines_nearby = 0
 
         # Create our surfaces
         self._surfaces = {
@@ -257,14 +310,14 @@ class Square:
     def set_neighbours(self, neighbours):
         self.neighbours = neighbours
 
-        # Count bombs!
-        self.bombs_nearby = len([n for n in neighbours
+        # Count mines!
+        self.mines_nearby = len([n for n in neighbours
                                  if n.type == Square.Type.MINE])
 
         # Draw the number on our revealed surface
-        if self.bombs_nearby > 0:
+        if self.mines_nearby > 0:
             font = load_font(None, self.rect[2] - 3)
-            text = font.render(str(self.bombs_nearby), True, (0, 0, 0))
+            text = font.render(str(self.mines_nearby), True, (0, 0, 0))
 
             surface = self._surfaces[Square.State.REVEALED]
             surface_rect = surface.get_rect()
