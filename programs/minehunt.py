@@ -261,7 +261,7 @@ class Square:
         FLAGGED = 2
         REVEALED = 3
 
-    _FLAG_HEIGHT_FACTOR = 0.7
+    _FLAG_HEIGHT_FACTOR = 0.6
     _FLAG_POLE_WIDTH = 3
     _FLAG_SIZE_FACTOR = 0.6
 
@@ -318,7 +318,7 @@ class Square:
                          self._FLAG_POLE_WIDTH)
         pygame.draw.rect(flag, (255, 20, 20),
                          ((x_coord, pole_gap,
-                           flag_size, flag_size)),
+                           flag_size, int(flag_size * 0.9))),
                          0)
 
     def get_surface(self):
