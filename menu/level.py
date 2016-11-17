@@ -26,7 +26,7 @@ class LevelMenu(menu.CLIMenu):
 
             # The program class names are represented in the JSON as strings,
             # we need to convert them to the corresponding class objects.
-            for level_info in self._levels.values():
+            for level_info in self._levels:
                 for cmd, cls_str in level_info['programs'].items():
                     level_info['programs'][cmd] = getattr(programs, cls_str)
 
@@ -36,13 +36,9 @@ class LevelMenu(menu.CLIMenu):
             ('  ..', LevelMenu.Items.BACK, '$ cd ..')
         ]
 
-        # Add each level as a menu item - we create a list of the levle names,
-        # so that we can use an index into this list as the menu item id.
-        # For now sort the level names alphabetically, assuming that this will
-        # give a good ordering in the menu.
-        self._level_names = sorted(self._levels.keys())
-        buf.extend([('  ' + name, idx, '$ connect {}'.format(name)) for
-                    idx, name in enumerate(self._level_names)])
+        # Add each level as a menu item
+        buf.extend([('  ' + l['name'], i, '$ connect {}'.format(l['name'])) for
+                    i, l in enumerate(self._levels)])
 
         super().__init__(mgr, buf)
 
@@ -53,7 +49,5 @@ class LevelMenu(menu.CLIMenu):
         else:
             # If this isn't an item from enum of items, assume that the user
             # clicked on a level - in this case 'item' contains the index of
-            # the level name in the list of names, whch we can use to look up
-            # the level info.
-            level_info = self._levels[self._level_names[item]]
-            self._mgr.replace(GameplayState(self._mgr, level_info))
+            # the level in the level list.
+            self._mgr.replace(GameplayState(self._mgr, self._levels[item]))
