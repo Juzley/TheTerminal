@@ -159,11 +159,11 @@ class HexEditor(program.TerminalProgram):
             expect_edit = True
             if idx == 0 or not edited_previous:
                 # This is the first line, or we didn't edit the previous line.
-                if start[0] < 6:
+                if start.count(9) > 0:
                     # (d) in the manual
-                    print('d - Line {} starts with {}, col {} {}->0'.format(
-                        idx, start[0], start[0], start[start[0]]))
-                    if end[start[0]] != 0:
+                    print('d - Line {} has {} 9s, col 5 {}->7'.format(
+                        idx, start.count(9), start[5]))
+                    if end[5] != 7:
                         return False
                 elif start.count(0) > 0:
                     # (e) in the manual
@@ -195,19 +195,18 @@ class HexEditor(program.TerminalProgram):
                     return False
             else:
                 # A middle line, and we edited the previous line.
-                if start[-1] < 6:
+                if start.count(0) > 1:
                     # (g) in the manual
-                    print('g - Line {} ends with {}: col {} {}->{}'.format(
-                        idx, start[-1], start[-1], start[start[-1]],
-                        edited_old))
-                    if end[start[-1]] != edited_old:
+                    print('g - Line {} has {} 0s, col 0 {}->{}'.format(
+                          idx, start.count(0), start[0], edited_old))
+                    if end[0] != edited_old:
                         return False
-                elif start.count(0xf):
+                elif start.count(9) > 1:
                     # (h) in the manual
-                    print('h - Line {} has {} 0xfs: col {} {}->{}'.format(
-                        idx, start.count(0xf), start.index(0xf),
-                        start[start.index(0xf)], edited_idx))
-                    if end[start.index(0xf)] != edited_idx:
+                    print('h - Line {} has {} 9s: col {} {}->{}'.format(
+                        idx, start.count(9), start.index(9),
+                        start[start.index(9)], edited_idx))
+                    if end[start.index(9)] != edited_idx:
                         return False
                 elif start.count(edited_new):
                     # (i) in the manual
