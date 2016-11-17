@@ -12,7 +12,7 @@ import pygame
 import constants
 import timer
 import mouse
-from media import load_font, load_image
+from resource import load_font, load_image
 from programs.program import BadInput
 
 

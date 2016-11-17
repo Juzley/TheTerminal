@@ -6,7 +6,7 @@ import mouse
 from itertools import combinations
 from enum import Enum, unique
 from . import program
-from media import load_font
+from resource import load_font
 
 
 @unique
