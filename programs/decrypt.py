@@ -2,7 +2,6 @@
 
 
 import random
-import string
 from media import load_font
 from . import program
 
@@ -29,12 +28,16 @@ class Decrypt(program.TerminalProgram):
           'h': 'u', 'i': 'v', 'j': 'p', 'k': 'x', 'l': 'k', 'm': 'f', 'n': 'b',
           'o': 'y', 'p': 'i', 'q': 'l', 'r': 'r', 's': 'c', 't': 't', 'u': 'w',
           'v': 'h', 'w': 'd', 'x': 's', 'y': 'a', 'z': 'j'}),
-        ('media/fonts/MageScript.otf', {c: c for c in string.ascii_lowercase}),
+        ('media/fonts/circlethings.ttf',
+         {'a': 'a', 'b': 'b', 'c': 'c', 'd': 'd', 'e': 'e', 'f': 'f', 'g': 'g',
+          'h': 'h', 'i': 'i', 'j': 'j', 'k': 'k', 'l': 'J', 'm': 'm', 'n': 'A',
+          'o': 'B', 'p': 'p', 'q': 'q', 'r': 'r', 's': 's', 't': 't', 'u': 'u',
+          'v': 'v', 'w': 'w', 'x': 'x', 'y': 'y', 'z': 'z'}),
      ]
 
     _TEXT_SIZE = 40
     _MIN_LENGTH = 4
-    _MAX_LENGTH = 12
+    _MAX_LENGTH = 8
     _FREEZE_TIME = 2 * 1000
 
     def __init__(self, terminal):
