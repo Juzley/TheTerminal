@@ -37,6 +37,13 @@
             "decrypt": "Decrypt"
         },
         "depends": {}
+    },
+    "Level 6": {
+        "time": 120,
+        "programs": {
+            "minehunt": "MineHunt"
+        },
+        "depends": {}
     }
 }
 
