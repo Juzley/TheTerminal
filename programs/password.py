@@ -10,9 +10,8 @@ class PasswordGuess(program.TerminalProgram):
 
     _MAX_GUESSES = 5
     _PASSWORDS = {
-        'root':  ['flask', 'great', 'asked', 'tarts', 'force', 'gleam', 'think',
-                  'brick', 'flute', 'brisk', 'freak', 'blast', 'feast', 'flick',
-                  'flank'],
+        'root': ['flask', 'great', 'force', 'gleam', 'brick', 'flute', 'blash',
+                 'feast', 'flick', 'flank'],
         'ro0t': ['tusks', 'blush', 'askew', 'train', 'asset', 'burns', 'tries',
                  'turns', 'basks', 'busks'],
         'rewt': ['maple', 'pearl', 'lapel', 'myths', 'cycle', 'apple', 'ladle',

@@ -12,8 +12,7 @@ should be able to work out the password using this information.
 
 User     | Possible Passwords
 ---------|---------------------------------------------------------------------
-root     | flask, great, asked, tarts, force, gleam, think, brick, flute,
-         | brisk, freak, blast, feast, flick, flank 
+root     | flask, great, force, gleam, brick, flute, blast, feast, flick, flank 
 ---------|---------------------------------------------------------------------
 ro0t     | tusks, blush, askew, train, asset, burns, tries, turns, basks, busks
 ---------|---------------------------------------------------------------------
