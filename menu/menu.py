@@ -112,6 +112,14 @@ class Menu(GameState):
         pass
 
 
+class CLIMenuItem:
+    def __init__(self, text, cmd="", item=None, disabled=False):
+        self.text = text
+        self.cmd = cmd
+        self.item = item
+        self.disabled = disabled
+
+
 class CLIMenu(GameState):
 
     """A menu designed to look like a CLI."""
@@ -120,11 +128,12 @@ class CLIMenu(GameState):
     _TEXT_SIZE = 16
     _TEXT_FONT = constants.TERMINAL_FONT
     _TEXT_COLOUR = (20, 200, 20)
+    _DISABLED_COLOUR = (100, 100, 100)
     _TEXT_START = (45, 50)
     _CMD_TEXT_POS = (45, 525)
     _BEZEL_IMAGE = 'media/bezel.png'
 
-    def __init__(self, mgr, buf):
+    def __init__(self, mgr, entries):
         """Initialize the class."""
         super().__init__()
         self._mgr = mgr
@@ -140,28 +149,36 @@ class CLIMenu(GameState):
                                                 CLIMenu._TEXT_COLOUR)
         self._buf = []
         y_coord = CLIMenu._TEXT_START[1]
-        for line, item, cmd_str in buf:
+        for entry in entries:
             # Render all the text up front, so that we can use the resulting
             # surfaces for hit-detection - we store a tuple containing:
             #   - The surface,
             #   - Its coordinates,
             #   - The menu item it represents, if any
-            text = self._font.render(line, True, CLIMenu._TEXT_COLOUR)
+            colour = CLIMenu._TEXT_COLOUR
+            if isinstance(entry, CLIMenuItem):
+                line = entry.text
+                item = entry.item
 
+                if entry.disabled:
+                    colour = CLIMenu._DISABLED_COLOUR
+                else:
+                    self._items.append(item)
+
+                    # If there's a command string associated with this item,
+                    # render the text and store it in a dictionary mapping the
+                    # item ID to the cmd text
+                    if entry.cmd:
+                        print(entry.cmd)
+                        self._cmds[item] = self._font.render(
+                            entry.cmd, True, CLIMenu._TEXT_COLOUR)
+            else:
+                line = entry
+                item = None
+
+            text = self._font.render(line, True, colour)
             self._buf.append((text, (CLIMenu._TEXT_START[0], y_coord), item))
             y_coord += CLIMenu._TEXT_SIZE
-
-            # Note that the 'is not None' here is because 0 is an allowed
-            # item index.
-            if item is not None:
-                self._items.append(item)
-
-                # If there's a command string associated with this item,
-                # render the text and store it in a dictionary mapping the
-                # item ID to the cmd text
-                if cmd_str:
-                    self._cmds[item] = self._font.render(
-                        cmd_str, True, CLIMenu._TEXT_COLOUR)
 
     def run(self, events):
         """Handle events."""
