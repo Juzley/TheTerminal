@@ -1,0 +1,164 @@
+<h1>The Terminal</h1>
+
+
+
+<h2>Overview</h2>
+
+<p> The terminal is a local multiplayer hacking game inspired by
+<a href="http://keeptalkinggame.com">"Keep Talking and Nobody Explodes"</a>.
+The aim of the game is to hack into a computer terminal by following the
+instructions in the hacking manual, before the system locks you out.</p>
+
+<p>Only one person can see and interact with the computer, but is not allowed to
+view the hacking manual. The other players can view the manual, but are not
+allowed to see the computer. The two groups must communicate with each other
+in order to gain access before timer runs out.</p>
+
+<h2>Getting started</h2>
+
+TODO
+
+<h2>Hacking</h2>
+<h3>Guessing Passwords</h3>
+<p>We have recovered a shredded list of passwords from a nearby dumpster.
+Despite our best efforts to piece it back together, it is still hard to make
+out the passwords. Below are our best guesses for the passwords of each user -
+perhaps with a bit of extra work you can work which are correct?</p>
+
+<p>You will have a number of attempts to log in before the password is reset.
+Using our cracked login program, you will be able to see how many characters
+were correct - the right letter in the right position - for each attempt. You
+should be able to work out the password using this information.</p>
+
+<table>
+    <tr><th>User</th><th>Possible Passwords</th></tr>
+    <tr>
+        <td>root</td>
+        <td>flask, great, force, gleam, brick, flute, blast, feast, flick,
+            flank</td>
+    </tr>
+    <tr>
+        <td>ro0t</td>
+        <td>tusks, blush, askew, train, asset, burns, tries, turns, basks,
+            busks</td>
+    </tr>
+    <tr>
+        <td>rewt</td>
+        <td>maple, pearl, lapel, myths, cycle, apple, ladle, ample, maize,
+            capel</td>
+    </tr>
+    <tr>
+        <td>00142331</td>
+        <td>trice, racer, tours, glaze, trail, raise, slick, track, grace,
+            trace</td>
+    </tr>
+    <tr>
+        <td>00143231</td>
+        <td>court, truce, fords, flirt, cruel, craft, tours, chart, fours,
+            count</td> 
+    </tr>
+    <tr>
+        <td>01043231</td>
+        <td>eagle, ariel, glare, gains, earns, gauge, angle, early, agile,
+            engle</td>
+    </tr>
+</table>
+
+<h3>Guessing Visual Passwords</h3>
+<p>Some organisations use images rather than text passwords in order to
+authenticate users. Each user selects a set of images to identify themselves.
+The visual login process presents the user with three of these images, and one
+other image - the user must select the other image in order to be granted
+access. Selecting an incorrect image will result in a temporary lockout.</p>
+
+<p>Most users select images that represent their likes and passtimes, which
+allows the system to be easily bypassed with a bit of research. We've used some
+social engineering techniques to identify the likes and dislikes for several
+users - see if you can use this information to obtain access.</p>
+
+<table>
+    <tr><th>User</th><th>Likes</th></tr>
+    <tr>
+        <td>A</td>
+        <td>Cars, Cats, Dogs, Planes, Music, Flowers</td>
+    </tr>
+    <tr>
+        <td>B</td>
+        <td>Skateboarding, Horses, Music, Dogs, Food, Wine</td>
+    </tr>
+    <tr>
+        <td>C</td>
+        <td>Books, Computers, Cats, Archery, Boats, Cars</td>
+    </tr>
+    <tr>
+        <td>D</td>
+        <td>Soccer, Basketball, Baseball, Archery, Skateboarding, Tennis</td>
+    </tr>
+    <tr>
+        <td>E</td>
+        <td>Books, Wine, Planes, Computers, Music, Horses</td>
+    </tr>
+    <tr>
+        <td>F</td>
+        <td>Soccer, Tennis, Flowers, Cats, Boats, Archery</td>
+    </tr>
+    <tr>
+        <td>G</td>
+        <td>Food, Wine, Beer, Planes, Basketball, Baseball</td>
+    </tr>
+    <tr>
+        <td>H</td>
+        <td>Cars, Beer, Soccer, Tennis, Food, Computers</td>
+    </tr>
+</table>
+
+<h3>Cracking Programs</h3>
+<p>You'll sometimes need to use a hex editor to crack sprograms in order to
+bypass security checks. The hex editor shows the code of the program
+line-by-line. Each line is made up of 6 numbers.</p>
+
+<p>In order to crack a program, you will need to modify the lines of code which
+make up the program according to the following rules. The hex editor will
+allow you to edit the lines of code one-by-one, replacing one value in the
+line with another value. Follow the rules below in order to determine the
+correct actions for each line:</p>
+
+<ol type="a">
+    <li>If this is the first line in the program go to (d), else go to (b)</li>
+    <li>If this is the last line go to (j), else go to (c)</li>
+    <li>If you made a change to the previous line, go to (g), else go to
+        (d)</li>
+    <li>If the has one or more 9s, replace the last number in the line by 7,
+        else go to (e)</li>
+    <li>If the line contains one or more zeros, replace the first occurence
+        with 9, else go to (f)</li>
+    <li>If the line contains more than 3 odd numbers, reduce the first odd
+        number by 1, else go to (x)</li>
+    <li>If the line has one or more zeros, replace the first number in the
+        line with the number that was replaced in the previous line, else go
+        to (h)</li>
+    <li>If the line contains one or more 9s, replace the first occurence with
+        the number of the column in the last line which was edited, else go to
+        (i)</li>
+    <li>If the line contains one or more values which match the value inserted
+        in the previous line, replace the first occurence with zero, else go
+        to (x)</li>
+    <li>Replace the final value with the number of lines (excluding this line)
+        which have been modified.</li>
+    <li>Do not edit the line.</li>
+</ol>
+
+<h3>Decrypting Filesystems</h3>
+<p>Some systems you encounter will have encrypted filesystems, which will need
+to be unencrypted before you can progress further with a hack.</p>
+
+TODO
+
+<img src="decrypt.png">
+       
+        
+
+
+        
+
+
