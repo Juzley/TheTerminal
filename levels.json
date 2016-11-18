@@ -21,7 +21,7 @@
         "depends": {
             "login" : ["hexedit", "inspect"]
         },
-        "requires": [ 0 ]
+        "requires": []
     },
     {
         "id": 2,
@@ -31,7 +31,7 @@
             "login": "ImagePassword"
         },
         "depends": {},
-        "requires": [ 1 ]
+        "requires": []
     },
     {
         "id": 3,
@@ -41,7 +41,7 @@
             "network": "NetworkManager"
         },
         "depends": {},
-        "requires": [ 2 ]
+        "requires": []
     },
     {
         "id": 4,
@@ -51,7 +51,7 @@
             "decrypt": "Decrypt"
         },
         "depends": {},
-        "requires": [ 3 ]
+        "requires": []
     },
     {
         "id": 5,
@@ -61,7 +61,7 @@
             "minehunt": "MineHunt"
         },
         "depends": {},
-        "requires": [ 4 ]
+        "requires": []
     }
 ]
 
