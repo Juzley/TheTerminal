@@ -1,6 +1,13 @@
-<h1>The Terminal</h1>
-
-
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>The Terminal - Hacking Manual</title>
+    <link rel="stylesheet" type="text/css" href="manual.css">
+</head>
+<body>
+<div id='manual'>
+<h1>The Terminal - Hacking Manual</h1>
 
 <h2>Overview</h2>
 
@@ -19,6 +26,7 @@ in order to gain access before timer runs out.</p>
 TODO
 
 <h2>Hacking</h2>
+<div class='puzzle-section'>
 <h3>Guessing Passwords</h3>
 <p>We have recovered a shredded list of passwords from a nearby dumpster.
 Despite our best efforts to piece it back together, it is still hard to make
@@ -63,7 +71,9 @@ should be able to work out the password using this information.</p>
             engle</td>
     </tr>
 </table>
+</div>
 
+<div class='puzzle-section'>
 <h3>Guessing Visual Passwords</h3>
 <p>Some organisations use images rather than text passwords in order to
 authenticate users. Each user selects a set of images to identify themselves.
@@ -111,7 +121,9 @@ users - see if you can use this information to obtain access.</p>
         <td>Cars, Beer, Soccer, Tennis, Food, Computers</td>
     </tr>
 </table>
+</div>
 
+<div class='puzzle-section'>
 <h3>Cracking Programs</h3>
 <p>You'll sometimes need to use a hex editor to crack sprograms in order to
 bypass security checks. The hex editor shows the code of the program
@@ -147,7 +159,9 @@ correct actions for each line:</p>
         which have been modified.</li>
     <li>Do not edit the line.</li>
 </ol>
+</div>
 
+<div class='puzzle-section'>
 <h3>Decrypting Filesystems</h3>
 <p>Some systems you encounter will have encrypted filesystems, which will need
 to be unencrypted before you can progress further with a hack.</p>
@@ -155,10 +169,99 @@ to be unencrypted before you can progress further with a hack.</p>
 TODO
 
 <img src="decrypt.png">
+</div>
        
-        
+<div class='puzzle-section'>
+<h3>Disabling Hardware Security</h3>
+<p>Some of our target devices have hardware security support in the form of
+on-board expansion chips. These will prevent us from gaining access unless we
+can somehow disable them. Luckily we were able to 'obtain' a copy of the
+hardware specifications, which should help you bypass this protection.</p>
 
+<p>Be careful - booting the system with an incorrect hardware configuration may
+affect the system clock, which may reduce the amount of time you have before
+you are logged out.</p>
 
-        
+<p>Each system may have one or more security chip on its motherboard, with an
+associated pull-down resistor. In order to bypass the security system, you
+must remove the chip, its pull-down resistor, or both, based on the information
+in the following tables.</p>
 
+<p>Table 1:
+Use the last character of the security chip's identifier and the value of the
+chip's pull-down resistor to determine the correction action.</p>
 
+<table>
+    <tr>
+        <th>Resistor Value</th>
+        <th>Odd number</th>
+        <th>Event number</th>
+        <th>Zero</th>
+        <th>Letter</th>
+    </tr>
+    <tr><td>10 kOhms</td><td>N</td><td>C</td><td>R</td><td>B</td></tr>
+    <tr><td>20 kOhms</td><td>C</td><td>C</td><td>B</td><td>R</td></tr>
+    <tr><td>30 kOhms</td><td>R</td><td>R</td><td>C</td><td>C</td></tr>
+    <tr><td>40 kOhms</td><td>B</td><td>N</td><td>R</td><td>C</td></tr>
+    <tr><td>50 kOhms</td><td>T2, row 1</td><td>T2, row 4</td><td>N></td><td>T2,
+            row 3</td></tr>
+    <tr><td>60 kOhms</td><td>T2, row 5</td><td>C</td><td>T2, row 2</td><td>T2,
+            row 6</td></tr>
+</table>
+
+<p>Key:
+<ul>
+    <li>N: remove nothing.</li>
+    <li>C: remove the chip.</li>
+    <li>R: remove the resistor.</li>
+    <li>B: remove both.</li>
+    <li>T2, row#: Consult table 2, looking at the specified row.</li>
+</ul>
+</p>
+
+<p>Table 2:
+Use the row given by table 1, and the first character of the terminal name to
+determine the correct action.</p>
+
+<table>
+    <tr>
+        <th>Row</th>
+        <th>Odd number</th>
+        <th>Even number</th>
+        <th>Zero</th>
+        <th>Letter</th>
+    </tr>
+    <tr><td>Row 1</td><td>C</td><td>N</td><td>R</td><td>C</td></tr>
+    <tr><td>Row 2</td><td>R</td><td>C</td><td>R</td><td>C</td></tr>
+    <tr><td>Row 3</td><td>R</td><td>B</td><td>C</td><td>R</td></tr>
+    <tr><td>Row 4</td><td>C</td><td>R</td><td>C</td><td>R</td></tr>
+    <tr><td>Row 5</td><td>N</td><td>C</td><td>R</td><td>B</td></tr>
+    <tr><td>Row 6</td><td>C</td><td>C</td><td>C</td><td>R</td></tr>
+</table>
+
+<p>Key:
+<ul>
+    <li>N: remove nothing.</li>
+    <li>C: remove the chip.</li>
+    <li>R: remove the resistor.</li>
+    <li>B: remove both.</li>
+</ul>
+</p>
+
+<p>Table 3:
+This table shows the values of the different resistors, based on the coloured
+markings (read from left to right) printed on the body of the resistor.</p>
+
+<table>
+    <tr><th>Markings</th><th>Value</th></tr>
+    <tr><td>red-red-yellow-green</td><td>10 kOhms</td></tr>
+    <tr><td>red-black-yellow-green</td><td>20 kOhms</td></tr>
+    <tr><td>yellow-blue-blue-red</td><td>30 kOhms</td></tr>
+    <tr><td>red-blue-blue-yellow</td><td>40 kOhms</td></tr>
+    <tr><td>green-red-blue-green</td><td>50 kOhms</td></tr>
+    <tr><td>green-black-blue-green</td><td>60 kOhms</td></tr>
+</table>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,44 @@
+* {
+    font-family: courier;
+}
+
+body {
+    background: #EEE;
+}
+
+#manual {
+    max-width: 20cm;
+    margin: auto;
+}
+
+div.puzzle-section {
+    background: white;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.puzzle-section h3 {
+    text-align: center;
+}
+
+.puzzle-section table {
+    border-collapse: collapse;
+}
+
+.puzzle-section tr:nth-child(odd) {
+    background: #EEE
+}
+
+.puzzle-section th {
+    background: #CCC
+    font-weight: bold;
+}
+
+.puzzle-section th, .puzzle-section td {
+    text-align: left;
+    border: 1px solid;
+}
+
+
