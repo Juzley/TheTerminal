@@ -279,7 +279,7 @@ class Terminal:
 
             # If we are in a program, then abort it
             if self._current_program:
-                # If the current program isn't allow ctrl+c then stop
+                # If the current program doesn't allow ctrl+c then stop
                 if not self._current_program.allow_ctrl_c:
                     return
 

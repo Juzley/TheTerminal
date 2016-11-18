@@ -26,28 +26,29 @@ rewt     | maple, pearl, lapel, myths, cycle, apple, ladle, ample, maize, capel
 01043231 | eagle, ariel, glare, gains, earns, gauge, angle, early, agile, engle
 
 
-Image Password Guessing
+Visual Password Guessing
 -----------------------
 Some organisations use images rather than text passwords in order to
-authenticate users. For image login processes, each user specifies two sets of
-images: A and B. The login screen presents the user with 4 images: 1 from
-category A and 3 from category B. In order to log in, the user must select
-the image from category A.
+authenticate users. Each user selects a set of images to identify themselves.
+The visual login process presents the user with three of these images, and one
+other image - the user must select the other image in order to be granted
+access. Selecting an incorrect image will result in a temporary lockout.
 
-Our research has shown that users always pick images representing things that
-they like for category A, and images representing their dislikes for category
-B. We've used some social engineering techniques to identify the likes and
-dislikes for several users - see if you can use this information to obtain
-access.
+Most users select images that represent their likes and passtimes, which
+allows the system to be easily bypassed with a bit of research. We've used some
+social engineering techniques to identify the likes and dislikes for several
+users - see if you can use this information to obtain access.
 
-User   | Likes          | Dislikes
--------|----------------|---------------------------------
-User 1 | Soccer, Tennis | Cars, Planes, Flowers, Cats
-User 2 | Flowers, Cats  | Cars, Planes, Dogs, Music
-User 3 | Dogs, Cats     | Cars, Flowers, Computers, Food
-User 4 | Dogs, Cats     | Cars, Planes, Fishing, Boats
-User 5 | Cars, Food     | Fishing, Soccer, Computers, Cats
-
+User   | Likes          
+-------|-------------------------------------------------------------
+User 1 | Cars, Cats, Dogs, Planes, Music, Flowers
+User 2 | Skateboarding, Horses, Music, Dogs, Food, Wine
+User 3 | Books, Computers, Cats, Archery, Boats, Cars 
+User 4 | Soccer, Basketball, Baseball, Archery, Skateboarding, Tennis
+User 5 | Books, Wine, Planes, Computers, Music, Horses
+User 6 | Soccer, Tennis, Flowers, Cats, Boats, Archery
+User 7 | Food, Wine, Beer, Planes, Basketball, Baseball
+User 8 | Cars, Beer, Soccer, Tennis, Food, Computers
 
 Cracking
 --------

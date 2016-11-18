@@ -45,8 +45,10 @@ class TerminalProgram:
         """Initialize the class."""
         self._terminal = terminal
 
-        # Is ctrl+c allowed to cancel this program at this point?
-        self.allow_ctrl_c = True
+    @property
+    def allow_ctrl_c(self):
+        """Indicate whether ctrl-c is allowed to cancel the program."""
+        return True
 
     @property
     def prompt(self):
