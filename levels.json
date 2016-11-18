@@ -1,12 +1,17 @@
-{
-    "Level 1": {
+[
+    {
+        "id": 0,
+        "name": "Level 1",
         "time": 60,
         "programs": {
             "login": "PasswordGuess"
         },
-        "depends" : {}
+        "depends" : {},
+        "requires": {}
     },
-    "Level 2":  {
+    {
+        "id": 1,
+        "name": "Level 2",
         "time": 180,
         "programs": {
             "login": "PasswordGuess",
@@ -15,35 +20,48 @@
         },
         "depends": {
             "login" : ["hexedit", "inspect"]
-        }
+        },
+        "requires": [ 0 ]
     },
-    "Level 3": {
+    {
+        "id": 2,
+        "name": "Level 3",
         "time": 50,
         "programs": {
             "login": "ImagePassword"
         },
-        "depends": {}
+        "depends": {},
+        "requires": [ 1 ]
     },
-    "Level 4": {
+    {
+        "id": 3,
+        "name": "Level 4",
         "time": 50,
         "programs": {
             "network": "NetworkManager"
         },
-        "depends": {}
+        "depends": {},
+        "requires": [ 2 ]
     },
-    "Level 5": {
+    {
+        "id": 4,
+        "name": "Level 5",
         "time": 120,
         "programs": {
             "decrypt": "Decrypt"
         },
-        "depends": {}
+        "depends": {},
+        "requires": [ 3 ]
     },
-    "Level 6": {
+    {
+        "id": 5,
+        "name": "Level 6",
         "time": 120,
         "programs": {
             "minehunt": "MineHunt"
         },
-        "depends": {}
+        "depends": {},
+        "requires": [ 4 ]
     }
-}
+]
 

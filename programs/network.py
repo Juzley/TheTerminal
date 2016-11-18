@@ -114,6 +114,10 @@ class NetworkManager(program.TerminalProgram):
         self._puzzle = PuzzleParser(puzzle[0])
 
     @property
+    def allow_ctrl_c(self):
+        return not self._error_mode
+
+    @property
     def help(self):
         """Get the help string for the program."""
         return "Manage network connectivity."
@@ -222,9 +226,6 @@ class NetworkManager(program.TerminalProgram):
         return reversed(lines)
 
     def start(self):
-        # Make sure ctrl+c allowed again
-        self.allow_ctrl_c = True
-
         # Reset board
         self._visited_from = {}
         self._exited = False
@@ -294,7 +295,6 @@ class NetworkManager(program.TerminalProgram):
         self._error_mode = True
         self._error_msg = msg
         self._error_mode_start = self._terminal.time
-        self.allow_ctrl_c = False
 
 
 class PuzzleParser:

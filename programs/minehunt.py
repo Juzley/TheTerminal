@@ -32,11 +32,16 @@ class MineHunt(program.TerminalProgram):
         self._board_pos = (int((screen_rect[2] / 2) - (self._board.width / 2)),
                            self._BOARD_Y)
 
-        font = load_font(None, self._FONT_SIZE)
+        self._font = load_font(None, self._FONT_SIZE)
         self._game_over_texts = [
-            font.render("Game over!!", True, (255, 255, 255)),
-            font.render("Press R to retry, or Q to quit",
-                        True, (255, 255, 255)),
+            self._font.render("Game over!!", True, (255, 255, 255)),
+            self._font.render("Press R to retry, or Q to quit",
+                              True, (255, 255, 255)),
+        ]
+        self._game_won_texts = [
+            self._font.render("Game completed!!", True, (255, 255, 255)),
+            self._font.render("Press R to retry, or Q to quit",
+                              True, (255, 255, 255)),
         ]
 
     @property
@@ -69,7 +74,7 @@ class MineHunt(program.TerminalProgram):
 
     def on_keypress(self, key, key_unicode):
         """Handle a user keypress."""
-        if self._board.hit_mine:
+        if self._board.state != Board.State.PLAYING:
             print(key)
             if key == pygame.K_r:
                 self._board.reset()
@@ -89,42 +94,41 @@ class MineHunt(program.TerminalProgram):
         screen = pygame.display.get_surface()
         screen.blit(self._board.draw_surface,
                     self._board_pos)
+        screen_rect = screen.get_rect()
 
         # Have we hit a mine? Draw game over text
         # TODO: have a game surface and draw this on
-        if self._board.hit_mine:
-            screen_rect = screen.get_rect()
+        if self._board.state != Board.State.PLAYING:
+            texts = (self._game_over_texts
+                     if self._board.state == Board.State.MINE_HIT else
+                     self._game_won_texts)
             text_y = self._board_pos[1] + self._board.height + 5
-            for text in self._game_over_texts:
+            for text in texts:
                 text_rect = text.get_rect()
                 text_x = int(screen_rect[2] / 2 - text_rect[2] / 2)
                 screen.blit(text, (text_x, text_y))
 
                 text_y += text_rect[3]
-
-
-BOARDS = (
-"""
-.....x
-x.....
-......
-...x..
-......
-xx....
-""",
-"""
-.....x...
-x........
-.........
-...x.....
-........x
-xx......x
-""")
+        else:
+            # Draw mines found text
+            text = self._font.render("Mines flagged: {} / {}"
+                                     .format(self._board.flag_count,
+                                             self._board.mine_count),
+                                     True, (255, 255, 255))
+            text_x = int(screen_rect[2] / 2 - text.get_rect()[2] / 2)
+            text_y = self._board_pos[1] + self._board.height + 5
+            screen.blit(text, (text_x, text_y))
 
 
 class Board:
     _MAX_WIDTH = 400
     _MAX_HEIGHT = 400
+
+    @unique
+    class State(Enum):
+        PLAYING = 1
+        MINE_HIT = 2
+        CLEARED = 3
 
     def __init__(self, board_str):
         # Board is a 2D array of Squares, indexed by row then col
@@ -140,8 +144,11 @@ class Board:
         # Surface for the next draw
         self.draw_surface = None
 
-        # Have we hit a mine?
-        self.hit_mine = False
+        # Board state
+        self.state = Board.State.PLAYING
+
+        # Total mine count
+        self.mine_count = 0
 
         # Create the board
         self._create_board(board_str)
@@ -156,14 +163,19 @@ class Board:
 
         self._setup_draw()
 
+    @property
+    def flag_count(self):
+        return len([s for s in itertools.chain.from_iterable(self._board)
+                    if s.state == Square.State.FLAGGED])
+
     def reset(self):
-        self.hit_mine = False
+        self.state = Board.State.PLAYING
         for square in itertools.chain.from_iterable(self._board):
             square.state = Square.State.HIDDEN
         self._setup_draw()
 
     def on_mouseclick(self, button, pos):
-        if self.hit_mine:
+        if self.state != Board.State.PLAYING:
             return
 
         square = self._hit_square(pos)
@@ -181,6 +193,17 @@ class Board:
                 square.state = Square.State.HIDDEN
                 self._setup_draw()
 
+            # Game is over when mines have been flagged and all squares
+            # revealed
+            if len([
+                s for s in itertools.chain.from_iterable(self._board)
+                if s.state == Square.State.HIDDEN or
+                (s.state == Square.State.FLAGGED and
+                 s.type == Square.Type.EMPTY) or
+                (s.state != Square.State.FLAGGED and
+                 s.type == Square.Type.MINE)]) == 0:
+                self.state = Board.State.CLEARED
+
     def _reveal_square(self, square):
         # Set for this square, and if it doesn't have any mine neighbours,
         # reveal them!
@@ -194,7 +217,7 @@ class Board:
               square.type == Square.Type.MINE):
             # We have revealed a Mine!
             square.state = Square.State.REVEALED
-            self.hit_mine = True
+            self.state = Board.State.MINE_HIT
 
     def _create_board(self, board_str):
         lines = [l for l in board_str.split("\n") if len(l) > 0]
@@ -217,7 +240,7 @@ class Board:
             self._board.append([Square(get_type(c), get_rect(row, col))
                                 for col, c in enumerate(line)])
 
-        # Now calculate neighbours
+        # Now calculate neighbours and mines
         for row in range(self._rows):
             for col in range(self._cols):
                 neighbours = []
@@ -228,8 +251,10 @@ class Board:
                             0 <= neighbour[1] < self._cols):
                         neighbours.append(
                             self._board[neighbour[0]][neighbour[1]])
-
-                self._board[row][col].set_neighbours(neighbours)
+                square = self._board[row][col]
+                square.set_neighbours(neighbours)
+                if square.type == Square.Type.MINE:
+                    self.mine_count += 1
 
     def _hit_square(self, pos):
         for square in itertools.chain.from_iterable(self._board):
@@ -261,7 +286,7 @@ class Square:
         FLAGGED = 2
         REVEALED = 3
 
-    _FLAG_HEIGHT_FACTOR = 0.7
+    _FLAG_HEIGHT_FACTOR = 0.6
     _FLAG_POLE_WIDTH = 3
     _FLAG_SIZE_FACTOR = 0.6
 
@@ -318,7 +343,7 @@ class Square:
                          self._FLAG_POLE_WIDTH)
         pygame.draw.rect(flag, (255, 20, 20),
                          ((x_coord, pole_gap,
-                           flag_size, flag_size)),
+                           flag_size, int(flag_size * 0.9))),
                          0)
 
     def get_surface(self):
@@ -347,4 +372,31 @@ class Square:
                           int(surface_rect[3] / 2 - text_rect[3] / 2)))
 
 
-
+BOARDS = (
+"""
+.....x
+x.....
+......
+...x..
+......
+xx....
+""",
+"""
+.....x...
+x........
+.........
+...x.....
+........x
+xx......x
+""",
+"""
+.....x
+......
+......
+...x..
+......
+xx....
+..x...
+.x....
+""",
+)

@@ -17,7 +17,7 @@ class Decrypt(program.TerminalProgram):
          {'a': 'a', 'b': 'b', 'c': 'c', 'd': 'd', 'e': 'e', 'f': 'f', 'g': 'g',
           'h': 'h', 'i': 'A', 'j': 'B', 'k': 'C', 'l': 'D', 'm': 'E', 'n': 'F',
           'o': 'G', 'p': 'H', 'q': 'y', 'r': 'z', 's': 'Y', 't': 'Z', 'u': 'm',
-          'v': 'n', 'w': 'Q', 'x': 'R', 'y': 'S', 'z': 'y'}),
+          'v': 'n', 'w': 'Q', 'x': 'R', 'y': 'S', 'z': 'T'}),
         ('media/fonts/Gobotronic.otf',
          {'a': 'n', 'b': 'o', 'c': 'p', 'd': 'q', 'e': 'r', 'f': 's', 'g': 't',
           'h': 'u', 'i': 'v', 'j': 'w', 'k': 'x', 'l': 'y', 'm': 'z', 'n': 'N',
