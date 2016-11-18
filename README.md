@@ -1,7 +1,7 @@
 # The Terminal
 
 An entry into the Github 2016 Game-Off game jam, this is a cooperative hacking
-game in the style of [Keep Talking and Nobody Explodes][http://keeptalkinggame.com].
+game in the style of [Keep Talking and Nobody Explodes](http://keeptalkinggame.com).
 
 ## Setup
 * Install python3 and the pygame module.
