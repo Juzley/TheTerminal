@@ -121,6 +121,7 @@ class GameplayState(GameState):
 
     def __init__(self, mgr, level_info):
         """Initialize the class."""
+        self._level_info = level_info
         self._terminal = Terminal(
             programs=level_info['programs'],
             time=level_info['time'],
@@ -160,6 +161,7 @@ class GameplayState(GameState):
         if self._terminal.completed():
             # Don't need to return to the game, so replace this gamestate with
             # the success screen.
+            menu.LevelMenu.completed_level(self._level_info['id'])
             self._mgr.replace(SuccessState(self._mgr, self._terminal))
 
     def draw(self):

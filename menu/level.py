@@ -17,6 +17,7 @@ class LevelMenu(menu.CLIMenu):
         BACK = 1
 
     _LEVELS_FILE = 'levels.json'
+    _PROGRESS_FILE = 'progress.json'
 
     def __init__(self, mgr):
         """Initialize the class."""
@@ -41,6 +42,24 @@ class LevelMenu(menu.CLIMenu):
                     i, l in enumerate(self._levels)])
 
         super().__init__(mgr, buf)
+
+    @staticmethod
+    def completed_level(lvl_id):
+        """Mark a level as completed."""
+        progress = {}
+        try:
+            with open(LevelMenu._PROGRESS_FILE, 'r') as f:
+                progress = json.load(f)
+        except (FileNotFoundError, ValueError):
+            pass
+
+        completed = progress.get('completed', [])
+        if lvl_id not in completed:
+            completed.append(lvl_id)
+        progress['completed'] = completed
+
+        with open(LevelMenu._PROGRESS_FILE, 'w') as f:
+            json.dump(progress, f)
 
     def _on_choose(self, item):
         if item == LevelMenu.Items.BACK:
