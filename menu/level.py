@@ -32,16 +32,14 @@ class LevelMenu(menu.CLIMenu):
                     level_info['programs'][cmd] = getattr(programs, cls_str)
 
         # Load progress information.
-        completed = []
-        with open(LevelMenu._PROGRES_, 'r') as f:
-            progress = json.load(f)
-            completed = progress['completed']
+        progress = LevelMenu._get_progress()
+        completed = progress.get('completed', [])
 
         # Build the menu text
         buf = [
             '$ cd levels',
             '$ ls',
-            menu.CLIMenuItem('  ..', LevelMenu.Items.BACK, '$ cd ..')
+            menu.CLIMenuItem('  ..', '$ cd ..', LevelMenu.Items.BACK)
         ]
 
         # Add each level as a menu item
@@ -54,20 +52,26 @@ class LevelMenu(menu.CLIMenu):
                                     cmd='$ connect {}'.format(lvl['name']),
                                     item=idx,
                                     disabled=disabled)
-            buf.extend(item)
+            buf.append(item)
 
         super().__init__(mgr, buf)
 
     @staticmethod
-    def completed_level(lvl_id):
-        """Mark a level as completed."""
-        progress = {}
+    def _get_progress():
+        """Load the current level progress from disk."""
         try:
             with open(LevelMenu._PROGRESS_FILE, 'r') as f:
-                progress = json.load(f)
+                return json.load(f)
         except (FileNotFoundError, ValueError):
-            pass
+            # The file may not be found if this is the first time the game is
+            # played or the user hasn't completed any levels. Also ignore any
+            # JSON parsing errors.
+            return {}
 
+    @staticmethod
+    def completed_level(lvl_id):
+        """Mark a level as completed."""
+        progress = LevelMenu._get_progress()
         completed = progress.get('completed', [])
         if lvl_id not in completed:
             completed.append(lvl_id)

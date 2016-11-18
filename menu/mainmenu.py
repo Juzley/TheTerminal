@@ -2,7 +2,7 @@
 
 
 import constants
-from .menu import CLIMenu
+from .menu import CLIMenu, CLIMenuItem
 from .level import LevelMenu
 from enum import Enum, unique
 
@@ -19,15 +19,15 @@ class MainMenu(CLIMenu):
     def __init__(self, mgr):
         """Initialize the class."""
         buf = [
-            ('-' * 60, None, None),
-            ('', None, None),
-            ('Welcome to {}'.format(constants.GAMENAME), None, None),
-            ('', None, None),
-            ('-' * 60, None, None),
-            ('', None, None),
-            ('$ ls', None, None),
-            ('  start', MainMenu.Items.START_GAME, '$ start'),
-            ('  exit', MainMenu.Items.QUIT, '$ exit')
+            '-' * 60,
+            '',
+            'Welcome to {}'.format(constants.GAMENAME),
+            '',
+            '-' * 60,
+            '',
+            '$ ls',
+            CLIMenuItem('  start', '$ start', MainMenu.Items.START_GAME),
+            CLIMenuItem('  exit', '$ exit', MainMenu.Items.QUIT)
         ]
         super().__init__(mgr, buf)
 

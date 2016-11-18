@@ -168,7 +168,8 @@ class CLIMenu(GameState):
                     # If there's a command string associated with this item,
                     # render the text and store it in a dictionary mapping the
                     # item ID to the cmd text
-                    if entry.cmd
+                    if entry.cmd:
+                        print(entry.cmd)
                         self._cmds[item] = self._font.render(
                             entry.cmd, True, CLIMenu._TEXT_COLOUR)
             else:
