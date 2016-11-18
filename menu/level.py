@@ -31,15 +31,30 @@ class LevelMenu(menu.CLIMenu):
                 for cmd, cls_str in level_info['programs'].items():
                     level_info['programs'][cmd] = getattr(programs, cls_str)
 
+        # Load progress information.
+        completed = []
+        with open(LevelMenu._PROGRES_, 'r') as f:
+            progress = json.load(f)
+            completed = progress['completed']
+
+        # Build the menu text
         buf = [
-            ('$ cd levels', None, None),
-            ('$ ls', None, None),
-            ('  ..', LevelMenu.Items.BACK, '$ cd ..')
+            '$ cd levels',
+            '$ ls',
+            menu.CLIMenuItem('  ..', LevelMenu.Items.BACK, '$ cd ..')
         ]
 
         # Add each level as a menu item
-        buf.extend([('  ' + l['name'], i, '$ connect {}'.format(l['name'])) for
-                    i, l in enumerate(self._levels)])
+        for idx, lvl in enumerate(self._levels):
+            # Work out whether this level is accessible.
+            disabled = len([r for r in lvl['requires']
+                            if r not in completed]) > 0
+
+            item = menu.CLIMenuItem(text='  ' + lvl['name'],
+                                    cmd='$ connect {}'.format(lvl['name']),
+                                    item=idx,
+                                    disabled=disabled)
+            buf.extend(item)
 
         super().__init__(mgr, buf)
 
