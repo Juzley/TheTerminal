@@ -1,3 +1,4 @@
+
 * {
     font-family: courier;
 }
@@ -17,28 +18,41 @@ div.puzzle-section {
     margin-bottom: 20px;
     padding-left: 5px;
     padding-right: 5px;
+    padding-bottom: 10px;
 }
 
 .puzzle-section h3 {
     text-align: center;
 }
 
+.puzzle-section p.intro {
+    font-style: italic;
+}
+
 .puzzle-section table {
     border-collapse: collapse;
+    max-width: 90%;
+    margin: auto;
+}
+
+ol li:nth-child(odd) {
+    background: #EEE;
 }
 
 .puzzle-section tr:nth-child(odd) {
-    background: #EEE
+    background: #EEE;
 }
 
 .puzzle-section th {
-    background: #CCC
+    background: #CCC;
     font-weight: bold;
 }
 
 .puzzle-section th, .puzzle-section td {
     text-align: left;
     border: 1px solid;
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
 

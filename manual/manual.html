@@ -28,15 +28,18 @@ TODO
 <h2>Hacking</h2>
 <div class='puzzle-section'>
 <h3>Guessing Passwords</h3>
-<p>We have recovered a shredded list of passwords from a nearby dumpster.
-Despite our best efforts to piece it back together, it is still hard to make
-out the passwords. Below are our best guesses for the passwords of each user -
-perhaps with a bit of extra work you can work which are correct?</p>
+<p class='intro'>We have recovered a shredded list of passwords from a nearby
+dumpster. Despite our best efforts to piece it back together, it is still hard
+to make out the passwords. Below are our best guesses for the passwords of each
+user - perhaps with a bit of extra work you can work which are correct?</p>
 
 <p>You will have a number of attempts to log in before the password is reset.
 Using our cracked login program, you will be able to see how many characters
 were correct - the right letter in the right position - for each attempt. You
 should be able to work out the password using this information.</p>
+
+<p>Inputting the incorrect password too many times will lead to a password
+reset, and you'll have to start again.</p>
 
 <table>
     <tr><th>User</th><th>Possible Passwords</th></tr>
@@ -75,49 +78,50 @@ should be able to work out the password using this information.</p>
 
 <div class='puzzle-section'>
 <h3>Guessing Visual Passwords</h3>
-<p>Some organisations use images rather than text passwords in order to
-authenticate users. Each user selects a set of images to identify themselves.
-The visual login process presents the user with three of these images, and one
-other image - the user must select the other image in order to be granted
-access. Selecting an incorrect image will result in a temporary lockout.</p>
+<p class='intro'>Some organisations use a visual password system. Users select
+images to identify themselves, and this selection is then used for
+authentication. Fortunately for us, people usually pick images based on their
+likes and passtimes...</p>
 
-<p>Most users select images that represent their likes and passtimes, which
-allows the system to be easily bypassed with a bit of research. We've used some
-social engineering techniques to identify the likes and dislikes for several
-users - see if you can use this information to obtain access.</p>
+<p>The visual login process will present you with four images - three from the
+user's selected images, and one which was not selected by the user. Use the
+table below to identify the user based on the images you are presented with,
+and select the odd-one-out</p>
+
+<p>Selecting an incorrect image will result in a temporary lockout.</p>
 
 <table>
     <tr><th>User</th><th>Likes</th></tr>
     <tr>
-        <td>A</td>
+        <td>User A</td>
         <td>Cars, Cats, Dogs, Planes, Music, Flowers</td>
     </tr>
     <tr>
-        <td>B</td>
+        <td>User B</td>
         <td>Skateboarding, Horses, Music, Dogs, Food, Wine</td>
     </tr>
     <tr>
-        <td>C</td>
+        <td>User C</td>
         <td>Books, Computers, Cats, Archery, Boats, Cars</td>
     </tr>
     <tr>
-        <td>D</td>
+        <td>User D</td>
         <td>Soccer, Basketball, Baseball, Archery, Skateboarding, Tennis</td>
     </tr>
     <tr>
-        <td>E</td>
+        <td>User E</td>
         <td>Books, Wine, Planes, Computers, Music, Horses</td>
     </tr>
     <tr>
-        <td>F</td>
+        <td>User F</td>
         <td>Soccer, Tennis, Flowers, Cats, Boats, Archery</td>
     </tr>
     <tr>
-        <td>G</td>
+        <td>User G</td>
         <td>Food, Wine, Beer, Planes, Basketball, Baseball</td>
     </tr>
     <tr>
-        <td>H</td>
+        <td>User H</td>
         <td>Cars, Beer, Soccer, Tennis, Food, Computers</td>
     </tr>
 </table>
@@ -125,15 +129,17 @@ users - see if you can use this information to obtain access.</p>
 
 <div class='puzzle-section'>
 <h3>Cracking Programs</h3>
-<p>You'll sometimes need to use a hex editor to crack sprograms in order to
-bypass security checks. The hex editor shows the code of the program
-line-by-line. Each line is made up of 6 numbers.</p>
+<p class='intro'>You'll sometimes need to modify the code of programs on the
+computer you're attempting to gain access to in order to bypass security
+checks. Brush off your programming skills and open your hex editor...</p>
 
-<p>In order to crack a program, you will need to modify the lines of code which
-make up the program according to the following rules. The hex editor will
-allow you to edit the lines of code one-by-one, replacing one value in the
-line with another value. Follow the rules below in order to determine the
-correct actions for each line:</p>
+<p>A program is made up of a number of lines of code, where each line consists
+of 6 numbers. A hex editor will allow you to modify the lines of code
+one-by-one, replacing one value in the line with another value. Follow the
+rules below in order to determine the correct actions for each line:</p>
+
+<p>If you don't follow the instructions below carefully, the system will detect
+your attempts to modify the program, and revert it to its original state.</p>
 
 <ol type="a">
     <li>If this is the first line in the program go to (d), else go to (b)</li>
@@ -163,29 +169,36 @@ correct actions for each line:</p>
 
 <div class='puzzle-section'>
 <h3>Decrypting Filesystems</h3>
-<p>Some systems you encounter will have encrypted filesystems, which will need
-to be unencrypted before you can progress further with a hack.</p>
+<p class='intro'>Some systems you encounter will have encrypted filesystems,
+which will need to be unencrypted before you can progress further with a hack.
+A disgruntled employee at one of the big security firms leaked some of the
+encryption keys, which should allow you to progress</p>
 
-TODO
+<p>Our decryption program will present you with a section of encrypted data.
+Use the table below to enter the correct plain-text data - decryption can then
+take place based on this information.</p>
+
+<p>Entering the incorrect key will cause data corruption, and recovering from
+this will waste valuable time</p>
 
 <img src="decrypt.png">
 </div>
        
 <div class='puzzle-section'>
 <h3>Disabling Hardware Security</h3>
-<p>Some of our target devices have hardware security support in the form of
-on-board expansion chips. These will prevent us from gaining access unless we
-can somehow disable them. Luckily we were able to 'obtain' a copy of the
-hardware specifications, which should help you bypass this protection.</p>
-
-<p>Be careful - booting the system with an incorrect hardware configuration may
-affect the system clock, which may reduce the amount of time you have before
-you are logged out.</p>
+<p class='intro'>Some of our target devices have hardware security support in
+the form of on-board expansion chips. These will prevent us from gaining access 
+unless we can somehow disable them. Luckily we were able to 'obtain' a copy of
+the hardware specifications, which should help you bypass this protection.</p>
 
 <p>Each system may have one or more security chip on its motherboard, with an
 associated pull-down resistor. In order to bypass the security system, you
 must remove the chip, its pull-down resistor, or both, based on the information
-in the following tables.</p>
+in the below tables.</p>
+
+<p>Booting the system with an incorrect hardware configuration may affect the
+system clock, which may reduce the amount of time you have before you are
+logged out.</p>
 
 <p>Table 1:
 Use the last character of the security chip's identifier and the value of the
