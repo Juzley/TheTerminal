@@ -275,6 +275,101 @@ markings (read from left to right) printed on the body of the resistor.</p>
     <tr><td>green-black-blue-green</td><td>60 kOhms</td></tr>
 </table>
 </div>
+
+<div class='puzzle-section'>
+<h3>Network Management</h3>
+<p class='intro'>Some systems obtain login information from a remote
+authentication server. The easiest way around this is to reconfigure the
+network so that they are connected to one of our servers instead!</p>
+
+<p>The network manager allows you to make network connections between devices
+in a network. Each device is represented as a symbol in a grid. Your goal is
+to use the arrow keys to draw a path from the computer you are attempting to
+hack (the source, S) to our rogue authentication server (the destination, D).
+You cannot visit a node in the network grid more than once.
+</p>
+
+<p>Some networks contain gateway switches (G). When connecting the source to
+the destination, you must make sure to go through all such switches on the way.
+Most networks also contain firewalls (x) - our server cannot communicate
+through these devices and so they must be avoided.
+</p>
+
+<p>Attempts to configure the network such that it doesn't meet the above
+requirements will fail, and the network configuration will roll back to its
+previous state.</p>
+
+<p>Below are some possible network configurations you will encounter. The
+source and destination devices are identified by IP addresses, which are
+included with the diagram.</p>
+
+<div class='network-diagram'>
+<span class='ip'>Src IP: 192.168.1.15</span>
+<span class='ip'>Dst IP: 10.0.0.1</span>
+<pre>
+S . . . x x
+x . . . x x
+x x G x x x
+. . . . G .
+G . . . . .
+x x x x x D
+</pre>
 </div>
+
+<div class='network-diagram'>
+<span class='ip'>Src IP: 192.168.1.15</span>
+<span class='ip'>Dst IP: 11.0.0.1</span>
+<pre>
+S . . G x x
+. . . . x x
+. x . . x x
+. . x . G .
+G . . x . .
+x x . . . D
+</pre>
+</div>
+
+<pre class='network-diagram'>
+S . . G x x
+. . . . . x
+. x . . G x
+. . x . x .
+G . . . . .
+x x . . . D
+</pre>
+
+<pre class='network-diagram'>
+. x D x x .
+. x . . x .
+x x x . x x
+. . . . . .
+. x x x x .
+. . . S . G
+</pre>
+
+<pre class='network-diagram'>
+. x x D x .
+. x . . x .
+x x . x x x
+. . . . . .
+. x x x x .
+G . S . . .
+</pre>
+</div>
+</div>
+
+<script>
+    "use strict";
+    var networks = document.querySelectorAll('.network-diagram pre');
+    for (network of networks) {
+        diagram = network.innerHTML;
+        diagram = diagram.replace("x", "<span class='firewall'>x</span>");
+        diagram = diagram.replace("G", "<span class='gateway'>G</span>");
+        diagram = diagram.replace("S", "<span class='src'>S</span>");
+        diagram = diagram.replace("D", "<span class='dst'>D</span>");
+        diagram = diagram.replace(".", "<span class='node'>.</span>");
+        network.innerHTML = diagram;
+    }
+</script>
 </body>
 </html>

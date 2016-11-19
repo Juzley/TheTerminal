@@ -55,4 +55,16 @@ ol li:nth-child(odd) {
     padding-right: 5px;
 }
 
+div.network-diagram {
+    display: inline-block;
+}
+
+.network-diagram span.ip {
+    display: block;
+    font-style: italic;
+}
+
+.network-diagram pre {
+    margin: auto;
+}
 

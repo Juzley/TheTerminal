@@ -40,9 +40,32 @@ x x . . . D
 "255.255.0.0",
 "11.0.0.1")
 
+PUZZLE4 =("""
+. x D x x .
+. x . . x .
+x x x . x x
+. . . . . .
+. x x x x .
+. . . S . G
+""",
+"192.168.1.100",
+"255.255.255.0",
+"12.0.0.1")
+
+PUZZLE5 =("""
+. x x D x .
+. x . . x .
+x x . x x x
+. . . . . .
+. x x x x .
+G . S . . .
+""",
+"192.168.1.100",
+"255.255.255.0",
+"12.0.0.1")
 
 """List of available puzzles, to be chosen at random."""
-PUZZLES = (PUZZLE1, PUZZLE2, PUZZLE3)
+PUZZLES = (PUZZLE1, PUZZLE2, PUZZLE3, PUZZLE4, PUZZLE5)
 
 
 class NetworkManager(program.TerminalProgram):
