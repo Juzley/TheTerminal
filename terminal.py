@@ -24,9 +24,16 @@ class Terminal:
                        string.punctuation + " ")
     _BUF_SIZE = 100
     _HISTORY_SIZE = 50
-    _VISIBLE_LINES = 30  # TODO: Variable based on resolution.
+
+    _TIMER_FONT = 'media/fonts/LCDMU___.TTF'
+    _TIMER_SIZE = 20
+    _TIMER_POS = (2, 0)
+    _TIMER_COLOUR = (255, 255, 255)
+    _TIMER_WARNING_COLOUR = (200, 0, 0)
+    _TIMER_WARNING_SECS = 30
 
     # Constants related to drawing the terminal text.
+    _VISIBLE_LINES = 30
     _TEXT_SIZE = 16
     _TEXT_FONT = constants.TERMINAL_FONT
     _TEXT_COLOUR = constants.TEXT_COLOUR
@@ -76,6 +83,7 @@ class Terminal:
         # Timer attributes
         self._timer = timer.Timer()
         self._timeleft = time * 1000
+        self._timer_font = load_font(Terminal._TIMER_FONT, Terminal._TIMER_SIZE)
 
         # Freeze attributes
         self._freeze_start = None
@@ -490,10 +498,17 @@ class Terminal:
                                           Terminal._BEZEL_TEXT_LOCATION)
 
         # Draw the countdown text.
+        colour = Terminal._TIMER_COLOUR
+        if self._timeleft // 1000 < Terminal._TIMER_WARNING_SECS:
+            colour = Terminal._TIMER_WARNING_COLOUR
         minutes, seconds = divmod(self._timeleft // 1000, 60)
-        text = self._font.render('{}:{:02}'.format(minutes, seconds),
-                                 True, (255, 255, 255))
-        pygame.display.get_surface().blit(text, (0, 0))
+        text = self._timer_font.render('{}:{:02}'.format(minutes, seconds),
+                                       True, colour)
+        surf = pygame.Surface((text.get_rect().w + 4, text.get_rect().h))
+        surf.set_alpha(100)
+        pygame.display.get_surface().blit(surf, (Terminal._TIMER_POS[0] - 2,
+                                                 Terminal._TIMER_POS[1]))
+        pygame.display.get_surface().blit(text, Terminal._TIMER_POS)
 
     def run(self):
         """Run terminal logic."""

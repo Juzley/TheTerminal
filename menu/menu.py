@@ -113,7 +113,11 @@ class Menu(GameState):
 
 
 class CLIMenuItem:
+
+    """Class representing an item in a CLI Menu."""
+
     def __init__(self, text, cmd="", item=None, disabled=False):
+        """Initialize the class."""
         self.text = text
         self.cmd = cmd
         self.item = item
@@ -169,7 +173,6 @@ class CLIMenu(GameState):
                     # render the text and store it in a dictionary mapping the
                     # item ID to the cmd text
                     if entry.cmd:
-                        print(entry.cmd)
                         self._cmds[item] = self._font.render(
                             entry.cmd, True, CLIMenu._TEXT_COLOUR)
             else:
