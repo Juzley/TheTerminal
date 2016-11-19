@@ -2,66 +2,126 @@
     {
         "id": 0,
         "name": "Level 1",
-        "time": 60,
-        "programs": {
-            "login": "PasswordGuess"
-        },
-        "depends" : {},
-        "requires": {}
+        "time": 180,
+        "program_groups": {
+            "login": {
+                "program_count": 1,
+                "dependent_on": "others",
+                "programs": [
+                    ["login", "PasswordGuess"]
+                ]
+            },
+            "others": {
+                "program_count": 1,
+                "programs": [
+                    ["inspect", "HardwareInspect"],
+                    ["hexedit", "HexEditor"]
+                ]
+            }
+        }
     },
     {
         "id": 1,
         "name": "Level 2",
-        "time": 180,
-        "programs": {
-            "login": "PasswordGuess",
-            "inspect": "HardwareInspect",
-            "hexedit": "HexEditor"
-        },
-        "depends": {
-            "login" : ["hexedit", "inspect"]
-        },
-        "requires": []
+        "time": 300,
+        "requires": [0],
+        "program_groups": {
+            "login": {
+                "program_count": 1,
+                "dependent_on": "others",
+                "programs": [
+                    ["login", "PasswordGuess"],
+                    ["login", "ImagePassword"]
+                ]
+            },
+            "others": {
+                "program_count": 3,
+                "programs": [
+                    ["inspect", "HardwareInspect"],
+                    ["hexedit", "HexEditor"],
+                    ["network", "NetworkManager"],
+                    ["decrypt", "Decrypt"],
+                    ["minehunt", "MineHunt"]
+                ]
+            }
+        }
     },
     {
         "id": 2,
-        "name": "Level 3",
-        "time": 50,
-        "programs": {
-            "login": "ImagePassword"
-        },
-        "depends": {},
-        "requires": []
+        "name": "Decrypt",
+        "time": 60,
+        "program_groups": {
+            "decrypt": {
+                "program_count": 1,
+                "programs": [["decrypt", "Decrypt"]]
+            }
+        }
     },
     {
         "id": 3,
-        "name": "Level 4",
-        "time": 50,
-        "programs": {
-            "network": "NetworkManager"
-        },
-        "depends": {},
-        "requires": []
+        "name": "Hardware",
+        "time": 60,
+        "program_groups": {
+            "inspect": {
+                "program_count": 1,
+                "programs": [["inspect", "HardwareInspect"]]
+            }
+        }
     },
     {
         "id": 4,
-        "name": "Level 5",
-        "time": 120,
-        "programs": {
-            "decrypt": "Decrypt"
-        },
-        "depends": {},
-        "requires": []
+        "name": "Hexedit",
+        "time": 60,
+        "program_groups": {
+            "hexedit": {
+                "program_count": 1,
+                "programs": [["hexedit", "HexEditor"]]
+            }
+        }
     },
     {
         "id": 5,
-        "name": "Level 6",
-        "time": 120,
-        "programs": {
-            "minehunt": "MineHunt"
-        },
-        "depends": {},
-        "requires": []
+        "name": "Visual Password",
+        "time": 60,
+        "program_groups": {
+            "login": {
+                "program_count": 1,
+                "programs": [["login", "ImagePassword"]]
+            }
+        }
+    },
+    {
+        "id": 6,
+        "name": "Minehunt",
+        "time": 60,
+        "program_groups": {
+            "minehunt": {
+                "program_count": 1,
+                "programs": [["minehunt", "MineHunt"]]
+            }
+        }
+    },
+    {
+        "id": 7,
+        "name": "Network",
+        "time": 60,
+        "program_groups": {
+            "minehunt": {
+                "program_count": 1,
+                "programs": [["network", "NetworkManager"]]
+            }
+        }
+    },
+    {
+        "id": 8,
+        "name": "Password",
+        "time": 60,
+        "program_groups": {
+            "login": {
+                "program_count": 1,
+                "programs": [["login", "PasswordGuess"]]
+            }
+        }
     }
 ]
 

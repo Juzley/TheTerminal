@@ -1,5 +1,8 @@
 """Implementation of the core gameplay."""
 
+import random
+from itertools import product
+
 import pygame
 
 import timer
@@ -122,10 +125,49 @@ class GameplayState(GameState):
     def __init__(self, mgr, level_info):
         """Initialize the class."""
         self._level_info = level_info
+
+        # The level file specifies programs with groups, where each group
+        # contains a list of possible programs, and the number of programs to
+        # use from that group. Here we pick the programs that we're going to
+        # use from each group - we end up with a data structure looking
+        # something like the following:
+        # groups = {
+        #    'group_name_1': {
+        #        'program_name_1': 'program_class_1',
+        #        'program_name_2': 'program_class_2',
+        #    },
+        #    'group_name_2': {
+        #        'program_name_3': 'program_class_3'
+        #    }
+        # }
+        groups = {}
+        for group_name, group_info in level_info['program_groups'].items():
+            # Pick the programs we're going to use for this game.
+            groups[group_name] = {name: cls for (name, cls) in
+                                  random.sample(group_info['programs'],
+                                                group_info['program_count'])}
+
+        # Now that we've picked which programs to use, we can set up the
+        # dependencies between programs. 
+        depends = {}
+        for group_name, group_info in level_info['program_groups'].items():
+            group_programs = groups[group_name]
+
+            if 'dependent_on' in group_info:
+                dependent_group_programs = groups[group_info['dependent_on']]
+
+                for program in group_programs.keys():
+                    depends[program] = list(dependent_group_programs.keys())
+
+        # Finally get the flatten the groups into a list of programs
+        programs = {}
+        for g in groups.values():
+            programs.update(g)
+
         self._terminal = Terminal(
-            programs=level_info['programs'],
+            programs=programs,
             time=level_info['time'],
-            depends=level_info['depends'])
+            depends=depends)
         self._mgr = mgr
 
     def run(self, events):

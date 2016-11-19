@@ -27,9 +27,10 @@ class LevelMenu(menu.CLIMenu):
 
             # The program class names are represented in the JSON as strings,
             # we need to convert them to the corresponding class objects.
-            for level_info in self._levels:
-                for cmd, cls_str in level_info['programs'].items():
-                    level_info['programs'][cmd] = getattr(programs, cls_str)
+            for level in self._levels:
+                for group in level['program_groups'].values():
+                    for program_info in group['programs']:
+                        program_info[1] = getattr(programs, program_info[1])
 
         # Load progress information.
         progress = LevelMenu._get_progress()
@@ -45,7 +46,7 @@ class LevelMenu(menu.CLIMenu):
         # Add each level as a menu item
         for idx, lvl in enumerate(self._levels):
             # Work out whether this level is accessible.
-            disabled = len([r for r in lvl['requires']
+            disabled = len([r for r in lvl.get('requires', [])
                             if r not in completed]) > 0
 
             item = menu.CLIMenuItem(text='  ' + lvl['name'],
