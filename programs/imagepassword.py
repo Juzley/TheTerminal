@@ -58,10 +58,10 @@ class ImagePassword(program.TerminalProgram):
     ]
 
     _BUTTON_COORDS = [
-        (80, 100),
-        (260, 100),
-        (440, 100),
-        (620, 100),
+        (280, 180),
+        (420, 180),
+        (280, 320),
+        (420, 320),
     ]
 
     _BUTTON_SIZE = 100
