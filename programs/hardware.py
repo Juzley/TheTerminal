@@ -40,14 +40,14 @@ class BoardDefinition:
 
 
 """Define boards."""
-BoardDefinition("media/motherboard.png",
+BoardDefinition("media/motherboard4.png",
                 [("media/cpu.png", (420, 240))],
                 ((10, 10), (10, 100)),
                 ((10, 210), (10, 300)),
                 ((210, 10), (210, 100)),
                 ((210, 210), (210, 300)))
 
-BoardDefinition("media/motherboard.png",
+BoardDefinition("media/motherboard3.png",
                 [("media/cpu.png", (420, 240))],
                 ((10, 10), (10, 100)),
                 ((110, 210), (110, 300)),
@@ -435,7 +435,7 @@ class Chip(Component):
 
         # Add code to the chip
         font = load_font(None, 20)
-        text = font.render(self.code, True, (0, 0, 0))
+        text = font.render(self.code, True, (255, 255, 255))
 
         image_rect = self._image.get_rect()
         text_rect = text.get_rect()
