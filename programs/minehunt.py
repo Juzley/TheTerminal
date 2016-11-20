@@ -15,8 +15,7 @@ class MineHunt(program.TerminalProgram):
     """Minehunt program."""
 
     """The properties of this program."""
-    PROPERTIES = program.ProgramProperties(is_graphical=True,
-                                           call_run_func=True)
+    PROPERTIES = program.ProgramProperties(is_graphical=True)
 
     _TIMER_Y = 50
     _BOARD_Y = 80

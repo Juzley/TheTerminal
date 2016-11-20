@@ -560,8 +560,7 @@ class Terminal:
                 self.on_keypress(key, key_unicode)
 
         # Run the current program logic
-        if (self._current_program is not None and
-                self._current_program.PROPERTIES.call_run_func):
+        if self._current_program is not None:
             self._current_program.run()
 
     def completed(self):

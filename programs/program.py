@@ -17,7 +17,6 @@ class ProgramProperties:
                  alternate_buf=False,
                  hide_cursor=False,
                  suppress_success=False,
-                 call_run_func=False,
                  is_graphical=False):
 
         # If graphical, then set correct properties
@@ -30,7 +29,6 @@ class ProgramProperties:
         self.alternate_buf = alternate_buf
         self.hide_cursor = hide_cursor
         self.suppress_success = suppress_success
-        self.call_run_func = call_run_func
         self.is_graphical = is_graphical
 
 
@@ -85,7 +83,7 @@ class TerminalProgram:
         pass
 
     def run(self):
-        """Run program logic, if call_run_func set"""
+        """Run any background program logic that isn't user input driven."""
         pass
 
     def start(self):
