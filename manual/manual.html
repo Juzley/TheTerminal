@@ -303,6 +303,7 @@ previous state.</p>
 source and destination devices are identified by IP addresses, which are
 included with the diagram.</p>
 
+<div class='network-diagrams'>
 <div class='network-diagram'>
 <span class='ip'>Src IP: 192.168.1.15</span>
 <span class='ip'>Dst IP: 10.0.0.1</span>
@@ -329,7 +330,10 @@ x x . . . D
 </pre>
 </div>
 
-<pre class='network-diagram'>
+<div class='network-diagram'>
+<span class='ip'>Src IP: 192.168.1.50</span>
+<span class='ip'>Dst IP: 11.0.0.1</span>
+<pre>
 S . . G x x
 . . . . . x
 . x . . G x
@@ -337,8 +341,12 @@ S . . G x x
 G . . . . .
 x x . . . D
 </pre>
+</div>
 
-<pre class='network-diagram'>
+<div class='network-diagram'>
+<span class='ip'>Src IP: 192.168.1.100</span>
+<span class='ip'>Dst IP: 12.0.0.1</span>
+<pre>
 . x D x x .
 . x . . x .
 x x x . x x
@@ -346,8 +354,12 @@ x x x . x x
 . x x x x .
 . . . S . G
 </pre>
+</div>
 
-<pre class='network-diagram'>
+<div class='network-diagram'>
+<span class='ip'>Src IP: 192.168.1.100</span>
+<span class='ip'>Dst IP: 12.0.0.2</span>
+<pre>
 . x x D x .
 . x . . x .
 x x . x x x
@@ -355,6 +367,21 @@ x x . x x x
 . x x x x .
 G . S . . .
 </pre>
+</div>
+
+<div class='network-diagram'>
+<span class='ip'>Src IP: 10.10.10.11</span>
+<span class='ip'>Dst IP: 10.10.10.7</span>
+<pre>
+D . . . x x
+. x x . x x
+. x x G x x
+. . . . . x
+x . x x . x
+x G . . . S
+</pre>
+</div>
+</div>
 </div>
 
 <div class='puzzle-section'>
@@ -475,18 +502,23 @@ xx.......
 </div>
 </div>
 
-</div>
-
 <script>
     "use strict";
+
+    String.prototype.replaceAll = function(search, replacement) {
+            var target = this;
+                return target.split(search).join(replacement);
+    };
+
+
     var networks = document.querySelectorAll('.network-diagram pre');
-    for (network of networks) {
-        diagram = network.innerHTML;
-        diagram = diagram.replace("x", "<span class='firewall'>x</span>");
-        diagram = diagram.replace("G", "<span class='gateway'>G</span>");
-        diagram = diagram.replace("S", "<span class='src'>S</span>");
-        diagram = diagram.replace("D", "<span class='dst'>D</span>");
-        diagram = diagram.replace(".", "<span class='node'>.</span>");
+    for (var network of networks) {
+        var diagram = network.innerHTML;
+        diagram = diagram.replaceAll("x", "<span class=firewall>x</span>");
+        diagram = diagram.replaceAll("G", "<span class=gateway>G</span>");
+        diagram = diagram.replaceAll("S", "<span class=src>S</span>");
+        diagram = diagram.replaceAll("D", "<span class=dst>D</span>");
+        diagram = diagram.replaceAll(".", "<span class=node>.</span>");
         network.innerHTML = diagram;
     }
 </script>

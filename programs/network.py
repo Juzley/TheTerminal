@@ -1,3 +1,4 @@
+"""Network manager program classes."""
 
 import pygame
 import random
@@ -34,7 +35,7 @@ S . . G x x
 G . . . . .
 x x . . . D
 """,
-"192.168.1.15",
+"192.168.1.50",
 "11.0.0.1")
 
 PUZZLE4 = ("""
@@ -57,7 +58,18 @@ x x . x x x
 G . S . . .
 """,
 "192.168.1.100",
-"12.0.0.1")
+"12.0.0.2")
+
+PUZZLE6 = ("""
+D . . . x x
+. x x . x x
+. x x G x x
+. . . . . x
+x . x x . x
+x G . . . S
+""",
+"10.10.10.11",
+"10.10.10.7")
 
 """List of available puzzles, to be chosen at random."""
 PUZZLES = (PUZZLE1, PUZZLE2, PUZZLE3, PUZZLE4, PUZZLE5)

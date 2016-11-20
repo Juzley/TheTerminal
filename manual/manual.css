@@ -55,8 +55,16 @@ ol li:nth-child(odd) {
     padding-right: 5px;
 }
 
+div.network-diagrams {
+    text-align: center;
+}
+
 div.network-diagram {
     display: inline-block;
+    margin-top: 5px;
+    margin-bottom: 0px;
+    min-width: 30%;
+    background-color: #CCC;
 }
 
 .network-diagram span.ip {
@@ -65,18 +73,27 @@ div.network-diagram {
 }
 
 .network-diagram pre {
-    margin: auto;
+    background-color: #EEE;
+    text-align: center;
+    margin-top: 1px;
 }
 
-.minehunt-diagram pre {
-    margin: auto;
+.network-diagram span.node {
+    color: #AAA;
 }
 
-.minehunt-diagram span.size {
-    display: block;
+.network-diagram span.firewall {
+    color: #C11;
 }
 
-.minehunt-diagram span.time {
-    display: block;
-    font-style: italic;
+.network-diagram span.src {
+    color: #1C1;
+}
+
+.network-diagram span.dst {
+    color: #11C;
+}
+
+.network-diagram span.gateway {
+    color: #990;
 }
