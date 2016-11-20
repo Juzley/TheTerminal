@@ -559,6 +559,11 @@ class Terminal:
                 self._key_last_repeat = self._timer.time
                 self.on_keypress(key, key_unicode)
 
+        # Run the current program logic
+        if (self._current_program is not None and
+                self._current_program.PROPERTIES.call_run_func):
+            self._current_program.run()
+
     def completed(self):
         """Indicate whether the player has been successful."""
         return len([p for p in self._programs.values()

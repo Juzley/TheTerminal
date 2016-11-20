@@ -160,12 +160,14 @@ class CLIMenu(GameState):
             #   - Its coordinates,
             #   - The menu item it represents, if any
             colour = CLIMenu._TEXT_COLOUR
+            disabled = False
             if isinstance(entry, CLIMenuItem):
                 line = entry.text
                 item = entry.item
 
                 if entry.disabled:
                     colour = CLIMenu._DISABLED_COLOUR
+                    disabled = True
                 else:
                     self._items.append(item)
 
@@ -180,7 +182,8 @@ class CLIMenu(GameState):
                 item = None
 
             text = self._font.render(line, True, colour)
-            self._buf.append((text, (CLIMenu._TEXT_START[0], y_coord), item))
+            self._buf.append((text, (CLIMenu._TEXT_START[0], y_coord), item,
+                              disabled))
             y_coord += CLIMenu._TEXT_SIZE
 
     def run(self, events):
@@ -198,7 +201,7 @@ class CLIMenu(GameState):
         selected_item = self._items[self._selected_index]
 
         # Draw the text
-        for line, coords, item in self._buf:
+        for line, coords, item, disabled in self._buf:
             if line:
                 pygame.display.get_surface().blit(line, coords)
 
@@ -218,8 +221,9 @@ class CLIMenu(GameState):
     def _hit_item(self, pos):
         """Determine whether a given point hits a menu item."""
         # Only consider the lines associated with menu items.
-        for line, coords, item in [l for l in self._buf if l[2] is not None]:
-            if line.get_rect().move(coords).collidepoint(pos):
+        for line, coords, item, disabled in [l for l in self._buf
+                                             if l[2] is not None]:
+            if not disabled and line.get_rect().move(coords).collidepoint(pos):
                 return item
 
         return None

@@ -13,7 +13,6 @@ G . . . . .
 x x x x x D
 """,
 "192.168.1.15",
-"255.255.255.0",
 "10.0.0.1")
 
 PUZZLE2 = ("""
@@ -25,7 +24,6 @@ G . . x . .
 x x . . . D
 """,
 "192.168.1.15",
-"255.255.255.0",
 "11.0.0.1")
 
 PUZZLE3 = ("""
@@ -37,10 +35,9 @@ G . . . . .
 x x . . . D
 """,
 "192.168.1.15",
-"255.255.0.0",
 "11.0.0.1")
 
-PUZZLE4 =("""
+PUZZLE4 = ("""
 . x D x x .
 . x . . x .
 x x x . x x
@@ -49,10 +46,9 @@ x x x . x x
 . . . S . G
 """,
 "192.168.1.100",
-"255.255.255.0",
 "12.0.0.1")
 
-PUZZLE5 =("""
+PUZZLE5 = ("""
 . x x D x .
 . x . . x .
 x x . x x x
@@ -61,7 +57,6 @@ x x . x x x
 G . S . . .
 """,
 "192.168.1.100",
-"255.255.255.0",
 "12.0.0.1")
 
 """List of available puzzles, to be chosen at random."""
@@ -115,8 +110,7 @@ class NetworkManager(program.TerminalProgram):
 
         # IP details
         self._source_ip = puzzle[1]
-        self._subnet_mask = puzzle[2]
-        self._dest_ip = puzzle[3]
+        self._dest_ip = puzzle[2]
 
         # Current location (set to start location in start)
         self._curr = (0, 0)
@@ -162,8 +156,7 @@ class NetworkManager(program.TerminalProgram):
                  "   Networking made easy!",
                  "-------------------------------",
                  "",
-                 "Source IP: {}".format(self._source_ip),
-                 "Subnet mask: {}".format(self._subnet_mask),
+                 "Source IP:      {}".format(self._source_ip),
                  "Destination IP: {}".format(self._dest_ip),
                  "",
                  "",

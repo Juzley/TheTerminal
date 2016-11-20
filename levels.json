@@ -122,6 +122,22 @@
                 "programs": [["login", "PasswordGuess"]]
             }
         }
+    },
+    {
+        "id": 9,
+        "name": "Minehunt & Password",
+        "time": 90,
+        "program_groups": {
+            "login": {
+                "program_count": 1,
+                "dependent_on": "minehunt",
+                "programs": [["login", "PasswordGuess"]]
+            },
+            "minehunt": {
+                "program_count": 1,
+                "programs": [["minehunt", "MineHunt"]]
+            }
+        }
     }
 ]
 

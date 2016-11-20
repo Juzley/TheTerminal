@@ -1,5 +1,6 @@
 
 import itertools
+import math
 import pygame
 import random
 from enum import Enum, unique
@@ -15,33 +16,46 @@ class MineHunt(program.TerminalProgram):
 
     """The properties of this program."""
     PROPERTIES = program.ProgramProperties(is_graphical=True,
-                                           suppress_success=True)
+                                           call_run_func=True)
 
-    _BOARD_Y = 50
-    _FONT_SIZE = 40
+    _TIMER_Y = 50
+    _BOARD_Y = 80
+    _BOARD_MAX_WIDTH = 600
+    _BOARD_MAX_HEIGHT = 400
+    _STATUS_FONT_SIZE = 30
+    _END_FONT_SIZE = 40
+    _TIMER_FONT_SIZE = 40
+    _TIME_LIMIT = 30 * 1000
 
     def __init__(self, terminal):
         """Initialize the class."""
         super().__init__(terminal)
 
+        self._puzzle = random.choice(Puzzle.puzzles)
+
         self._completed = False
         self._exited = False
-        self._board = Board(random.choice(BOARDS))
+        self._board = Board(self._puzzle.board_def,
+                            self._BOARD_MAX_WIDTH, self._BOARD_MAX_HEIGHT)
+        self._start_time = None
+        self._secs_left = None
 
         screen_rect = pygame.display.get_surface().get_rect()
         self._board_pos = (int((screen_rect[2] / 2) - (self._board.width / 2)),
                            self._BOARD_Y)
 
-        self._font = load_font(None, self._FONT_SIZE)
+        self._status_font = load_font(None, self._STATUS_FONT_SIZE)
+        self._timer_font = load_font(None, self._TIMER_FONT_SIZE)
+        end_font = load_font(None, self._END_FONT_SIZE)
         self._game_over_texts = [
-            self._font.render("Game over!!", True, (255, 255, 255)),
-            self._font.render("Press R to retry, or Q to quit",
-                              True, (255, 255, 255)),
+            end_font.render("Game over!!", True, (255, 255, 255)),
+            end_font.render("Press R to retry, or Q to quit",
+                            True, (255, 255, 255)),
         ]
         self._game_won_texts = [
-            self._font.render("Game completed!!", True, (255, 255, 255)),
-            self._font.render("Press R to retry, or Q to quit",
-                              True, (255, 255, 255)),
+            end_font.render("Game completed!!", True, (255, 255, 255)),
+            end_font.render("Press R to retry, or Q to quit",
+                            True, (255, 255, 255)),
         ]
 
     @property
@@ -63,6 +77,8 @@ class MineHunt(program.TerminalProgram):
         # Reset board
         self._board.reset()
         self._exited = False
+        self._start_time = self._terminal.time
+        self._secs_left = self._TIME_LIMIT / 1000
 
     def completed(self):
         """Indicate whether the program was completed."""
@@ -75,9 +91,8 @@ class MineHunt(program.TerminalProgram):
     def on_keypress(self, key, key_unicode):
         """Handle a user keypress."""
         if self._board.state != Board.State.PLAYING:
-            print(key)
             if key == pygame.K_r:
-                self._board.reset()
+                self.start()
             elif key == pygame.K_q:
                 self._exited = True
 
@@ -89,6 +104,53 @@ class MineHunt(program.TerminalProgram):
         board_pos = (pos[0] - self._board_pos[0], pos[1] - self._board_pos[1])
         self._board.on_mouseclick(button, board_pos)
 
+    def run(self):
+        # Get time left
+        if self._board.state == Board.State.PLAYING:
+            time_left = (self._TIME_LIMIT - (self._terminal.time -
+                         self._start_time))
+            if time_left <= 0:
+                time_left = 0
+                self._board.state = Board.State.TIME_OUT
+
+            self._secs_left = math.ceil(time_left / 1000)
+        else:
+            # Did the user end with the correct time remaining?
+            if self._puzzle.time_left is not None:
+                success = self._secs_left == self._puzzle.time_left
+            else:
+                success = True
+
+            # Have all mines been flagged, and if there is a mine to be clicked,
+            # has it been clicked?
+            if success:
+                for loc, square in self._board.mines:
+                    # Do we have a victory mine, if so this mine should be
+                    # clicked and not flagged.
+                    #
+                    # If not, then the mine should be flagged.
+                    victory_mine = (self._puzzle.mine_loc is not None and
+                                    loc == self._puzzle.mine_loc)
+                    if victory_mine and square.state != Square.State.REVEALED:
+                        success = False
+                    elif (not victory_mine and
+                          square.state != Square.State.FLAGGED):
+                        success = False
+
+            # Have only mines been flagged?
+            if success:
+                for loc, square in self._board.flags:
+                    if square.type != Square.Type.MINE:
+                        success = False
+
+            # Display crash message if success
+            if success:
+                # TODO: Better crash dump message
+                self._terminal.output(["CRASH ALERT: minehunt crashed -- "
+                                       "segfault at address 0x445d9ee9"])
+
+            self._completed = success
+
     def draw(self):
         """Draw the program."""
         screen = pygame.display.get_surface()
@@ -96,41 +158,61 @@ class MineHunt(program.TerminalProgram):
                     self._board_pos)
         screen_rect = screen.get_rect()
 
+        # Draw timer
+        text = self._timer_font.render("Time left: {}s"
+                                       .format(self._secs_left),
+                                       True, (255, 255, 255))
+        screen.blit(text, (self._board_pos[0], self._TIMER_Y))
+
         # Have we hit a mine? Draw game over text
         # TODO: have a game surface and draw this on
         if self._board.state != Board.State.PLAYING:
-            texts = (self._game_over_texts
-                     if self._board.state == Board.State.MINE_HIT else
-                     self._game_won_texts)
+            # Dim the board
+            dim = pygame.Surface((self._board.width, self._board.height),
+                                 flags=pygame.SRCALPHA)
+            if self._board.state == Board.State.CLEARED:
+                dim.fill((255, 100, 255, 0))
+            else:
+                dim.fill((100, 255, 255, 0))
+            screen.blit(dim, self._board_pos,
+                        special_flags=pygame.BLEND_RGBA_SUB)
+
+            # Get the end game texts
+            texts = (self._game_won_texts
+                     if self._board.state == Board.State.CLEARED else
+                     self._game_over_texts)
+
+            total_height = sum(t.get_rect()[3] for t in texts)
             text_y = self._board_pos[1] + self._board.height + 5
+
+            # Draw text
             for text in texts:
                 text_rect = text.get_rect()
                 text_x = int(screen_rect[2] / 2 - text_rect[2] / 2)
                 screen.blit(text, (text_x, text_y))
 
                 text_y += text_rect[3]
+
         else:
             # Draw mines found text
-            text = self._font.render("Mines flagged: {} / {}"
-                                     .format(self._board.flag_count,
-                                             self._board.mine_count),
-                                     True, (255, 255, 255))
+            text = self._status_font.render("Mines flagged: {} / {}"
+                                            .format(self._board.flag_count,
+                                                    self._board.mine_count),
+                                            True, (255, 255, 255))
             text_x = int(screen_rect[2] / 2 - text.get_rect()[2] / 2)
             text_y = self._board_pos[1] + self._board.height + 5
             screen.blit(text, (text_x, text_y))
 
 
 class Board:
-    _MAX_WIDTH = 400
-    _MAX_HEIGHT = 400
-
     @unique
     class State(Enum):
         PLAYING = 1
         MINE_HIT = 2
-        CLEARED = 3
+        TIME_OUT = 3
+        CLEARED = 4
 
-    def __init__(self, board_str):
+    def __init__(self, board_def, max_width, max_height):
         # Board is a 2D array of Squares, indexed by row then col
         self._board = []
 
@@ -151,7 +233,7 @@ class Board:
         self.mine_count = 0
 
         # Create the board
-        self._create_board(board_str)
+        self._create_board(board_def, max_width, max_height)
 
         # Set width and height
         self.width = self._cols * self._square_size
@@ -167,6 +249,22 @@ class Board:
     def flag_count(self):
         return len([s for s in itertools.chain.from_iterable(self._board)
                     if s.state == Square.State.FLAGGED])
+
+    @property
+    def mines(self):
+        for row in range(self._rows):
+            for col in range(self._cols):
+                square = self._board[row][col]
+                if square.type == Square.Type.MINE:
+                    yield ((row, col), square)
+
+    @property
+    def flags(self):
+        for row in range(self._rows):
+            for col in range(self._cols):
+                square = self._board[row][col]
+                if square.type == Square.State.FLAGGED:
+                    yield ((row, col), square)
 
     def reset(self):
         self.state = Board.State.PLAYING
@@ -219,14 +317,13 @@ class Board:
             square.state = Square.State.REVEALED
             self.state = Board.State.MINE_HIT
 
-    def _create_board(self, board_str):
-        lines = [l for l in board_str.split("\n") if len(l) > 0]
-        self._rows = len(lines)
-        self._cols = len(lines[0])
+    def _create_board(self, board_def, max_width, max_height):
+        self._rows = len(board_def)
+        self._cols = len(board_def[0])
 
         # Work out square size
-        self._square_size = int(min(self._MAX_WIDTH / self._cols,
-                                    self._MAX_HEIGHT / self._rows))
+        self._square_size = int(min(max_width / self._cols,
+                                    max_height / self._rows))
 
         def get_type(c):
             return Square.Type.MINE if c == "x" else Square.Type.EMPTY
@@ -236,7 +333,7 @@ class Board:
                     r * self._square_size,
                     self._square_size, self._square_size)
 
-        for row, line in enumerate(lines):
+        for row, line in enumerate(board_def):
             self._board.append([Square(get_type(c), get_rect(row, col))
                                 for col, c in enumerate(line)])
 
@@ -289,6 +386,7 @@ class Square:
     _FLAG_HEIGHT_FACTOR = 0.6
     _FLAG_POLE_WIDTH = 3
     _FLAG_SIZE_FACTOR = 0.6
+    _MINE_SCALE_FACTOR = 0.8
 
     def __init__(self, square_type, rect):
         # Square type
@@ -327,7 +425,7 @@ class Square:
             pygame.draw.circle(self._surfaces[Square.State.REVEALED],
                                (0, 0, 0),
                                center,
-                               center[0] - 2,
+                               int(self._MINE_SCALE_FACTOR * center[0]),
                                0)
 
         # Add a flag to the flagged square
@@ -372,7 +470,26 @@ class Square:
                           int(surface_rect[3] / 2 - text_rect[3] / 2)))
 
 
-BOARDS = (
+class Puzzle:
+    puzzles = []
+
+    def __init__(self, board_str, time_left, mine_loc):
+        self.time_left = time_left
+        self.mine_loc = mine_loc
+        Puzzle.puzzles.append(self)
+
+        # Parse the board
+        lines = [l for l in board_str.split("\n") if len(l) > 0]
+        self.board_def = [[c for c in line]
+                          for line in lines]
+
+        # Make sure that there is a mine in the mine loc
+        if mine_loc is not None:
+            assert self.board_def[mine_loc[0]][mine_loc[1]] == "x", \
+                   "No mine at location {}".format(mine_loc)
+
+
+Puzzle(
 """
 .....x
 x.....
@@ -381,7 +498,9 @@ x.....
 ......
 xx....
 """,
-"""
+16, None)
+
+Puzzle("""
 .....x...
 x........
 .........
@@ -389,7 +508,9 @@ x........
 ........x
 xx......x
 """,
-"""
+16, (5, 8))
+
+Puzzle("""
 .....x
 ......
 ......
@@ -399,4 +520,4 @@ xx....
 ..x...
 .x....
 """,
-)
+16, None)
