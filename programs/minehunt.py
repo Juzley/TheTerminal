@@ -69,7 +69,7 @@ class MineHunt(program.TerminalProgram):
 
     @property
     def success_syslog(self):
-        return "{} user has been promoted to admin".format(
+        return "{} user has been promoted to root".format(
             self.SUCCESS_PREFIX)
 
     def start(self):

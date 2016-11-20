@@ -68,3 +68,15 @@ div.network-diagram {
     margin: auto;
 }
 
+.minehunt-diagram pre {
+    margin: auto;
+}
+
+.minehunt-diagram span.size {
+    display: block;
+}
+
+.minehunt-diagram span.time {
+    display: block;
+    font-style: italic;
+}
