@@ -115,10 +115,8 @@ class MineHunt(program.TerminalProgram):
             self._secs_left = math.ceil(time_left / 1000)
         else:
             # Did the user end with the correct time remaining?
-            if self._puzzle.time_left is not None:
-                success = self._secs_left == self._puzzle.time_left
-            else:
-                success = True
+            success = (self._puzzle.time_multiplier is None or
+                       (self._secs_left % self._puzzle.time_multiplier) == 0)
 
             # Have all mines been flagged, and if there is a mine to be clicked,
             # has it been clicked?
@@ -128,8 +126,8 @@ class MineHunt(program.TerminalProgram):
                     # clicked and not flagged.
                     #
                     # If not, then the mine should be flagged.
-                    victory_mine = (self._puzzle.mine_loc is not None and
-                                    loc == self._puzzle.mine_loc)
+                    victory_mine = (self._puzzle.click_mine is not None and
+                                    loc == self._puzzle.click_mine)
                     if victory_mine and square.state != Square.State.REVEALED:
                         success = False
                     elif (not victory_mine and
@@ -472,9 +470,9 @@ class Square:
 class Puzzle:
     puzzles = []
 
-    def __init__(self, board_str, time_left, mine_loc):
-        self.time_left = time_left
-        self.mine_loc = mine_loc
+    def __init__(self, board_str, time_multiplier=None, click_mine=None):
+        self.time_multiplier = time_multiplier
+        self.click_mine = click_mine
         Puzzle.puzzles.append(self)
 
         # Parse the board
@@ -483,9 +481,9 @@ class Puzzle:
                           for line in lines]
 
         # Make sure that there is a mine in the mine loc
-        if mine_loc is not None:
-            assert self.board_def[mine_loc[0]][mine_loc[1]] == "x", \
-                   "No mine at location {}".format(mine_loc)
+        if click_mine is not None:
+            assert self.board_def[click_mine[0]][click_mine[1]] == "x", \
+                   "No mine at location {}".format(click_mine)
 
 
 Puzzle(
@@ -497,7 +495,7 @@ x.....
 ......
 xx....
 """,
-16, None)
+time_multiplier=3)
 
 Puzzle("""
 .....x...
@@ -507,7 +505,8 @@ x........
 ........x
 xx......x
 """,
-16, (5, 8))
+time_multiplier=16,
+click_mine=(5, 8))
 
 Puzzle("""
 .....x
@@ -519,4 +518,4 @@ xx....
 ..x...
 .x....
 """,
-16, None)
+time_multiplier=16)
