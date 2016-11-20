@@ -7,18 +7,32 @@ body {
     background: #EEE;
 }
 
+a:link {
+    text-decoration: none;
+}
+
+a:hover {
+    font-weight: bold;
+}
+
 #manual {
     max-width: 20cm;
     margin: auto;
 }
 
-div.puzzle-section {
+div.section {
     background: white;
     margin-top: 20px;
     margin-bottom: 20px;
     padding-left: 5px;
     padding-right: 5px;
     padding-bottom: 10px;
+}
+
+.puzzle-section a {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
 }
 
 .puzzle-section h3 {

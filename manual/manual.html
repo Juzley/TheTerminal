@@ -7,6 +7,7 @@
 </head>
 <body>
 <div id='manual'>
+<div class='section'>
 <h1>The Terminal - Hacking Manual</h1>
 
 <h2>Overview</h2>
@@ -25,9 +26,19 @@ in order to gain access before timer runs out.</p>
 
 TODO
 
-<h2>Hacking</h2>
-<div class='puzzle-section'>
-<h3>Guessing Passwords</h3>
+<a name='hacking'><h2>Hacking</h2></a>
+<ul>
+    <li><a href='#passwords'>Guessing Passwords</a></li>
+    <li><a href='#visualpasswords'>Guessing Visual Passwords</a></li>
+    <li><a href='#cracking'>Cracking Programs</a></li>
+    <li><a href='#decrypting'>Decrypting Filesystems</a></li>
+    <li><a href='#hardware'>Disabling Hardware Security</a></li>
+    <li><a href='#network'>Network Management</a></li>
+    <li><a href='#minehunt'>Minehunt</a></li>
+</div>
+
+<div class='section puzzle-section'>
+<a name='passwords'><h3>Guessing Passwords</h3></a>
 <p class='intro'>We have recovered a shredded list of passwords from a nearby
 dumpster. Despite our best efforts to piece it back together, it is still hard
 to make out the passwords. Below are our best guesses for the passwords of each
@@ -74,10 +85,11 @@ reset, and you'll have to start again.</p>
             engle</td>
     </tr>
 </table>
+<a href='#hacking'>Back to top</a>
 </div>
 
-<div class='puzzle-section'>
-<h3>Guessing Visual Passwords</h3>
+<div class='section puzzle-section'>
+<a name='visualpasswords'><h3>Guessing Visual Passwords</h3></a>
 <p class='intro'>Some organisations use a visual password system. Users select
 images to identify themselves, and this selection is then used for
 authentication. Fortunately for us, people usually pick images based on their
@@ -125,10 +137,11 @@ and select the odd-one-out</p>
         <td>Cars, Beer, Soccer, Tennis, Food, Computers</td>
     </tr>
 </table>
+<a href='#hacking'>Back to top</a>
 </div>
 
-<div class='puzzle-section'>
-<h3>Cracking Programs</h3>
+<div class='section puzzle-section'>
+<a name='cracking'><h3>Cracking Programs</h3></a>
 <p class='intro'>You'll sometimes need to modify the code of programs on the
 computer you're attempting to gain access to in order to bypass security
 checks. Brush off your programming skills and open your hex editor...</p>
@@ -165,10 +178,11 @@ your attempts to modify the program, and revert it to its original state.</p>
         which have been modified.</li>
     <li>Do not edit the line.</li>
 </ol>
+<a href='#hacking'>Back to top</a>
 </div>
 
-<div class='puzzle-section'>
-<h3>Decrypting Filesystems</h3>
+<div class='section puzzle-section'>
+<a name='decrypting'><h3>Decrypting Filesystems</h3></a>
 <p class='intro'>Some systems you encounter will have encrypted filesystems,
 which will need to be unencrypted before you can progress further with a hack.
 A disgruntled employee at one of the big security firms leaked some of the
@@ -182,10 +196,11 @@ take place based on this information.</p>
 this will waste valuable time</p>
 
 <img src="decrypt.png">
+<a href='#hacking'>Back to top</a>
 </div>
        
-<div class='puzzle-section'>
-<h3>Disabling Hardware Security</h3>
+<div class='section puzzle-section'>
+<a name='hardware'><h3>Disabling Hardware Security</h3></a>
 <p class='intro'>Some of our target devices have hardware security support in
 the form of on-board expansion chips. These will prevent us from gaining access 
 unless we can somehow disable them. Luckily we were able to 'obtain' a copy of
@@ -274,10 +289,11 @@ markings (read from left to right) printed on the body of the resistor.</p>
     <tr><td>green-red-blue-green</td><td>50 kOhms</td></tr>
     <tr><td>green-black-blue-green</td><td>60 kOhms</td></tr>
 </table>
+<a href='#hacking'>Back to top</a>
 </div>
 
-<div class='puzzle-section'>
-<h3>Network Management</h3>
+<div class='section puzzle-section'>
+<a name='network'><h3>Network Management</h3></a>
 <p class='intro'>Some systems obtain login information from a remote
 authentication server. The easiest way around this is to reconfigure the
 network so that they are connected to one of our servers instead!</p>
@@ -382,10 +398,11 @@ x G . . . S
 </pre>
 </div>
 </div>
+<a href='#hacking'>Back to top</a>
 </div>
 
-<div class='puzzle-section'>
-<h3>Gaining root privileges using Minehunt game</h3>
+<div class='section puzzle-section'>
+<a name='minehunt'><h3>Minehunt</h3></a>
 <p class='intro'>Some of the systems have limited local access permissions,
 which severely harms our ability to hack into the terminal. Fortunately we
 have discovered that these machines often have a buggy minehunt game installed
@@ -500,6 +517,7 @@ xx.......
 ........x
 </pre>
 </div>
+<a href='#hacking'>Back to top</a>
 </div>
 
 <script>
