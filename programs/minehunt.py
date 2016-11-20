@@ -115,8 +115,8 @@ class MineHunt(program.TerminalProgram):
             self._secs_left = math.ceil(time_left / 1000)
         else:
             # Did the user end with the correct time remaining?
-            success = (self._puzzle.time_multiplier is None or
-                       (self._secs_left % self._puzzle.time_multiplier) == 0)
+            success = (self._puzzle.timeleft_multiple is None or
+                       (self._secs_left % self._puzzle.timeleft_multiple) == 0)
 
             # Have all mines been flagged, and if there is a mine to be clicked,
             # has it been clicked?
@@ -470,8 +470,8 @@ class Square:
 class Puzzle:
     puzzles = []
 
-    def __init__(self, board_str, time_multiplier=None, click_mine=None):
-        self.time_multiplier = time_multiplier
+    def __init__(self, board_str, timeleft_multiple=None, click_mine=None):
+        self.timeleft_multiple = timeleft_multiple
         self.click_mine = click_mine
         Puzzle.puzzles.append(self)
 
@@ -495,7 +495,7 @@ x.....
 ......
 xx....
 """,
-time_multiplier=3)
+timeleft_multiple=3)
 
 Puzzle("""
 .....x...
@@ -505,7 +505,7 @@ x........
 ........x
 xx......x
 """,
-time_multiplier=16,
+timeleft_multiple=3,
 click_mine=(5, 8))
 
 Puzzle("""
@@ -518,4 +518,4 @@ xx....
 ..x...
 .x....
 """,
-time_multiplier=16)
+timeleft_multiple=4)
