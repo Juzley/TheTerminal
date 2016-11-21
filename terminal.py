@@ -51,7 +51,7 @@ class Terminal:
     # Constants related to drawing the bezel.
     _BEZEL_IMAGE = 'media/bezel.png'
     _BEZEL_TEXT_SIZE = 30
-    _BEZEL_TEXT_LOCATION = (680, 576)
+    _BEZEL_TEXT_LOCATION = (698, 572)
 
     # The coordinates to start drawing text.
     _TEXT_START = (45, 541)

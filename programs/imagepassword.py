@@ -57,6 +57,19 @@ class ImagePassword(program.TerminalProgram):
          Categories.DOGS, Categories.FOOD, Categories.WINE}
     ]
 
+    _BACKGROUND_POS = (270, 140)
+    _BACKGROUND_SIZE = (260, 290)
+    _BACKGROUND_COLOUR = (180, 180, 180)
+    _BACKGROUND_FLASH_COLOUR = (255, 0, 0)
+    _BACKGROUND_FLASH_TIME = 100
+
+    _HEADER_POS = (2, 2)
+    _HEADER_SIZE = (256, 26)
+    _HEADER_COLOUR = (160, 160, 160)
+    _HEADER_TEXT_SIZE = 22
+    _HEADER_TEXT_COLOUR = (0, 0, 0)
+    _HEADER_TEXT_POS = (4, 8)
+
     _BUTTON_COORDS = [
         (280, 180),
         (420, 180),
@@ -65,6 +78,9 @@ class ImagePassword(program.TerminalProgram):
     ]
 
     _BUTTON_SIZE = 100
+    _BUTTON_BORDER_WIDTH = 30
+    _BUTTON_BORDER_COLOUR = (0, 0, 0)
+
     _LOCK_TIME = 2000
 
     """The properties of this program."""
@@ -77,6 +93,31 @@ class ImagePassword(program.TerminalProgram):
         self._user_info = random.choice(ImagePassword._USER_INFO)
         self._buttons = []
         self._lock_time = 0
+        self._background = pygame.Surface(ImagePassword._BACKGROUND_SIZE)
+        self._background.fill(ImagePassword._BACKGROUND_COLOUR)
+        header = pygame.Surface(ImagePassword._HEADER_SIZE)
+        header.fill(ImagePassword._HEADER_COLOUR)
+        self._background.blit(header, ImagePassword._HEADER_POS)
+
+        font = load_font(None, ImagePassword._HEADER_TEXT_SIZE)
+        text = font.render("Select login images", True,
+                           ImagePassword._HEADER_TEXT_COLOUR)
+        self._background.blit(text, ImagePassword._HEADER_TEXT_POS)
+
+        for coords in ImagePassword._BUTTON_COORDS:
+            border_coords = (coords[0] - ImagePassword._BUTTON_BORDER_WIDTH -
+                             ImagePassword._BACKGROUND_POS[0],
+                             coords[1] - ImagePassword._BUTTON_BORDER_WIDTH -
+                             ImagePassword._BACKGROUND_POS[1])
+            border_size = (ImagePassword._BUTTON_SIZE +
+                           ImagePassword._BUTTON_BORDER_WIDTH * 2)
+
+            border = pygame.Surface((border_size, border_size))
+            border.fill(ImagePassword._BUTTON_BORDER_COLOUR)
+            self._background.blit(border, border_coords)
+
+        self._flash = pygame.Surface(ImagePassword._BACKGROUND_SIZE)
+        self._flash.fill(ImagePassword._BACKGROUND_FLASH_COLOUR)
 
     @property
     def help(self):
@@ -127,20 +168,33 @@ class ImagePassword(program.TerminalProgram):
 
     def draw(self):
         """Draw the program."""
-        for surf, coords, _ in self._buttons:
-            pygame.display.get_surface().blit(surf, coords)
+        # Draw the background.
+        pygame.display.get_surface().blit(self._background,
+                                          ImagePassword._BACKGROUND_POS)
+
+        # If the user has made a mistake, flash the background.
+        if (self._lock_time != 0 and self._terminal.time <= self._lock_time +
+                ImagePassword._BACKGROUND_FLASH_TIME):
+            pygame.display.get_surface().blit(self._flash,
+                                              ImagePassword._BACKGROUND_POS)
+
+        # Draw the buttons.
+        if not self._locked():
+            for surf, coords, _ in self._buttons:
+                pygame.display.get_surface().blit(surf, coords)
 
     def on_mouseclick(self, button, pos):
         """Detect whether the user clicked the correct image."""
         # Ignore clicks if the program is locked.
         if not self._locked() and button == mouse.Button.LEFT:
-            item = [item for surf, coords, item in self._buttons if
-                    surf.get_rect().move(coords).collidepoint(pos)][0]
-            if item not in self._user_info:
-                self._completed = True
-            else:
-                self._lock_time = self._terminal.time
-                self._pick_images()
+            hits = [item for surf, coords, item in self._buttons if
+                    surf.get_rect().move(coords).collidepoint(pos)]
+            if hits:
+                if hits[0] not in self._user_info:
+                    self._completed = True
+                else:
+                    self._lock_time = self._terminal.time
+                    self._pick_images()
 
     def completed(self):
         """Indicate whether the program was successfully completed."""
