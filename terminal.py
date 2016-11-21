@@ -389,7 +389,9 @@ class Terminal:
                 (PAUSE_LEN * 25, ""),
                 (PAUSE_LEN * 50, msg)])
 
-        end_msgs = [(PAUSE_LEN, "Type 'help' for available commands")]
+        end_msgs = [(PAUSE_LEN,
+                     "Type 'login' to log in, or 'help' to "
+                     "list available commands")]
 
         # Push banner to top, leaving space for end messages.
         blank_lines = (Terminal._VISIBLE_LINES -
