@@ -78,8 +78,8 @@ class ImagePassword(program.TerminalProgram):
     ]
 
     _BUTTON_SIZE = 100
-    _BUTTON_BORDER_WIDTH = 30
-    _BUTTON_BORDER_COLOUR = (0, 0, 0)
+    _BUTTON_BORDER_WIDTH = 2
+    _BUTTON_BORDER_COLOUR = _HEADER_COLOUR
 
     _LOCK_TIME = 2000
 
