@@ -1,7 +1,6 @@
 """Implementation of the core gameplay."""
 
 import random
-from itertools import product
 
 import pygame
 
@@ -22,6 +21,7 @@ class SuccessState(GameState):
     _WAIT_TIME = 1000
     _MAIN_TEXT_HEIGHT = 50
     _CONTINUE_TEXT_HEIGHT = 20
+    _SPACING = 10
 
     def __init__(self, mgr, terminal):
         """Initialize the class."""
@@ -45,7 +45,8 @@ class SuccessState(GameState):
         coords = util.center_align(self._continue_text.get_rect().w, 0)
         self._continue_text_coords = (coords[0],
                                       self._login_text_coords[1] +
-                                      self._login_text.get_rect().h)
+                                      self._login_text.get_rect().h +
+                                      SuccessState._SPACING)
 
     def draw(self):
         """Draw the losing screen."""
@@ -74,6 +75,7 @@ class LostState(GameState):
     _FONT = constants.TERMINAL_FONT
     _MAIN_TEXT_HEIGHT = 50
     _CONTINUE_TEXT_HEIGHT = 20
+    _SPACING = 10
 
     def __init__(self, mgr, terminal):
         """Initialize the class."""
@@ -97,7 +99,8 @@ class LostState(GameState):
         coords = util.center_align(self._continue_text.get_rect().w, 0)
         self._continue_text_coords = (coords[0],
                                       self._login_text_coords[1] +
-                                      self._login_text.get_rect().h)
+                                      self._login_text.get_rect().h +
+                                      LostState._SPACING)
 
     def draw(self):
         """Draw the losing screen."""
@@ -148,7 +151,7 @@ class GameplayState(GameState):
                                                 group_info['program_count'])}
 
         # Now that we've picked which programs to use, we can set up the
-        # dependencies between programs. 
+        # dependencies between programs.
         depends = {}
         for group_name, group_info in level_info['program_groups'].items():
             group_programs = groups[group_name]

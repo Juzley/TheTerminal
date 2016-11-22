@@ -20,13 +20,15 @@ class PauseMenu(Menu):
             MenuItem(item_id=PauseMenu.Items.RESUME,
                      pos=(0, 200),
                      text='Resume',
-                     text_size=40,
-                     colour=(20, 200, 20)),
+                     text_size=50,
+                     colour=(50, 50, 50),
+                     selected_colour=(20, 200, 20)),
             MenuItem(item_id=PauseMenu.Items.QUIT,
-                     pos=(0, 240),
+                     pos=(0, 260),
                      text='Quit',
-                     text_size=40,
-                     colour=(20, 200, 20))
+                     text_size=50,
+                     colour=(50, 50, 50),
+                     selected_colour=(20, 200, 20))
         ])
 
         self._terminal = terminal

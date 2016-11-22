@@ -14,13 +14,15 @@ class MenuItem:
     """A single item in a menu."""
 
     def __init__(self, item_id, pos, text, text_size,
-                 colour=(255, 255, 255), align=util.Align.CENTER):
+                 colour=(255, 255, 255), selected_colour=(255, 255, 255),
+                 align=util.Align.CENTER):
         """Initialize the class."""
         self.item_id = item_id
         self._pos = pos
 
-        font = load_font(None, text_size)
+        font = load_font(constants.TERMINAL_FONT, text_size)
         self._text = font.render(text, True, colour)
+        self._selected_text = font.render(text, True, selected_colour)
 
         # Handle alignment
         text_width = self._text.get_rect()[2]
@@ -40,11 +42,11 @@ class MenuItem:
     def draw(self, selected):
         """Draw the menu item."""
         screen = pygame.display.get_surface()
-        screen.blit(self._text, self._pos)
 
         if selected:
-            pygame.draw.rect(screen, (255, 255, 255),
-                             self._text.get_rect().move(self._pos), 1)
+            screen.blit(self._selected_text, self._pos)
+        else:
+            screen.blit(self._text, self._pos)
 
 
 class Menu(GameState):
