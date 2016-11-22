@@ -81,6 +81,9 @@ class ImagePassword(program.TerminalProgram):
     _BUTTON_BORDER_WIDTH = 2
     _BUTTON_BORDER_COLOUR = _HEADER_COLOUR
 
+    _GUESSED_OVERLAY_COLOUR = (0, 255, 0)
+    _GUESSED_OVERLAY_ALPHA = 180
+
     _LOCK_TIME = 2000
 
     """The properties of this program."""
@@ -100,7 +103,7 @@ class ImagePassword(program.TerminalProgram):
         self._background.blit(header, ImagePassword._HEADER_POS)
 
         font = load_font(None, ImagePassword._HEADER_TEXT_SIZE)
-        text = font.render("Select login images", True,
+        text = font.render("Select three images", True,
                            ImagePassword._HEADER_TEXT_COLOUR)
         self._background.blit(text, ImagePassword._HEADER_TEXT_POS)
 
@@ -115,6 +118,11 @@ class ImagePassword(program.TerminalProgram):
             border = pygame.Surface((border_size, border_size))
             border.fill(ImagePassword._BUTTON_BORDER_COLOUR)
             self._background.blit(border, border_coords)
+
+        self._correct_overlay = pygame.Surface((ImagePassword._BUTTON_SIZE,
+                                                ImagePassword._BUTTON_SIZE))
+        self._correct_overlay.fill(ImagePassword._GUESSED_OVERLAY_COLOUR)
+        self._correct_overlay.set_alpha(ImagePassword._GUESSED_OVERLAY_ALPHA)
 
         self._flash = pygame.Surface(ImagePassword._BACKGROUND_SIZE)
         self._flash.fill(ImagePassword._BACKGROUND_FLASH_COLOUR)
@@ -156,9 +164,10 @@ class ImagePassword(program.TerminalProgram):
             text = font.render(c.name, True, (255, 255, 255))
             surf = pygame.Surface((ImagePassword._BUTTON_SIZE,
                                    ImagePassword._BUTTON_SIZE))
-            surf.fill((0, 0, 255))
+            surf.fill((180, 180, 255))
             surf.blit(text, (0, 0))
-            self._buttons.append((surf, ImagePassword._BUTTON_COORDS[i], c))
+            self._buttons.append([surf, ImagePassword._BUTTON_COORDS[i], c,
+                                  False])
 
     def _locked(self):
         """Indicate if the user is temporarily locked out."""
@@ -180,21 +189,34 @@ class ImagePassword(program.TerminalProgram):
 
         # Draw the buttons.
         if not self._locked():
-            for surf, coords, _ in self._buttons:
+            for surf, coords, _, correct in self._buttons:
                 pygame.display.get_surface().blit(surf, coords)
+
+                if correct:
+                    pygame.display.get_surface().blit(self._correct_overlay,
+                                                      coords)
 
     def on_mouseclick(self, button, pos):
         """Detect whether the user clicked the correct image."""
         # Ignore clicks if the program is locked.
         if not self._locked() and button == mouse.Button.LEFT:
-            hits = [item for surf, coords, item in self._buttons if
-                    surf.get_rect().move(coords).collidepoint(pos)]
+            hits = [info for info in self._buttons if
+                    info[0].get_rect().move(info[1]).collidepoint(pos)]
             if hits:
-                if hits[0] not in self._user_info:
-                    self._completed = True
-                else:
-                    self._lock_time = self._terminal.time
-                    self._pick_images()
+                # Mark the image as having been selected.
+                hits[0][3] = True
+
+                # Check if we've selected 3 images now.
+                guessed = [item for _, _, item, clicked in self._buttons if
+                           clicked]
+                correct = [item for _, _, item, clicked in self._buttons if
+                           clicked and item in self._user_info]
+                if len(guessed) is 3:
+                    if len(correct) == len(guessed):
+                        self._completed = True
+                    else:
+                        self._lock_time = self._terminal.time
+                        self._pick_images()
 
     def completed(self):
         """Indicate whether the program was successfully completed."""
