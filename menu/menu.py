@@ -6,7 +6,7 @@ import util
 import mouse
 import constants
 from gamestate import GameState
-from resource import load_image, load_font
+from resource import load_font
 
 
 class MenuItem:
@@ -135,14 +135,13 @@ class CLIMenu(GameState):
     _DISABLED_COLOUR = (100, 100, 100)
     _TEXT_START = (45, 50)
     _CMD_TEXT_POS = (45, 525)
-    _BEZEL_IMAGE = 'media/bezel.png'
 
     def __init__(self, mgr, entries):
         """Initialize the class."""
         super().__init__()
         self._mgr = mgr
 
-        self._bezel = load_image(CLIMenu._BEZEL_IMAGE)
+        self._bezel = util.render_bezel(constants.VERSION_STRING)
         self._font = load_font(CLIMenu._TEXT_FONT, CLIMenu._TEXT_SIZE)
         self._selected_index = 0
         self._items = []

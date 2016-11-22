@@ -2,6 +2,7 @@
 
 
 import pygame
+from resource import load_image, load_font
 
 
 class Align:
@@ -60,3 +61,26 @@ def center_align(w, h):
     """Return coords to align an image in the center of the screen."""
     return ((pygame.display.get_surface().get_rect().w - w) / 2,
             (pygame.display.get_surface().get_rect().h - h) / 2)
+
+
+def text_align(text, coords, align):
+    """Align text around given coords."""
+    if align == Align.LEFT:
+        return coords
+    elif align == Align.CENTER:
+        return (coords[0] - text.get_rect().w / 2, coords[1])
+    else:
+        return (coords[0] - text.get_rect().w, coords[1])
+
+
+def render_bezel(label):
+    """Render the bezel and label text."""
+    bezel = load_image('media/bezel.png')
+    text = load_font(None, 30).render(label, True, (200, 200, 200))
+
+    # Copy the bezel surface so we don't overwrite the stored cached surface in
+    # the media manager.
+    surf = bezel.copy()
+    surf.blit(text, text_align(text, (760, 572), Align.RIGHT))
+
+    return surf

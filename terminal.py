@@ -12,8 +12,9 @@ import pygame
 import constants
 import timer
 import mouse
-from resource import load_font, load_image
+from resource import load_font
 from programs.program import BadInput
+from util import render_bezel
 
 
 class Terminal:
@@ -47,11 +48,6 @@ class Terminal:
     _CURSOR_WIDTH = 6
     _CURSOR_ON_MS = 800
     _CURSOR_OFF_MS = 600
-
-    # Constants related to drawing the bezel.
-    _BEZEL_IMAGE = 'media/bezel.png'
-    _BEZEL_TEXT_SIZE = 30
-    _BEZEL_TEXT_LOCATION = (698, 572)
 
     # The coordinates to start drawing text.
     _TEXT_START = (45, 541)
@@ -105,10 +101,7 @@ class Terminal:
         self._depends = {} if depends is None else depends
 
         # Draw the monitor bezel
-        self._bezel = load_image(Terminal._BEZEL_IMAGE)
-        bezel_font = load_font(None, Terminal._BEZEL_TEXT_SIZE)
-        self._bezel_text = bezel_font.render(self.id_string, True,
-                                             (255, 255, 255))
+        self._bezel = render_bezel(self.id_string)
 
         self.reboot()
 
@@ -496,8 +489,6 @@ class Terminal:
     def draw_bezel(self):
         """Draw the bezel."""
         pygame.display.get_surface().blit(self._bezel, self._bezel.get_rect())
-        pygame.display.get_surface().blit(self._bezel_text,
-                                          Terminal._BEZEL_TEXT_LOCATION)
 
         # Draw the countdown text.
         colour = Terminal._TIMER_COLOUR
