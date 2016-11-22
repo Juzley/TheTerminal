@@ -116,22 +116,22 @@ class CLIMenuItem:
 
     """Class representing an item in a CLI Menu."""
 
-    def __init__(self, text, cmd="", item=None, disabled=False):
+    def __init__(self, text, cmd="", item=None, disabled=False, selected=False):
         """Initialize the class."""
         self.text = text
         self.cmd = cmd
         self.item = item
         self.disabled = disabled
+        self.selected = selected
 
 
 class CLIMenu(GameState):
 
     """A menu designed to look like a CLI."""
 
-    # TODO: Should probably share some of this with the Terminal class.
-    _TEXT_SIZE = 16
+    _TEXT_SIZE = constants.TERMINAL_TEXT_SIZE
     _TEXT_FONT = constants.TERMINAL_FONT
-    _TEXT_COLOUR = (20, 200, 20)
+    _TEXT_COLOUR = constants.TEXT_COLOUR
     _DISABLED_COLOUR = (100, 100, 100)
     _TEXT_START = (45, 50)
     _CMD_TEXT_POS = (45, 525)
@@ -169,6 +169,11 @@ class CLIMenu(GameState):
                     disabled = True
                 else:
                     self._items.append(item)
+
+                    # If this entry should start selected, set the
+                    # selected-index appropriately.
+                    if entry.selected:
+                        self._selected_index = len(self._items) - 1
 
                     # If there's a command string associated with this item,
                     # render the text and store it in a dictionary mapping the

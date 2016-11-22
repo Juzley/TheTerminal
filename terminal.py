@@ -35,8 +35,8 @@ class Terminal:
 
     # Constants related to drawing the terminal text.
     _VISIBLE_LINES = 30
-    _TEXT_SIZE = 16
     _TEXT_FONT = constants.TERMINAL_FONT
+    _TEXT_SIZE = constants.TERMINAL_TEXT_SIZE
     _TEXT_COLOUR = constants.TEXT_COLOUR
     _TEXT_COLOURS = {
         "g": constants.TEXT_COLOUR,

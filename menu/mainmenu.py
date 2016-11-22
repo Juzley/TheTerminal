@@ -26,8 +26,8 @@ class MainMenu(CLIMenu):
             '-' * 60,
             '',
             '$ ls',
-            CLIMenuItem('  start', '$ start', MainMenu.Items.START_GAME),
-            CLIMenuItem('  exit', '$ exit', MainMenu.Items.QUIT)
+            CLIMenuItem('   start', '$ start', MainMenu.Items.START_GAME),
+            CLIMenuItem('   exit', '$ exit', MainMenu.Items.QUIT)
         ]
         super().__init__(mgr, buf)
 

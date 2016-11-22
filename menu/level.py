@@ -40,7 +40,7 @@ class LevelMenu(menu.CLIMenu):
         buf = [
             '$ cd levels',
             '$ ls',
-            menu.CLIMenuItem('  ..', '$ cd ..', LevelMenu.Items.BACK)
+            menu.CLIMenuItem('   ..', '$ cd ..', LevelMenu.Items.BACK)
         ]
 
         # Add each level as a menu item
@@ -49,11 +49,16 @@ class LevelMenu(menu.CLIMenu):
             disabled = len([r for r in lvl.get('requires', [])
                             if r not in completed]) > 0
 
-            item = menu.CLIMenuItem(text='  ' + lvl['name'],
+            item = menu.CLIMenuItem(text='   ' + lvl['name'],
                                     cmd='$ connect {}'.format(lvl['name']),
                                     item=idx,
                                     disabled=disabled)
+
             buf.append(item)
+
+        # We want to start with the latest available level selected.
+        enabled = [i for i in buf if not item.disabled]
+        enabled[-1].selected = True
 
         super().__init__(mgr, buf)
 
