@@ -1,6 +1,5 @@
 
 import itertools
-import math
 import pygame
 import random
 from enum import Enum, unique
@@ -24,7 +23,6 @@ class MineHunt(program.TerminalProgram):
     _STATUS_FONT_SIZE = 30
     _END_FONT_SIZE = 40
     _TIMER_FONT_SIZE = 40
-    _TIME_LIMIT = 30 * 1000
 
     def __init__(self, terminal):
         """Initialize the class."""
@@ -37,7 +35,7 @@ class MineHunt(program.TerminalProgram):
         self._board = Board(self._puzzle.board_def,
                             self._BOARD_MAX_WIDTH, self._BOARD_MAX_HEIGHT)
         self._start_time = None
-        self._secs_left = None
+        self._time_secs = None
 
         screen_rect = pygame.display.get_surface().get_rect()
         self._board_pos = (int((screen_rect[2] / 2) - (self._board.width / 2)),
@@ -77,7 +75,7 @@ class MineHunt(program.TerminalProgram):
         self._board.reset()
         self._exited = False
         self._start_time = self._terminal.time
-        self._secs_left = self._TIME_LIMIT / 1000
+        self._time_secs = 0
 
     def completed(self):
         """Indicate whether the program was completed."""
@@ -106,17 +104,12 @@ class MineHunt(program.TerminalProgram):
     def run(self):
         # Get time left
         if self._board.state == Board.State.PLAYING:
-            time_left = (self._TIME_LIMIT - (self._terminal.time -
-                         self._start_time))
-            if time_left <= 0:
-                time_left = 0
-                self._board.state = Board.State.TIME_OUT
-
-            self._secs_left = math.ceil(time_left / 1000)
+            time_passed = self._terminal.time - self._start_time
+            self._time_secs = int(time_passed / 1000)
         else:
             # Did the user end with the correct time remaining?
-            success = (self._puzzle.timeleft_multiple is None or
-                       (self._secs_left % self._puzzle.timeleft_multiple) == 0)
+            success = (self._puzzle.time_multiple is None or
+                       (self._time_secs % self._puzzle.time_multiple) == 0)
 
             # Have all mines been flagged, and if there is a mine to be clicked,
             # has it been clicked?
@@ -156,8 +149,8 @@ class MineHunt(program.TerminalProgram):
         screen_rect = screen.get_rect()
 
         # Draw timer
-        text = self._timer_font.render("Time left: {}s"
-                                       .format(self._secs_left),
+        text = self._timer_font.render("Time: {}"
+                                       .format(self._time_secs),
                                        True, (255, 255, 255))
         screen.blit(text, (self._board_pos[0], self._TIMER_Y))
 
@@ -178,8 +171,6 @@ class MineHunt(program.TerminalProgram):
             texts = (self._game_won_texts
                      if self._board.state == Board.State.CLEARED else
                      self._game_over_texts)
-
-            total_height = sum(t.get_rect()[3] for t in texts)
             text_y = self._board_pos[1] + self._board.height + 5
 
             # Draw text
@@ -206,8 +197,7 @@ class Board:
     class State(Enum):
         PLAYING = 1
         MINE_HIT = 2
-        TIME_OUT = 3
-        CLEARED = 4
+        CLEARED = 3
 
     def __init__(self, board_def, max_width, max_height):
         # Board is a 2D array of Squares, indexed by row then col
@@ -470,8 +460,8 @@ class Square:
 class Puzzle:
     puzzles = []
 
-    def __init__(self, board_str, timeleft_multiple=None):
-        self.timeleft_multiple = timeleft_multiple
+    def __init__(self, board_str, time_multiple=None):
+        self.time_multiple = time_multiple
         Puzzle.puzzles.append(self)
 
         # Parse the board
@@ -488,7 +478,7 @@ class Puzzle:
                 if self.board_def[row][col] == "o":
                     # Change to mine character
                     self.board_def[row][col] = "x"
-                    return (row, col)
+                    return row, col
         return None
 
 
@@ -506,7 +496,7 @@ xx.....x..
 ..........
 ........x.
 """,
-timeleft_multiple=3)
+time_multiple=3)
 
 Puzzle("""
 .....x....
@@ -518,7 +508,7 @@ xx......o.
 ..........
 ..........
 """,
-timeleft_multiple=3)
+time_multiple=3)
 
 
 Puzzle("""
@@ -546,7 +536,7 @@ xx.....x.
 .........
 ........x
 """,
-timeleft_multiple=3)
+time_multiple=3)
 
 Puzzle(
 """
@@ -559,7 +549,7 @@ xx.....x.
 .........
 .x......x
 """,
-timeleft_multiple=5)
+time_multiple=5)
 
 Puzzle(
 """
@@ -572,5 +562,5 @@ xx.....x.
 xx.......
 ........x
 """,
-timeleft_multiple=6)
+time_multiple=6)
 
