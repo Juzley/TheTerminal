@@ -14,7 +14,7 @@
             "others": {
                 "program_count": 1,
                 "programs": [
-                    ["inspect", "HardwareInspect"],
+                    ["suspend", "HardwareInspect"],
                     ["hexedit", "HexEditor"]
                 ]
             }
@@ -37,7 +37,7 @@
             "others": {
                 "program_count": 3,
                 "programs": [
-                    ["inspect", "HardwareInspect"],
+                    ["suspend", "HardwareInspect"],
                     ["hexedit", "HexEditor"],
                     ["network", "NetworkManager"],
                     ["decrypt", "Decrypt"],
@@ -62,9 +62,9 @@
         "name": "Hardware",
         "time": 60,
         "program_groups": {
-            "inspect": {
+            "suspend": {
                 "program_count": 1,
-                "programs": [["inspect", "HardwareInspect"]]
+                "programs": [["suspend", "HardwareInspect"]]
             }
         }
     },

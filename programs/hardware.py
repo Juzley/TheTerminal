@@ -233,7 +233,7 @@ class HardwareInspect(program.TerminalProgram):
     @property
     def help(self):
         """Get the help string for the program."""
-        return "Inspect hardware."
+        return "Suspend system and modify hardware."
 
     @property
     def security_type(self):
