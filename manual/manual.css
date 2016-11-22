@@ -111,3 +111,25 @@ div.network-diagram {
 .network-diagram span.gateway {
     color: #990;
 }
+
+div.minehunt-diagrams {
+    text-align: center;
+}
+
+.minehunt-diagrams h4 {
+    display: block;
+}
+
+div.minehunt-diagram {
+    display: inline-block;
+    min-width: 45%;
+    background-color: #CCC;
+}
+
+.minehunt-diagram span.empty {
+    color: #AAA;
+}
+
+.minehunt-diagram span.finish {
+    color: #C11;
+}
