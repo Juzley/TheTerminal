@@ -76,7 +76,7 @@ def text_align(text, coords, align):
 def render_bezel(label):
     """Render the bezel and label text."""
     bezel = load_image('media/bezel.png')
-    text = load_font(None, 30).render(label, True, (200, 200, 200))
+    text = load_font(None, 30).render(label, True, (60, 60, 60))
 
     # Copy the bezel surface so we don't overwrite the stored cached surface in
     # the media manager.
