@@ -81,6 +81,6 @@ def render_bezel(label):
     # Copy the bezel surface so we don't overwrite the stored cached surface in
     # the media manager.
     surf = bezel.copy()
-    surf.blit(text, text_align(text, (760, 572), Align.RIGHT))
+    surf.blit(text, text_align(text, (725, 571), Align.CENTER))
 
     return surf
