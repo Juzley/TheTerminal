@@ -4,6 +4,7 @@ import pygame
 from pygame import Surface
 from pygame.font import Font
 from programs import Decrypt
+import constants
 
 _TEXT_HEIGHT = 40
 _VERTICAL_SPACING = 20
@@ -15,10 +16,10 @@ _CENTRAL_SPACING = 50
 
 def render_font(font, charmap):
     """Render all chars for a given font in a column."""
-    renders = [font.render(c, True, (0, 0, 0)) for _, c in charmap]
+    renders = [font.render(c, True, constants.TEXT_COLOUR) for _, c in charmap]
     surf = Surface((max([r.get_rect().w for r in renders]),
                     (_TEXT_HEIGHT + _VERTICAL_SPACING) * len(renders)))
-    surf.fill((255, 255, 255))
+    surf.fill((0, 0, 0))
 
     y = _VERTICAL_PADDING
     for r in renders:
@@ -41,7 +42,7 @@ def render_half(fonts):
 
     # Blit each font's column into the final image.
     output = Surface((img_width, img_height))
-    output.fill((255, 255, 255))
+    output.fill((0, 0, 0))
 
     x = _HORIZONTAL_PADDING
     for surf in surfs:
