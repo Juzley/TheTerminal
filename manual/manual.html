@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>The Terminal - Hacking Manual</title>
@@ -26,7 +26,7 @@ in order to gain access before timer runs out.</p>
 
 TODO
 
-<a name='hacking'><h2>Hacking</h2></a>
+<h2 id='hacking'>Hacking</h2>
 <ul>
     <li><a href='#passwords'>Guessing Passwords</a></li>
     <li><a href='#visualpasswords'>Guessing Visual Passwords</a></li>
@@ -35,10 +35,11 @@ TODO
     <li><a href='#hardware'>Disabling Hardware Security</a></li>
     <li><a href='#network'>Network Management</a></li>
     <li><a href='#minehunt'>Minehunt</a></li>
+</ul>
 </div>
 
 <div class='section puzzle-section'>
-<a name='passwords'><h3>Guessing Passwords</h3></a>
+<h3 id=passwords>Guessing Passwords</h3>
 <p class='intro'>We have recovered a shredded list of passwords from a nearby
 dumpster. Despite our best efforts to piece it back together, it is still hard
 to make out the passwords. Below are our best guesses for the passwords of each
@@ -52,7 +53,7 @@ should be able to work out the password using this information.</p>
 <p>Inputting the incorrect password too many times will lead to a password
 reset, and you'll have to start again.</p>
 
-<table>
+<table class=alternate>
     <tr><th>User</th><th>Possible Passwords</th></tr>
     <tr>
         <td>root</td>
@@ -89,7 +90,7 @@ reset, and you'll have to start again.</p>
 </div>
 
 <div class='section puzzle-section'>
-<a name='visualpasswords'><h3>Guessing Visual Passwords</h3></a>
+<h3 id='visualpasswords'>Guessing Visual Passwords</h3>
 <p class='intro'>Some organisations use a visual password system. Users select
 images to identify themselves, and this selection is then used for
 authentication. Fortunately for us, people usually pick images based on the
@@ -102,7 +103,7 @@ and select the three correct images</p>
 
 <p>Selecting an incorrect image will result in a temporary lockout.</p>
 
-<table>
+<table class=alternate>
     <tr><th>User</th><th>Likes</th></tr>
     <tr>
         <td>User A</td>
@@ -141,7 +142,7 @@ and select the three correct images</p>
 </div>
 
 <div class='section puzzle-section'>
-<a name='cracking'><h3>Cracking Programs</h3></a>
+<h3 id='cracking'>Cracking Programs</h3>
 <p class='intro'>You'll sometimes need to modify the code of programs on the
 computer you're attempting to gain access to in order to bypass security
 checks. Brush off your programming skills and open your hex editor...</p>
@@ -154,7 +155,7 @@ rules below in order to determine the correct actions for each line:</p>
 <p>If you don't follow the instructions below carefully, the system will detect
 your attempts to modify the program, and revert it to its original state.</p>
 
-<ol type="a">
+<ol class=alternate type="a">
     <li>If this is the first line in the program go to (d), else go to (b)</li>
     <li>If this is the last line go to (j), else go to (c)</li>
     <li>If you made a change to the previous line, go to (g), else go to
@@ -182,7 +183,7 @@ your attempts to modify the program, and revert it to its original state.</p>
 </div>
 
 <div class='section puzzle-section'>
-<a name='decrypting'><h3>Decrypting Filesystems</h3></a>
+<h3 id='decrypting'>Decrypting Filesystems</h3>
 <p class='intro'>Some systems you encounter will have encrypted filesystems,
 which will need to be unencrypted before you can progress further with a hack.
 A disgruntled employee at one of the big security firms leaked some of the
@@ -195,12 +196,12 @@ take place based on this information.</p>
 <p>Entering the incorrect key will cause data corruption, and recovering from
 this will waste valuable time.</p>
 
-<img src="decrypt.png">
+<img src="decrypt.png" alt="decryption key">
 <a href='#hacking'>Back to top</a>
 </div>
        
 <div class='section puzzle-section'>
-<a name='hardware'><h3>Disabling Hardware Security</h3></a>
+<h3 id='hardware'>Disabling Hardware Security</h3>
 <p class='intro'>Some of our target devices have hardware security support in
 the form of on-board expansion chips. These will prevent us from gaining access 
 unless we can somehow disable them. Luckily we were able to 'obtain' a copy of
@@ -219,7 +220,7 @@ logged out.</p>
 Use the last character of the security chip's identifier and the value of the
 chip's pull-down resistor to determine the correction action.</p>
 
-<table>
+<table class=alternate>
     <tr>
         <th>Resistor Value</th>
         <th>Odd number</th>
@@ -231,13 +232,13 @@ chip's pull-down resistor to determine the correction action.</p>
     <tr><td>20 kOhms</td><td>C</td><td>C</td><td>B</td><td>R</td></tr>
     <tr><td>30 kOhms</td><td>R</td><td>R</td><td>C</td><td>C</td></tr>
     <tr><td>40 kOhms</td><td>B</td><td>N</td><td>R</td><td>C</td></tr>
-    <tr><td>50 kOhms</td><td>T2, row 1</td><td>T2, row 4</td><td>N></td><td>T2,
+    <tr><td>50 kOhms</td><td>T2, row 1</td><td>T2, row 4</td><td>N</td><td>T2,
             row 3</td></tr>
     <tr><td>60 kOhms</td><td>T2, row 5</td><td>C</td><td>T2, row 2</td><td>T2,
             row 6</td></tr>
 </table>
 
-<p>Key:
+<p>Key:</p>
 <ul>
     <li>N: remove nothing.</li>
     <li>C: remove the chip.</li>
@@ -245,13 +246,12 @@ chip's pull-down resistor to determine the correction action.</p>
     <li>B: remove both.</li>
     <li>T2, row#: Consult table 2, looking at the specified row.</li>
 </ul>
-</p>
 
 <p>Table 2:
 Use the row given by table 1, and the first character of the terminal name to
 determine the correct action.</p>
 
-<table>
+<table class=alternate>
     <tr>
         <th>Row</th>
         <th>Odd number</th>
@@ -267,20 +267,19 @@ determine the correct action.</p>
     <tr><td>Row 6</td><td>C</td><td>C</td><td>C</td><td>R</td></tr>
 </table>
 
-<p>Key:
+<p>Key:</p>
 <ul>
     <li>N: remove nothing.</li>
     <li>C: remove the chip.</li>
     <li>R: remove the resistor.</li>
     <li>B: remove both.</li>
 </ul>
-</p>
 
 <p>Table 3:
 This table shows the values of the different resistors, based on the coloured
 markings (read from left to right) printed on the body of the resistor.</p>
 
-<table>
+<table class=alternate>
     <tr><th>Markings</th><th>Value</th></tr>
     <tr>
         <td>
@@ -353,7 +352,7 @@ markings (read from left to right) printed on the body of the resistor.</p>
 </div>
 
 <div class='section puzzle-section'>
-<a name='network'><h3>Network Management</h3></a>
+<h3 id='network'>Network Management</h3>
 <p class='intro'>Some systems obtain login information from a remote
 authentication server. The easiest way around this is to reconfigure the
 network so that they are connected to one of our servers instead!</p>
@@ -462,128 +461,131 @@ x G . . . S
 </div>
 
 <div class='section puzzle-section'>
-<a name='minehunt'><h3>Minehunt</h3></a>
-<p class='intro'>Some of the systems have limited local access permissions,
-which severely harms our ability to hack into the terminal. Fortunately we
-have discovered that these machines often have a buggy minehunt game installed
-that we can exploit to cause some memory corruption, tricking the system to
-give us elevated access permissions</p>
+<h3 id='minehunt'>Minehunt</h3>
+<p class=intro>The minehunt game is a poorly written Minesweeper clone,
+installed on many of our target systems. The aim is to clear all the squares
+not containing mines, without uncovering a mine. Flags can be placed to mark
+known mine locations. Winning the game is not  your aim here, however: analysis
+Minehunt's assembly code has revealed that it is possible to gain elavated
+permissions if certain actions are performed in the right order</p>
 
-<p>The minehunt game is clone of a well known game where the aim is to clear all
-the squares not containing mines (using left click), and placing flags on
-squares that contain mines (using right click). Click a square without a mine
-will reveal a count of how many mines are adjacent to the square.
-</p>
-
-<p>We have found that we can trigger a crash by placing flags on all but one
-mine, and then exposing the remaining mine (by clicking on it) when the minehunt
-clock has an odd or even number of seconds on it (dependent on the board layout)
-</p>
+<p>To trigger the exploit in the Minehunt game, follow the below steps:</p>
+<ol>
+    <li>Use the mine count and size of board to determine which layout you
+        have been presented with.</li>
+    <li>Place flags (right click) on all but one of the mines, as indicated
+        below.</li>
+    <li>Detonate (left click) the final mine. With some board layouts, the time
+        at which the final mine is detonated (whether the number of seconds in
+        the counter is odd or even) is critical in triggering the exploit.</li>
+</ol>
 
 <p>
-Below are all the possible solutions (grouped by board size) along with the
-actions required to trigger a crash. The key is as follows:
+Below are all possible board layouts you may encounter.
+Use the following key to determine which mines should be flagged, and which
+should be detonated:
 </p>
 
-<div>
-<table>
-    <tr><td class=minehunt-diagram><div class=bomb></div></td><td>Indicates the location of a
-            mine that should be flagged (right click)</td></tr>
-    <tr><td class=minehunt-diagram><div class=finish></div></td><td>Indicates a position of the mine
-            that should be hit (left click), once all other mines have been
-            flagged.</td></tr>
+<table id=minehunt-key>
+    <tr><td class=minehunt-diagram><div class=bomb></div></td>
+        <td>The location of a mine that should be flagged</td></tr>
+    <tr><td class=minehunt-diagram><div class=finish></div></td>
+        <td>The location of the mine that should be detonated</td></tr>
 </table>
-</div>
 
 <div class='minehunt-diagrams'>
-<h4>8 rows by 10 cols</h4>
-<div class='minehunt-diagram'>
-<span class='count'>8 mines</span>
-<span class='time'>End with <b>odd</b> number of secs:</span>
-<table>
-    <tr><td>. . . . . o . . . .</td></tr>
-    <tr><td>o . . . . . . . . .</td></tr>
-    <tr><td>. . . . . . . . . o</td></tr>
-    <tr><td>. . . o . . . . . .</td></tr>
-    <tr><td>. . . . . . . . . .</td></tr>
-    <tr><td>o x . . . . . o . .</td></tr>
-    <tr><td>. . . . . . . . . .</td></tr>
-    <tr><td>. . . . . . . . o .</td></tr>
-</table>
-</div>
-<div class='minehunt-diagram'>
-<span class='count'>9 mines</span>
-<span class='time'>End with <b>even</b> number of secs:</span>
-<table>
-    <tr><td>. . . . . o . . . .</td></tr>
-    <tr><td>o o . . . . . . . .</td></tr>
-    <tr><td>. . . . . . . . . .</td></tr>
-    <tr><td>. . . o . . . . . .</td></tr>
-    <tr><td>. . . . . . . . o .</td></tr>
-    <tr><td>o o . . . . . . x .</td></tr>
-    <tr><td>. . . . . . . . . .</td></tr>
-    <tr><td>. . . . . . . . . o</td></tr>
-</table>
-</div>
-<div class='minehunt-diagram'>
-<span class='count'>10 mines</span>
-<span class='time'>End with <b>any</b> number of secs:</span>
-<table>
-    <tr><td>. o . . . o . . . .</td></tr>
-    <tr><td>o o . . . . . . . .</td></tr>
-    <tr><td>. . . . . . . . . .</td></tr>
-    <tr><td>. . . o . . . . . .</td></tr>
-    <tr><td>. . . . . . . . . .</td></tr>
-    <tr><td>o x . . . . . . o .</td></tr>
-    <tr><td>. . . . . . . . . .</td></tr>
-    <tr><td>. o . . o . . . . .</td></tr>
-</table>
-</div>
-<h4>8 rows by 9 cols</h4>
-<div class='minehunt-diagram'>
-<span class='count'>7 mines</span>
-<span class='time'>End with <b>even</b> number of secs:</span>
-<table>
-    <tr><td>o . . . . o . . .</td></tr>
-    <tr><td>. . . . . . . . .</td></tr>
-    <tr><td>. . . . . . . . .</td></tr>
-    <tr><td>. . . x . . . . .</td></tr>
-    <tr><td>. . . . . . . . .</td></tr>
-    <tr><td>o o . . . . . o .</td></tr>
-    <tr><td>. . . . . . . . .</td></tr>
-    <tr><td>. . . . . . . . o</td></tr>
-</table
-</div>
-<div class='minehunt-diagram'>
-<span class='count'>11 mines</span>
-<span class='time'>End with <b>odd</b> number of secs:</span>
-<table>
-    <tr><td>o . . . . o . . .</td></tr>
-    <tr><td>o . . . . . . . .</td></tr>
-    <tr><td>. . . . . . . x o</td></tr>
-    <tr><td>. . . o . . . . .</td></tr>
-    <tr><td>. . . . . . . . .</td></tr>
-    <tr><td>o o . . . . . o .</td></tr>
-    <tr><td>. . . . . . . . .</td></tr>
-    <tr><td>. o . . . . . . o</td></tr>
-</table>
-</div>
-<div class='minehunt-diagram'>
-<span class='count'>9 mines</span>
-<span class='time'>End with <b>any</b> number of secs:</span>
-<table>
-    <tr><td>o . . . . o . . .</td></tr>
-    <tr><td>. . . . . . . . .</td></tr>
-    <tr><td>. . . . . . . . .</td></tr>
-    <tr><td>. . . o . . . . .</td></tr>
-    <tr><td>. . . . . . . . .</td></tr>
-    <tr><td>o x . . . . . o .</td></tr>
-    <tr><td>o o . . . . . . .</td></tr>
-    <tr><td>. . . . . . . . o</td></tr>
-</table>
-</div>
+    <div class='minehunt-diagram'>
+        <span class='count'>8x10, 8 mines</span>
+        <span class='time'>End when time is <em>odd</em></span>
+        <table>
+            <tr><td>. . . . . o . . . .</td></tr>
+            <tr><td>o . . . . . . . . .</td></tr>
+            <tr><td>. . . . . . . . . o</td></tr>
+            <tr><td>. . . o . . . . . .</td></tr>
+            <tr><td>. . . . . . . . . .</td></tr>
+            <tr><td>o x . . . . . o . .</td></tr>
+            <tr><td>. . . . . . . . . .</td></tr>
+            <tr><td>. . . . . . . . o .</td></tr>
+        </table>
+    </div>
+
+    <div class='minehunt-diagram'>
+        <span class='count'>8x10, 9 mines</span>
+        <span class='time'>End when time is <em>even</em></span>
+        <table>
+            <tr><td>. . . . . o . . . .</td></tr>
+            <tr><td>o o . . . . . . . .</td></tr>
+            <tr><td>. . . . . . . . . .</td></tr>
+            <tr><td>. . . o . . . . . .</td></tr>
+            <tr><td>. . . . . . . . o .</td></tr>
+            <tr><td>o o . . . . . . x .</td></tr>
+            <tr><td>. . . . . . . . . .</td></tr>
+            <tr><td>. . . . . . . . . o</td></tr>
+        </table>
+    </div>
+
+    <div class='minehunt-diagram'>
+        <span class='count'>8x10, 10 mines</span>
+        <span class='time'><em>No</em> time restrictions</span>
+        <table>
+            <tr><td>. o . . . o . . . .</td></tr>
+            <tr><td>o o . . . . . . . .</td></tr>
+            <tr><td>. . . . . . . . . .</td></tr>
+            <tr><td>. . . o . . . . . .</td></tr>
+            <tr><td>. . . . . . . . . .</td></tr>
+            <tr><td>o x . . . . . . o .</td></tr>
+            <tr><td>. . . . . . . . . .</td></tr>
+            <tr><td>. o . . o . . . . .</td></tr>
+        </table>
+    </div>
+
+    <div class='minehunt-diagram'>
+        <span class='count'>8x9, 7 mines</span>
+        <span class='time'>End when time is <em>even</em></span>
+        <table>
+            <tr><td>o . . . . o . . .</td></tr>
+            <tr><td>. . . . . . . . .</td></tr>
+            <tr><td>. . . . . . . . .</td></tr>
+            <tr><td>. . . x . . . . .</td></tr>
+            <tr><td>. . . . . . . . .</td></tr>
+            <tr><td>o o . . . . . o .</td></tr>
+            <tr><td>. . . . . . . . .</td></tr>
+            <tr><td>. . . . . . . . o</td></tr>
+        </table>
+    </div>
+
+    <div class='minehunt-diagram'>
+        <span class='count'>8x9, 11 mines</span>
+        <span class='time'>End when time is <em>odd</em></span>
+        <table>
+            <tr><td>o . . . . o . . .</td></tr>
+            <tr><td>o . . . . . . . .</td></tr>
+            <tr><td>. . . . . . . x o</td></tr>
+            <tr><td>. . . o . . . . .</td></tr>
+            <tr><td>. . . . . . . . .</td></tr>
+            <tr><td>o o . . . . . o .</td></tr>
+            <tr><td>. . . . . . . . .</td></tr>
+            <tr><td>. o . . . . . . o</td></tr>
+        </table>
+    </div>
+
+    <div class='minehunt-diagram'>
+        <span class='count'>8x9, 9 mines</span>
+        <span class='time'><em>No</em> time restrictions</span>
+        <table>
+            <tr><td>o . . . . o . . .</td></tr>
+            <tr><td>. . . . . . . . .</td></tr>
+            <tr><td>. . . . . . . . .</td></tr>
+            <tr><td>. . . o . . . . .</td></tr>
+            <tr><td>. . . . . . . . .</td></tr>
+            <tr><td>o x . . . . . o .</td></tr>
+            <tr><td>o o . . . . . . .</td></tr>
+            <tr><td>. . . . . . . . o</td></tr>
+        </table>
+    </div>
 </div>
 <a href='#hacking'>Back to top</a>
+</div>
 </div>
 
 <script>

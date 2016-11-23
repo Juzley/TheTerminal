@@ -7,6 +7,27 @@ body {
     background: #EEE;
 }
 
+img {
+    display: block;
+    margin: auto;
+}
+
+table.alternate tr:nth-child(odd), ol.alternate li:nth-child(odd) {
+    background: #EEE;
+}
+
+table.alternate th {
+    background: #CCC;
+    font-weight: bold;
+}
+
+table.alternate th, table.alternate td {
+    text-align: left;
+    border: 1px solid;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
 a:link {
     text-decoration: none;
 }
@@ -47,26 +68,6 @@ div.section {
     border-collapse: collapse;
     max-width: 90%;
     margin: auto;
-}
-
-ol li:nth-child(odd) {
-    background: #EEE;
-}
-
-.puzzle-section tr:nth-child(odd) {
-    background: #EEE;
-}
-
-.puzzle-section th {
-    background: #CCC;
-    font-weight: bold;
-}
-
-.puzzle-section th, .puzzle-section td {
-    text-align: left;
-    border: 1px solid;
-    padding-left: 5px;
-    padding-right: 5px;
 }
 
 div.network-diagrams {
@@ -116,17 +117,15 @@ div.minehunt-diagrams {
     text-align: center;
 }
 
-.minehunt-diagrams h4 {
-    display: block;
-}
-
 div.minehunt-diagram {
     display: inline-block;
-    min-width: 45%;
+    margin-top: 10px;
+    min-width: 40%;
 }
 
-.minehunt-diagram td {
+.minehunt-diagram td, td.minehunt-diagram {
     background-color: #DDD;
+    border: 1px solid;
     margin: 1px;
     width: 20px;
     height: 20px;
@@ -153,6 +152,20 @@ div.minehunt-diagram {
 .minehunt-diagram span.count {
     display: block;
     font-style: italic;
+}
+
+.minehunt-diagram span.time {
+    display: block;
+    font-style: italic;
+}
+
+.minehunt-diagram span.time em {
+    font-style: bold;
+}
+
+#minehunt-key td {
+    border: 1px solid;
+    padding: 2px;
 }
 
 div.resistor {
