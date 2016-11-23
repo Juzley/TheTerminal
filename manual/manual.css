@@ -12,6 +12,10 @@ img {
     margin: auto;
 }
 
+.command {
+    font-style: italic;
+}
+
 table.alternate tr:nth-child(odd), ol.alternate li:nth-child(odd) {
     background: #EEE;
 }
