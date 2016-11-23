@@ -149,3 +149,8 @@ div.minehunt-diagram {
     border-radius: 50%;
     margin: auto;
 }
+
+.minehunt-diagram span.count {
+    display: block;
+    font-style: italic;
+}

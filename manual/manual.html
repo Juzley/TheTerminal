@@ -411,16 +411,16 @@ give us elevated access permissions</p>
 
 <p>The minehunt game is clone of a well known game where the aim is to clear all
 the squares not containing mines (using left click), and placing flags on
-squares that contain mines (using right click).
+squares that contain mines (using right click). Click a square without a mine
+will reveal a count of how many mines are adjacent to the square.
 </p>
 
-<p>Depending on the board layout, we can trigger a crash with 1 of 2 methods:
-<ul>
-    <li>Completing the game, placing the last flag when a certain multiple of
-    seconds are remaining on the clock.</li>
-    <li>Completing the game, deliberately click the last mine when the
-    minehunt timer shows a multiple of x seconds (where x varies per board)</li>
-</ul>
+<p>We have found that we can trigger a crash by placing flags on all but one
+mine, and then exposing the remaining mine (by clicking on it) when the minehunt
+clock has an odd or even number of seconds on it (dependent on the board layout)
+</p>
+
+<p>
 Below are all the possible solutions (grouped by board size) along with the
 actions required to trigger a crash. The key is as follows:
 </p>
@@ -438,20 +438,22 @@ actions required to trigger a crash. The key is as follows:
 <div class='minehunt-diagrams'>
 <h4>8 rows by 10 cols</h4>
 <div class='minehunt-diagram'>
-<span class='time'>End with multiple of <b>3</b> secs:</span>
+<span class='count'>8 mines</span>
+<span class='time'>End with <b>odd</b> number of secs:</span>
 <table>
     <tr><td>. . . . . o . . . .</td></tr>
     <tr><td>o . . . . . . . . .</td></tr>
     <tr><td>. . . . . . . . . o</td></tr>
     <tr><td>. . . o . . . . . .</td></tr>
     <tr><td>. . . . . . . . . .</td></tr>
-    <tr><td>o o . . . . . o . .</td></tr>
+    <tr><td>o x . . . . . o . .</td></tr>
     <tr><td>. . . . . . . . . .</td></tr>
     <tr><td>. . . . . . . . o .</td></tr>
 </table>
 </div>
 <div class='minehunt-diagram'>
-<span class='time'>End with multiple of <b>3</b> secs:</span>
+<span class='count'>9 mines</span>
+<span class='time'>End with <b>even</b> number of secs:</span>
 <table>
     <tr><td>. . . . . o . . . .</td></tr>
     <tr><td>o o . . . . . . . .</td></tr>
@@ -460,15 +462,16 @@ actions required to trigger a crash. The key is as follows:
     <tr><td>. . . . . . . . o .</td></tr>
     <tr><td>o o . . . . . . x .</td></tr>
     <tr><td>. . . . . . . . . .</td></tr>
-    <tr><td>. . . . . . . . . .</td></tr>
+    <tr><td>. . . . . . . . . o</td></tr>
 </table>
 </div>
 <div class='minehunt-diagram'>
-<span class='time'>End with any time.</span>
+<span class='count'>10 mines</span>
+<span class='time'>End with <b>any</b> number of secs:</span>
 <table>
     <tr><td>. o . . . o . . . .</td></tr>
     <tr><td>o o . . . . . . . .</td></tr>
-    <tr><td>. . . . . . o . . .</td></tr>
+    <tr><td>. . . . . . . . . .</td></tr>
     <tr><td>. . . o . . . . . .</td></tr>
     <tr><td>. . . . . . . . . .</td></tr>
     <tr><td>o x . . . . . . o .</td></tr>
@@ -478,24 +481,26 @@ actions required to trigger a crash. The key is as follows:
 </div>
 <h4>8 rows by 9 cols</h4>
 <div class='minehunt-diagram'>
-<span class='time'>End with multiple of <b>3</b> secs:</span>
+<span class='count'>7 mines</span>
+<span class='time'>End with <b>even</b> number of secs:</span>
 <table>
     <tr><td>o . . . . o . . .</td></tr>
     <tr><td>. . . . . . . . .</td></tr>
     <tr><td>. . . . . . . . .</td></tr>
-    <tr><td>. . . o . . . . .</td></tr>
+    <tr><td>. . . x . . . . .</td></tr>
     <tr><td>. . . . . . . . .</td></tr>
     <tr><td>o o . . . . . o .</td></tr>
     <tr><td>. . . . . . . . .</td></tr>
     <tr><td>. . . . . . . . o</td></tr>
-</table>
+</table
 </div>
 <div class='minehunt-diagram'>
-<span class='time'>End with multiple of <b>5</b> secs:</span>
+<span class='count'>11 mines</span>
+<span class='time'>End with <b>odd</b> number of secs:</span>
 <table>
     <tr><td>o . . . . o . . .</td></tr>
     <tr><td>o . . . . . . . .</td></tr>
-    <tr><td>. . . . . . . x .</td></tr>
+    <tr><td>. . . . . . . x o</td></tr>
     <tr><td>. . . o . . . . .</td></tr>
     <tr><td>. . . . . . . . .</td></tr>
     <tr><td>o o . . . . . o .</td></tr>
@@ -504,16 +509,17 @@ actions required to trigger a crash. The key is as follows:
 </table>
 </div>
 <div class='minehunt-diagram'>
-<span class='time'>End with multiple of <b>6</b> secs:</span>
+<span class='count'>9 mines</span>
+<span class='time'>End with <b>any</b> number of secs:</span>
 <table>
-    <tr><td>o . . . . o . . . </td></tr>
-    <tr><td>. . . . . . . . . </td></tr>
-    <tr><td>. . . . . . . . . </td></tr>
-    <tr><td>. . . o . . . . . </td></tr>
-    <tr><td>. . . . . . . . . </td></tr>
-    <tr><td>o o . . . . . o . </td></tr>
-    <tr><td>o o . . . . . . . </td></tr>
-    <tr><td>. . . . . . . . o </td></tr>
+    <tr><td>o . . . . o . . .</td></tr>
+    <tr><td>. . . . . . . . .</td></tr>
+    <tr><td>. . . . . . . . .</td></tr>
+    <tr><td>. . . o . . . . .</td></tr>
+    <tr><td>. . . . . . . . .</td></tr>
+    <tr><td>o x . . . . . o .</td></tr>
+    <tr><td>o o . . . . . . .</td></tr>
+    <tr><td>. . . . . . . . o</td></tr>
 </table>
 </div>
 </div>

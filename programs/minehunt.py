@@ -101,45 +101,14 @@ class MineHunt(program.TerminalProgram):
         board_pos = (pos[0] - self._board_pos[0], pos[1] - self._board_pos[1])
         self._board.on_mouseclick(button, board_pos)
 
+        # Have we reached the program complete condition?
+        self._check_completed()
+
     def run(self):
-        # Get time left
+        # Get time passed if we are still playing
         if self._board.state == Board.State.PLAYING:
             time_passed = self._terminal.time - self._start_time
             self._time_secs = int(time_passed / 1000)
-        else:
-            # Did the user end with the correct time remaining?
-            success = (self._puzzle.time_multiple is None or
-                       (self._time_secs % self._puzzle.time_multiple) == 0)
-
-            # Have all mines been flagged, and if there is a mine to be clicked,
-            # has it been clicked?
-            if success:
-                for loc, square in self._board.mines:
-                    # Do we have a victory mine, if so this mine should be
-                    # clicked and not flagged.
-                    #
-                    # If not, then the mine should be flagged.
-                    victory_mine = (self._puzzle.click_mine is not None and
-                                    loc == self._puzzle.click_mine)
-                    if victory_mine and square.state != Square.State.REVEALED:
-                        success = False
-                    elif (not victory_mine and
-                          square.state != Square.State.FLAGGED):
-                        success = False
-
-            # Have only mines been flagged?
-            if success:
-                for loc, square in self._board.flags:
-                    if square.type != Square.Type.MINE:
-                        success = False
-
-            # Display crash message if success
-            if success:
-                # TODO: Better crash dump message
-                self._terminal.output(["CRASH ALERT: minehunt crashed -- "
-                                       "segfault at address 0x445d9ee9"])
-
-            self._completed = success
 
     def draw(self):
         """Draw the program."""
@@ -190,6 +159,48 @@ class MineHunt(program.TerminalProgram):
             text_x = int(screen_rect[2] / 2 - text.get_rect()[2] / 2)
             text_y = self._board_pos[1] + self._board.height + 5
             screen.blit(text, (text_x, text_y))
+
+    def _check_completed(self):
+        # Did the user click with the correct time remaining?
+        if self._puzzle.time_condition == Puzzle.Time.ANY:
+            success = True
+        elif self._puzzle.time_condition == Puzzle.Time.ODD:
+            success = (self._time_secs % 2) == 1
+        elif self._puzzle.time_condition == Puzzle.Time.EVEN:
+            success = (self._time_secs % 2) == 0
+        else:
+            assert False, "Unexpected condition {}".format(
+                self._puzzle.time_condition)
+
+        # Have all mines been flagged, and if there is a mine to be clicked,
+        # has it been clicked?
+        if success:
+            for loc, square in self._board.mines:
+                # Do we have a victory mine, if so this mine should be
+                # clicked and not flagged.
+                #
+                # If not, then the mine should be flagged.
+                victory_mine = (self._puzzle.click_mine is not None and
+                                loc == self._puzzle.click_mine)
+                if victory_mine and square.state != Square.State.REVEALED:
+                    success = False
+                elif (not victory_mine and
+                      square.state != Square.State.FLAGGED):
+                    success = False
+
+        # Have only mines been flagged?
+        if success:
+            for loc, square in self._board.flags:
+                if square.type != Square.Type.MINE:
+                    success = False
+
+        # Display crash message if success
+        if success:
+            # TODO: Better crash dump message
+            self._terminal.output(["CRASH ALERT: minehunt crashed -- "
+                                   "segfault at address 0x445d9ee9"])
+
+        self._completed = success
 
 
 class Board:
@@ -467,9 +478,14 @@ class Puzzle:
     _CLICK_CHAR = "x"
     _IGNORE_CHAR = " "
 
-    def __init__(self, board_str, time_multiple=None):
-        self.time_multiple = time_multiple
-        Puzzle.puzzles.append(self)
+    @unique
+    class Time(Enum):
+        ANY = 1
+        ODD = 2
+        EVEN = 3
+
+    def __init__(self, board_str, time_condition, mine_count):
+        self.time_condition = time_condition
 
         # Parse the board
         lines = [l for l in board_str.split("\n") if len(l) > 0]
@@ -478,6 +494,18 @@ class Puzzle:
 
         # See if there is a mine that has to be clicked (represented by o)
         self.click_mine = self._find_click_mine()
+
+        # Check the number of mines are correct
+        defined_count = len(
+            [s for s in itertools.chain.from_iterable(self.board_def)
+             if s == Puzzle.MINE_CHAR])
+        assert defined_count == mine_count, \
+            "Incorrect mine count: expected {}, actual {}".format(
+                mine_count, defined_count)
+
+        # Add to global puzzle list
+        Puzzle.puzzles.append(self)
+
 
     def _find_click_mine(self):
         for row in range(len(self.board_def)):
@@ -499,11 +527,12 @@ o . . . . . . . . .
 . . . . . . . . . o
 . . . o . . . . . .
 . . . . . . . . . .
-o o . . . . . o . .
+o x . . . . . o . .
 . . . . . . . . . .
 . . . . . . . . o .
 """,
-time_multiple=3)
+Puzzle.Time.ODD,
+mine_count=8)
 
 Puzzle("""
 . . . . . o . . . .
@@ -513,21 +542,24 @@ o o . . . . . . . .
 . . . . . . . . o .
 o o . . . . . . x .
 . . . . . . . . . .
-. . . . . . . . . .
+. . . . . . . . . o
 """,
-time_multiple=3)
+Puzzle.Time.EVEN,
+mine_count=9)
 
 
 Puzzle("""
 . o . . . o . . . .
 o o . . . . . . . .
-. . . . . . o . . .
+. . . . . . . . . .
 . . . o . . . . . .
 . . . . . . . . . .
 o x . . . . . . o .
 . . . . . . . . . .
 . o . . o . . . . .
-""")
+""",
+Puzzle.Time.ANY,
+mine_count=10)
 
 #
 # 8 rows x 9 cols boards
@@ -537,26 +569,28 @@ Puzzle(
 o . . . . o . . .
 . . . . . . . . .
 . . . . . . . . .
-. . . o . . . . .
+. . . x . . . . .
 . . . . . . . . .
 o o . . . . . o .
 . . . . . . . . .
 . . . . . . . . o
 """,
-time_multiple=3)
+Puzzle.Time.EVEN,
+mine_count=7)
 
 Puzzle(
 """
 o . . . . o . . .
 o . . . . . . . .
-. . . . . . . x .
+. . . . . . . x o
 . . . o . . . . .
 . . . . . . . . .
 o o . . . . . o .
 . . . . . . . . .
 . o . . . . . . o
 """,
-time_multiple=5)
+Puzzle.Time.ODD,
+mine_count=11)
 
 Puzzle(
 """
@@ -565,9 +599,10 @@ o . . . . o . . .
 . . . . . . . . .
 . . . o . . . . .
 . . . . . . . . .
-o o . . . . . o .
+o x . . . . . o .
 o o . . . . . . .
 . . . . . . . . o
 """,
-time_multiple=6)
+Puzzle.Time.ANY,
+mine_count=9)
 

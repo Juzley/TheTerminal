@@ -117,7 +117,7 @@ class Terminal:
                 if not self._current_program.completed():
                     self._current_program.start()
                 else:
-                    self.output(["{} already disabled!"
+                    self.output(["{} already completed!"
                                  .format(self._current_program.security_type)
                                  .capitalize()])
                     self._current_program = None

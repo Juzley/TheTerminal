@@ -2,6 +2,7 @@
 
 
 import pygame
+import random
 
 import constants
 import mouse
@@ -19,6 +20,7 @@ def setup():
     pygame.display.set_icon(load_image("media/icon.png"))
     pygame.display.set_caption(constants.GAMENAME)
     mouse.current.set_cursor(mouse.Cursor.ARROW)
+    random.seed()
 
 
 def run():
