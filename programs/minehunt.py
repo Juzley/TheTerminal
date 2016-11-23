@@ -495,6 +495,11 @@ class Puzzle:
         # See if there is a mine that has to be clicked (represented by o)
         self.click_mine = self._find_click_mine()
 
+        # Make sure we have a mine to click (can drop this if we decide to
+        # vary puzzles later)
+        assert self.click_mine is not None, \
+            "No mine to click in puzzle: {}".format(board_str)
+
         # Check the number of mines are correct
         defined_count = len(
             [s for s in itertools.chain.from_iterable(self.board_def)
