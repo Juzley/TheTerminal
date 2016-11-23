@@ -5,7 +5,7 @@ import random
 import mouse
 from enum import Enum, unique
 from . import program
-from resource import load_font
+from resource import load_font, load_image
 
 
 @unique
@@ -13,25 +13,25 @@ class Categories(Enum):
 
     """Categories of image to display."""
 
-    CARS = 1
-    PLANES = 2
-    FLOWERS = 3
-    CATS = 4
-    DOGS = 5
-    MUSIC = 6
-    SOCCER = 7
-    TENNIS = 8
-    FOOD = 9
-    COMPUTERS = 10
-    BOATS = 11
-    ARCHERY = 12
-    BOOKS = 13
-    WINE = 14
-    BEER = 15
-    HORSES = 16
-    BASKETBALL = 17
-    BASEBALL = 18
-    SKATEBOARDING = 19
+    CARS = 'media/login/cars.png'
+    PLANES = 'media/login/planes.png'
+    FLOWERS = 'media/login/flowers.png'
+    CATS = 'media/login/cats.png'
+    DOGS = 'media/login/dogs.png'
+    MUSIC = 'media/login/music.png'
+    SOCCER = 'media/login/soccer.png'
+    TENNIS = 'media/login/tennis.png'
+    FOOD = 'media/login/food.png'
+    COMPUTERS = 'media/login/computers.png'
+    BOATS = 'media/login/boats.png'
+    ARCHERY = 'media/login/archery.png'
+    BOOKS = 'media/login/books.png'
+    WINE = 'media/login/wine.png'
+    BEER = 'media/login/beer.png'
+    HORSES = 'media/login/horses.png'
+    BASKETBALL = 'media/login/basketball.png'
+    BASEBALL = 'media/login/baseball.png'
+    SKATEBOARDING = 'media/login/skateboarding.png'
 
 
 class ImagePassword(program.TerminalProgram):
@@ -81,7 +81,7 @@ class ImagePassword(program.TerminalProgram):
     _BUTTON_BORDER_WIDTH = 2
     _BUTTON_BORDER_COLOUR = _HEADER_COLOUR
 
-    _GUESSED_OVERLAY_COLOUR = (0, 255, 0)
+    _GUESSED_OVERLAY_COLOUR = (150, 150, 150)
     _GUESSED_OVERLAY_ALPHA = 180
 
     _LOCK_TIME = 2000
@@ -159,15 +159,10 @@ class ImagePassword(program.TerminalProgram):
 
         # Build the buttons
         self._buttons = []
-        font = load_font(None, 30)
         for i, c in enumerate(choices):
-            text = font.render(c.name, True, (255, 255, 255))
-            surf = pygame.Surface((ImagePassword._BUTTON_SIZE,
-                                   ImagePassword._BUTTON_SIZE))
-            surf.fill((180, 180, 255))
-            surf.blit(text, (0, 0))
-            self._buttons.append([surf, ImagePassword._BUTTON_COORDS[i], c,
-                                  False])
+            self._buttons.append([load_image(c.value),
+                                  ImagePassword._BUTTON_COORDS[i],
+                                  c, False])
 
     def _locked(self):
         """Indicate if the user is temporarily locked out."""
