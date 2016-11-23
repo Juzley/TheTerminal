@@ -423,93 +423,98 @@ squares that contain mines (using right click).
 </ul>
 Below are all the possible solutions (grouped by board size) along with the
 actions required to trigger a crash. The key is as follows:
-<ul>
-    <li>'o' indicates the location of a mine</li>
-    <li>'x' indicates a position of a mine that should be clicked (once all
-        other mines have been flagged)</li>
-</ul>
 </p>
+
+<div>
+<table>
+    <tr><td class=minehunt-diagram><div class=bomb></div></td><td>Indicates the location of a
+            mine that should be flagged (right click)</td></tr>
+    <tr><td class=minehunt-diagram><div class=finish></div></td><td>Indicates a position of the mine
+            that should be hit (left click), once all other mines have been
+            flagged.</td></tr>
+</table>
+</div>
 
 <div class='minehunt-diagrams'>
 <h4>8 rows by 10 cols</h4>
 <div class='minehunt-diagram'>
 <span class='time'>End with multiple of <b>3</b> secs:</span>
-<pre>
-. . . . . o . . . .
-o . . . . . . . . .
-. . . . . . . . . o
-. . . o . . . . . .
-. . . . . . . . . .
-o o . . . . . o . .
-. . . . . . . . . .
-. . . . . . . . o .
-</pre>
+<table>
+    <tr><td>. . . . . o . . . .</td></tr>
+    <tr><td>o . . . . . . . . .</td></tr>
+    <tr><td>. . . . . . . . . o</td></tr>
+    <tr><td>. . . o . . . . . .</td></tr>
+    <tr><td>. . . . . . . . . .</td></tr>
+    <tr><td>o o . . . . . o . .</td></tr>
+    <tr><td>. . . . . . . . . .</td></tr>
+    <tr><td>. . . . . . . . o .</td></tr>
+</table>
 </div>
 <div class='minehunt-diagram'>
 <span class='time'>End with multiple of <b>3</b> secs:</span>
-<pre>
-. . . . . o . . . .
-o o . . . . . . . .
-. . . . . . . . . .
-. . . o . . . . . .
-. . . . . . . . o .
-o o . . . . . . x .
-. . . . . . . . . .
-. . . . . . . . . .
-</pre>
+<table>
+    <tr><td>. . . . . o . . . .</td></tr>
+    <tr><td>o o . . . . . . . .</td></tr>
+    <tr><td>. . . . . . . . . .</td></tr>
+    <tr><td>. . . o . . . . . .</td></tr>
+    <tr><td>. . . . . . . . o .</td></tr>
+    <tr><td>o o . . . . . . x .</td></tr>
+    <tr><td>. . . . . . . . . .</td></tr>
+    <tr><td>. . . . . . . . . .</td></tr>
+</table>
 </div>
 <div class='minehunt-diagram'>
 <span class='time'>End with any time.</span>
-<pre>
-. o . . . o . . . .
-o o . . . . . . . .
-. . . . . . o . . .
-. . . o . . . . . .
-. . . . . . . . . .
-o x . . . . . . o .
-. . . . . . . . . .
-. o . . o . . . . .
-</pre>
+<table>
+    <tr><td>. o . . . o . . . .</td></tr>
+    <tr><td>o o . . . . . . . .</td></tr>
+    <tr><td>. . . . . . o . . .</td></tr>
+    <tr><td>. . . o . . . . . .</td></tr>
+    <tr><td>. . . . . . . . . .</td></tr>
+    <tr><td>o x . . . . . . o .</td></tr>
+    <tr><td>. . . . . . . . . .</td></tr>
+    <tr><td>. o . . o . . . . .</td></tr>
+</table>
 </div>
 <h4>8 rows by 9 cols</h4>
 <div class='minehunt-diagram'>
 <span class='time'>End with multiple of <b>3</b> secs:</span>
-<pre>
-o . . . . o . . .
-. . . . . . . . .
-. . . . . . . . .
-. . . o . . . . .
-. . . . . . . . .
-o o . . . . . o .
-. . . . . . . . .
-. . . . . . . . o
-</pre>
+<table>
+    <tr><td>o . . . . o . . .</td></tr>
+    <tr><td>. . . . . . . . .</td></tr>
+    <tr><td>. . . . . . . . .</td></tr>
+    <tr><td>. . . o . . . . .</td></tr>
+    <tr><td>. . . . . . . . .</td></tr>
+    <tr><td>o o . . . . . o .</td></tr>
+    <tr><td>. . . . . . . . .</td></tr>
+    <tr><td>. . . . . . . . o</td></tr>
+</table>
 </div>
 <div class='minehunt-diagram'>
 <span class='time'>End with multiple of <b>5</b> secs:</span>
-<pre>
-o . . . . o . . .
-o . . . . . . . .
-. . . . . . . x .
-. . . o . . . . .
-. . . . . . . . .
-o o . . . . . o .
-. . . . . . . . .
-. o . . . . . . o
-</pre>
+<table>
+    <tr><td>o . . . . o . . .</td></tr>
+    <tr><td>o . . . . . . . .</td></tr>
+    <tr><td>. . . . . . . x .</td></tr>
+    <tr><td>. . . o . . . . .</td></tr>
+    <tr><td>. . . . . . . . .</td></tr>
+    <tr><td>o o . . . . . o .</td></tr>
+    <tr><td>. . . . . . . . .</td></tr>
+    <tr><td>. o . . . . . . o</td></tr>
+</table>
 </div>
 <div class='minehunt-diagram'>
 <span class='time'>End with multiple of <b>6</b> secs:</span>
-<pre>
-o . . . . o . . . 
-. . . . . . . . . 
-. . . . . . . . . 
-. . . o . . . . . 
-. . . . . . . . . 
-o o . . . . . o . 
-o o . . . . . . . 
-. . . . . . . . o 
-</pre>
+<table>
+    <tr><td>o . . . . o . . . </td></tr>
+    <tr><td>. . . . . . . . . </td></tr>
+    <tr><td>. . . . . . . . . </td></tr>
+    <tr><td>. . . o . . . . . </td></tr>
+    <tr><td>. . . . . . . . . </td></tr>
+    <tr><td>o o . . . . . o . </td></tr>
+    <tr><td>o o . . . . . . . </td></tr>
+    <tr><td>. . . . . . . . o </td></tr>
+</table>
 </div>
 </div>
 <a href='#hacking'>Back to top</a>
@@ -535,13 +540,14 @@ o o . . . . . . .
         network.innerHTML = diagram;
     }
 
-    var boards = document.querySelectorAll('.minehunt-diagram pre');
-    for (var board of boards) {
-        var diagram = board.innerHTML;
-        diagram = diagram.replaceAll("x", "<span class=finish>x</span>");
-        diagram = diagram.replaceAll("o", "<span class=bomb>o</span>");
-        diagram = diagram.replaceAll(".", "<span class=empty>.</span>");
-        board.innerHTML = diagram;
+    var rows = document.querySelectorAll('.minehunt-diagram tr');
+    for (var row of rows) {
+        var div = row.children[0];
+        var divs = div.innerHTML;
+        divs = divs.replaceAll("x", "<td><div class=finish></div></td>");
+        divs = divs.replaceAll("o", "<td><div class=bomb></div></td>");
+        divs = divs.replaceAll(".", "<td></td>");
+        row.innerHTML = divs;
     }
 </script>
 </body>

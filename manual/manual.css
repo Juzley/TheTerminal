@@ -123,13 +123,29 @@ div.minehunt-diagrams {
 div.minehunt-diagram {
     display: inline-block;
     min-width: 45%;
-    background-color: #CCC;
 }
 
-.minehunt-diagram span.empty {
-    color: #AAA;
+.minehunt-diagram td {
+    background-color: #DDD;
+    margin: 1px;
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    text-align: center;
 }
 
-.minehunt-diagram span.finish {
-    color: #C11;
+.minehunt-diagram div.bomb {
+    background-color: black;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin: auto;
+}
+
+.minehunt-diagram div.finish {
+    background-color: red;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin: auto;
 }
