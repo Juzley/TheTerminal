@@ -313,7 +313,8 @@ class Board:
                                     max_height / self._rows))
 
         def get_type(c):
-            return Square.Type.MINE if c == "x" else Square.Type.EMPTY
+            return (Square.Type.MINE if c == Puzzle.MINE_CHAR
+                    else Square.Type.EMPTY)
 
         def get_rect(r, c):
             return (c * self._square_size,
@@ -460,24 +461,30 @@ class Square:
 class Puzzle:
     puzzles = []
 
+    MINE_CHAR = "o"
+    EMPTY_CHAR = "."
+
+    _CLICK_CHAR = "x"
+    _IGNORE_CHAR = " "
+
     def __init__(self, board_str, time_multiple=None):
         self.time_multiple = time_multiple
         Puzzle.puzzles.append(self)
 
         # Parse the board
         lines = [l for l in board_str.split("\n") if len(l) > 0]
-        self.board_def = [[c for c in line]
+        self.board_def = [[c for c in line if c != self._IGNORE_CHAR]
                           for line in lines]
 
         # See if there is a mine that has to be clicked (represented by o)
-        self.click_mine = self._find_mine_to_click()
+        self.click_mine = self._find_click_mine()
 
-    def _find_mine_to_click(self):
+    def _find_click_mine(self):
         for row in range(len(self.board_def)):
             for col in range(len(self.board_def[row])):
-                if self.board_def[row][col] == "o":
+                if self.board_def[row][col] == self._CLICK_CHAR:
                     # Change to mine character
-                    self.board_def[row][col] = "x"
+                    self.board_def[row][col] = Puzzle.MINE_CHAR
                     return row, col
         return None
 
@@ -487,39 +494,39 @@ class Puzzle:
 #
 Puzzle(
 """
-.....x....
-x.........
-.........x
-...x......
-..........
-xx.....x..
-..........
-........x.
+. . . . . o . . . .
+o . . . . . . . . .
+. . . . . . . . . o
+. . . o . . . . . .
+. . . . . . . . . .
+o o . . . . . o . .
+. . . . . . . . . .
+. . . . . . . . o .
 """,
 time_multiple=3)
 
 Puzzle("""
-.....x....
-xx........
-..........
-...x......
-........x.
-xx......o.
-..........
-..........
+. . . . . o . . . .
+o o . . . . . . . .
+. . . . . . . . . .
+. . . o . . . . . .
+. . . . . . . . o .
+o o . . . . . . x .
+. . . . . . . . . .
+. . . . . . . . . .
 """,
 time_multiple=3)
 
 
 Puzzle("""
-.x...x....
-xx........
-......x...
-...x......
-..........
-xo......x.
-..........
-.x..x.....
+. o . . . o . . . .
+o o . . . . . . . .
+. . . . . . o . . .
+. . . o . . . . . .
+. . . . . . . . . .
+o x . . . . . . o .
+. . . . . . . . . .
+. o . . o . . . . .
 """)
 
 #
@@ -527,40 +534,40 @@ xo......x.
 #
 Puzzle(
 """
-x....x...
-.........
-.........
-...x.....
-.........
-xx.....x.
-.........
-........x
+o . . . . o . . .
+. . . . . . . . .
+. . . . . . . . .
+. . . o . . . . .
+. . . . . . . . .
+o o . . . . . o .
+. . . . . . . . .
+. . . . . . . . o
 """,
 time_multiple=3)
 
 Puzzle(
 """
-x....x...
-x........
-.......o.
-...x.....
-.........
-xx.....x.
-.........
-.x......x
+o . . . . o . . .
+o . . . . . . . .
+. . . . . . . x .
+. . . o . . . . .
+. . . . . . . . .
+o o . . . . . o .
+. . . . . . . . .
+. o . . . . . . o
 """,
 time_multiple=5)
 
 Puzzle(
 """
-x....x...
-.........
-.........
-...x.....
-.........
-xx.....x.
-xx.......
-........x
+o . . . . o . . .
+. . . . . . . . .
+. . . . . . . . .
+. . . o . . . . .
+. . . . . . . . .
+o o . . . . . o .
+o o . . . . . . .
+. . . . . . . . o
 """,
 time_multiple=6)
 
