@@ -154,3 +154,38 @@ div.minehunt-diagram {
     display: block;
     font-style: italic;
 }
+
+div.resistor {
+    margin: auto;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    background-color: #e5e5cb;
+}
+
+.resistor div {
+    width: 6px;
+    height: 1em;
+    margin-left: 1px;
+    margin-right: 1px;
+    display: inline-block;
+}
+
+.resistor div.red {
+    background-color: red;
+}
+
+.resistor div.yellow {
+    background-color: yellow;
+}
+
+.resistor div.green {
+    background-color: green;
+}
+
+.resistor div.blue {
+    background-color: blue;
+}
+
+.resistor div.black {
+    background-color: black;
+}
