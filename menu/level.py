@@ -27,8 +27,8 @@ class LevelMenu(menu.CLIMenu):
 
             # The program class names are represented in the JSON as strings,
             # we need to convert them to the corresponding class objects.
-            for level in self._levels:
-                for group in level['program_groups'].values():
+            for lvl in self._levels:
+                for group in lvl['program_groups'].values():
                     for program_info in group['programs']:
                         program_info[1] = getattr(programs, program_info[1])
 
@@ -40,7 +40,7 @@ class LevelMenu(menu.CLIMenu):
         buf = [
             '$ cd levels',
             '$ ls',
-            menu.CLIMenuItem('   ..', '$ cd ..', LevelMenu.Items.BACK)
+            menu.CLIMenuItem('    ..', '$ cd ..', LevelMenu.Items.BACK)
         ]
 
         # Add each level as a menu item
@@ -48,17 +48,21 @@ class LevelMenu(menu.CLIMenu):
             # Work out whether this level is accessible.
             disabled = len([r for r in lvl.get('requires', [])
                             if r not in completed]) > 0
+            text = '    [{}] {}'.format(
+                'x' if lvl['id'] in completed else ' ',
+                lvl['name'])
 
-            item = menu.CLIMenuItem(text='   ' + lvl['name'],
-                                    cmd='$ connect {}'.format(lvl['name']),
+            item = menu.CLIMenuItem(text=text,
+                                    cmd='$ {}'.format(lvl['cmd']),
                                     item=idx,
                                     disabled=disabled)
-
             buf.append(item)
 
         # We want to start with the latest available level selected.
-        enabled = [i for i in buf if not item.disabled]
-        enabled[-1].selected = True
+        enabled = [i for i in buf if
+                   isinstance(i, menu.CLIMenuItem) and not i.disabled]
+        if enabled:
+            enabled[-1].selected = True
 
         super().__init__(mgr, buf)
 

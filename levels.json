@@ -1,12 +1,13 @@
 [
     {
         "id": 0,
-        "name": "Level 1",
+        "name": "Level 1 - Learning To Hack",
+        "cmd": "connect learning.ssh",
         "time": 180,
         "program_groups": {
             "login": {
                 "program_count": 1,
-                "dependent_on": "others",
+                "dependent_on": ["others"],
                 "programs": [
                     ["login", "PasswordGuess"]
                 ]
@@ -14,128 +15,202 @@
             "others": {
                 "program_count": 1,
                 "programs": [
-                    ["suspend", "HardwareInspect"],
-                    ["hexedit", "HexEditor"]
+                    ["decrypt", "Decrypt"]
                 ]
             }
         }
     },
     {
         "id": 1,
-        "name": "Level 2",
-        "time": 300,
+        "name": "Level 2 - Cracking",
+        "cmd": "connect cracking.ssh",
+        "time": 180,
         "requires": [0],
         "program_groups": {
             "login": {
                 "program_count": 1,
-                "dependent_on": "others",
+                "dependent_on": ["others"],
                 "programs": [
                     ["login", "PasswordGuess"],
                     ["login", "ImagePassword"]
                 ]
             },
             "others": {
-                "program_count": 3,
+                "program_count": 2,
                 "programs": [
-                    ["suspend", "HardwareInspect"],
                     ["hexedit", "HexEditor"],
-                    ["network", "NetworkManager"],
-                    ["decrypt", "Decrypt"],
-                    ["minehunt", "MineHunt"]
+                    ["decrypt", "Decrypt"]
                 ]
             }
         }
     },
     {
         "id": 2,
-        "name": "Decrypt",
-        "time": 60,
+        "name": "Level 3 - Hardware Hacking",
+        "cmd": "connect hardware.ssh",
+        "time": 180,
+        "requires": [1],
         "program_groups": {
-            "decrypt": {
+            "login": {
                 "program_count": 1,
-                "programs": [["decrypt", "Decrypt"]]
+                "dependent_on": ["hardware", "others"],
+                "programs": [
+                    ["login", "PasswordGuess"],
+                    ["login", "ImagePassword"]
+                ]
+            },
+            "hardware": {
+                "program_count": 1,
+                "programs": [
+                    ["suspend", "HardwareInspect"]
+                ]
+            },
+            "others": {
+                "program_count": 1,
+                "programs": [
+                    ["hexedit", "HexEditor"],
+                    ["decrypt", "Decrypt"]
+                ]
             }
         }
     },
     {
         "id": 3,
-        "name": "Hardware",
-        "time": 60,
+        "name": "Level 4 - Network Design",
+        "cmd": "connect network.ssh",
+        "time": 180,
+        "requires": [1],
         "program_groups": {
-            "suspend": {
+            "login": {
                 "program_count": 1,
-                "programs": [["suspend", "HardwareInspect"]]
+                "dependent_on": ["network", "others"],
+                "programs": [
+                    ["login", "PasswordGuess"],
+                    ["login", "ImagePassword"]
+                ]
+            },
+            "network": {
+                "program_count": 1,
+                "programs": [
+                    ["network", "NetworkManager"]
+                ]
+            },
+            "others": {
+                "program_count": 1,
+                "programs": [
+                    ["hexedit", "HexEditor"],
+                    ["decrypt", "Decrypt"]
+                ]
             }
         }
     },
     {
         "id": 4,
-        "name": "Hexedit",
-        "time": 60,
+        "name": "Level 5 - MineHunt!",
+        "cmd": "connect minehunt.ssh",
+        "time": 180,
+        "requires": [1],
         "program_groups": {
-            "hexedit": {
+            "login": {
                 "program_count": 1,
-                "programs": [["hexedit", "HexEditor"]]
+                "dependent_on": ["minehunt", "others"],
+                "programs": [
+                    ["login", "PasswordGuess"],
+                    ["login", "ImagePassword"]
+                ]
+            },
+            "minehunt": {
+                "program_count": 1,
+                "programs": [
+                    ["minehunt", "MineHunt"]
+                ]
+            },
+            "others": {
+                "program_count": 1,
+                "programs": [
+                    ["hexedit", "HexEditor"],
+                    ["decrypt", "Decrypt"]
+                ]
             }
         }
     },
     {
         "id": 5,
-        "name": "Visual Password",
-        "time": 60,
+        "name": "Level 6 - Ready For Anything",
+        "cmd": "connect rdy.ssh",
+        "time": 180,
+        "requires": [2, 3, 4],
         "program_groups": {
             "login": {
                 "program_count": 1,
-                "programs": [["login", "ImagePassword"]]
+                "dependent_on": ["others"],
+                "programs": [
+                    ["login", "PasswordGuess"],
+                    ["login", "ImagePassword"]
+                ]
+            },
+            "others": {
+                "program_count": 2,
+                "programs": [
+                    ["minehunt", "MineHunt"],
+                    ["network", "NetworkManager"],
+                    ["suspend", "HardwareInspect"],
+                    ["hexedit", "HexEditor"],
+                    ["decrypt", "Decrypt"]
+                ]
             }
         }
     },
     {
         "id": 6,
-        "name": "Minehunt",
-        "time": 60,
+        "name": "Level 7 - The Hacker's Marathon",
+        "cmd": "connect mar4thon.ssh",
+        "time": 300,
+        "requires": [5],
         "program_groups": {
-            "minehunt": {
+            "login": {
                 "program_count": 1,
-                "programs": [["minehunt", "MineHunt"]]
+                "dependent_on": ["others"],
+                "programs": [
+                    ["login", "PasswordGuess"],
+                    ["login", "ImagePassword"]
+                ]
+            },
+            "others": {
+                "program_count": 5,
+                "programs": [
+                    ["minehunt", "MineHunt"],
+                    ["network", "NetworkManager"],
+                    ["suspend", "HardwareInspect"],
+                    ["hexedit", "HexEditor"],
+                    ["decrypt", "Decrypt"]
+                ]
             }
         }
     },
     {
         "id": 7,
-        "name": "Network",
+        "name": "Level 8 - Speedy Software",
+        "cmd": "connect fastlockout.ssh",
         "time": 60,
-        "program_groups": {
-            "minehunt": {
-                "program_count": 1,
-                "programs": [["network", "NetworkManager"]]
-            }
-        }
-    },
-    {
-        "id": 8,
-        "name": "Password",
-        "time": 60,
+        "requires": [6],
         "program_groups": {
             "login": {
                 "program_count": 1,
-                "programs": [["login", "PasswordGuess"]]
-            }
-        }
-    },
-    {
-        "id": 9,
-        "name": "Minehunt & Password",
-        "time": 90,
-        "program_groups": {
-            "login": {
-                "program_count": 1,
-                "dependent_on": "minehunt",
-                "programs": [["login", "PasswordGuess"]]
+                "dependent_on": ["others"],
+                "programs": [
+                    ["login", "PasswordGuess"],
+                    ["login", "ImagePassword"]
+                ]
             },
-            "minehunt": {
+            "others": {
                 "program_count": 1,
-                "programs": [["minehunt", "MineHunt"]]
+                "programs": [
+                    ["minehunt", "MineHunt"],
+                    ["network", "NetworkManager"],
+                    ["hexedit", "HexEditor"],
+                    ["decrypt", "Decrypt"]
+                ]
             }
         }
     }

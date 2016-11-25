@@ -157,10 +157,13 @@ class GameplayState(GameState):
             group_programs = groups[group_name]
 
             if 'dependent_on' in group_info:
-                dependent_group_programs = groups[group_info['dependent_on']]
+                program_list = []
+                for d in group_info['dependent_on']:
+                    dependent_group_programs = groups[d]
+                    program_list.append(list(dependent_group_programs.keys()))
 
-                for program in group_programs.keys():
-                    depends[program] = list(dependent_group_programs.keys())
+                    for program in group_programs.keys():
+                        depends[program] = program_list
 
         # Finally get the flatten the groups into a list of programs
         programs = {}
