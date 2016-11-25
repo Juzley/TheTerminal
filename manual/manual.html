@@ -47,6 +47,9 @@ objective of the program), you may do so by pressing ctrl and c on your
 keyboard - you can always run it again later.</p>
 
 <h2 id='hacking'>Hacking</h2>
+<p>The sections that follow describe the various tasks you will have to
+master in order to be a successful hacker. The list below gives links to each
+task.</p>
 <ul>
     <li><a href='#passwords'>Guessing Passwords</a></li>
     <li><a href='#visualpasswords'>Guessing Visual Passwords</a></li>
@@ -169,11 +172,14 @@ checks. Brush off your programming skills and open your hex editor...</p>
 
 <p>A program is made up of a number of lines of code, where each line consists
 of 6 numbers. A hex editor will allow you to modify the lines of code
-one-by-one, replacing one value in the line with another value. Follow the
-rules below in order to determine the correct actions for each line:</p>
+one-by-one, replacing one value in the line with another value. <em>Note
+that in some cases, you will need to remember the value that you are replacing
+for following lines.</em></p> 
 
-<p>If you don't follow the instructions below carefully, the system will detect
-your attempts to modify the program, and revert it to its original state.</p>
+<p>Follow the rules below in order to determine the correct actions for each
+line. If you don't follow the instructions below carefully, the system will
+detect your attempts to modify the program, and revert it to its original
+state.</p>
 
 <ol class=alternate type="a">
     <li>If this is the first line in the program go to (d), else go to (b)</li>
@@ -230,74 +236,17 @@ the hardware specifications, which should help you bypass this protection.</p>
 <p>Each system may have one or more security chip on its motherboard, with an
 associated pull-down resistor. In order to bypass the security system, you
 must remove the chip, its pull-down resistor, or both, based on the information
-in the below tables.</p>
+in the below tables. Removing a chip or resistor is achieved by simply
+left-clicking on it.</p>
 
-<p>Booting the system with an incorrect hardware configuration may affect the
-system clock, which may reduce the amount of time you have before you are
-logged out.</p>
+<p>Once you have the correct hardware configuration, click the "Reboot" button
+to restart the computer. Booting the system with an incorrect hardware
+configuration may affect the system clock, which may reduce the amount of time
+you have before you are logged out.</p>
 
 <p>Table 1:
-Use the last character of the security chip's identifier and the value of the
-chip's pull-down resistor to determine the correction action.</p>
-
-<table class=alternate>
-    <tr>
-        <th>Resistor Value</th>
-        <th>Odd number</th>
-        <th>Event number</th>
-        <th>Zero</th>
-        <th>Letter</th>
-    </tr>
-    <tr><td>10 kOhms</td><td>N</td><td>C</td><td>R</td><td>B</td></tr>
-    <tr><td>20 kOhms</td><td>C</td><td>C</td><td>B</td><td>R</td></tr>
-    <tr><td>30 kOhms</td><td>R</td><td>R</td><td>C</td><td>C</td></tr>
-    <tr><td>40 kOhms</td><td>B</td><td>N</td><td>R</td><td>C</td></tr>
-    <tr><td>50 kOhms</td><td>T2, row 1</td><td>T2, row 4</td><td>N</td><td>T2,
-            row 3</td></tr>
-    <tr><td>60 kOhms</td><td>T2, row 5</td><td>C</td><td>T2, row 2</td><td>T2,
-            row 6</td></tr>
-</table>
-
-<p>Key:</p>
-<ul>
-    <li>N: remove nothing.</li>
-    <li>C: remove the chip.</li>
-    <li>R: remove the resistor.</li>
-    <li>B: remove both.</li>
-    <li>T2, row#: Consult table 2, looking at the specified row.</li>
-</ul>
-
-<p>Table 2:
-Use the row given by table 1, and the first character of the terminal name to
-determine the correct action.</p>
-
-<table class=alternate>
-    <tr>
-        <th>Row</th>
-        <th>Odd number</th>
-        <th>Even number</th>
-        <th>Zero</th>
-        <th>Letter</th>
-    </tr>
-    <tr><td>Row 1</td><td>C</td><td>N</td><td>R</td><td>C</td></tr>
-    <tr><td>Row 2</td><td>R</td><td>C</td><td>R</td><td>C</td></tr>
-    <tr><td>Row 3</td><td>R</td><td>B</td><td>C</td><td>R</td></tr>
-    <tr><td>Row 4</td><td>C</td><td>R</td><td>C</td><td>R</td></tr>
-    <tr><td>Row 5</td><td>N</td><td>C</td><td>R</td><td>B</td></tr>
-    <tr><td>Row 6</td><td>C</td><td>C</td><td>C</td><td>R</td></tr>
-</table>
-
-<p>Key:</p>
-<ul>
-    <li>N: remove nothing.</li>
-    <li>C: remove the chip.</li>
-    <li>R: remove the resistor.</li>
-    <li>B: remove both.</li>
-</ul>
-
-<p>Table 3:
 This table shows the values of the different resistors, based on the coloured
-markings (read from left to right) printed on the body of the resistor.</p>
+markings on the resistor.</p>
 
 <table class=alternate>
     <tr><th>Markings</th><th>Value</th></tr>
@@ -368,6 +317,57 @@ markings (read from left to right) printed on the body of the resistor.</p>
         <td>60 kOhms</td>
     </tr>
 </table>
+
+<p>Table 2:
+Use the last character of the security chip's identifier and the value of the
+chip's pull-down resistor to determine the correct action.</p>
+
+<table class=alternate>
+    <tr>
+        <th>Resistor Value</th>
+        <th>Odd number</th>
+        <th>Event number</th>
+        <th>Zero</th>
+        <th>Letter</th>
+    </tr>
+    <tr><td>10 kOhms</td><td>N</td><td>C</td><td>R</td><td>B</td></tr>
+    <tr><td>20 kOhms</td><td>C</td><td>C</td><td>B</td><td>R</td></tr>
+    <tr><td>30 kOhms</td><td>R</td><td>R</td><td>C</td><td>C</td></tr>
+    <tr><td>40 kOhms</td><td>B</td><td>N</td><td>R</td><td>C</td></tr>
+    <tr><td>50 kOhms</td><td>T3, row 1</td><td>T3, row 4</td><td>N</td><td>T3,
+            row 3</td></tr>
+    <tr><td>60 kOhms</td><td>T3, row 5</td><td>C</td><td>T3, row 2</td><td>T3,
+            row 6</td></tr>
+</table>
+
+<p>Table 3:
+Use the row given by table 2, and the first character of the terminal name to
+determine the correct action.</p>
+
+<table class=alternate>
+    <tr>
+        <th>Row</th>
+        <th>Odd number</th>
+        <th>Even number</th>
+        <th>Zero</th>
+        <th>Letter</th>
+    </tr>
+    <tr><td>Row 1</td><td>C</td><td>N</td><td>R</td><td>C</td></tr>
+    <tr><td>Row 2</td><td>R</td><td>C</td><td>R</td><td>C</td></tr>
+    <tr><td>Row 3</td><td>R</td><td>B</td><td>C</td><td>R</td></tr>
+    <tr><td>Row 4</td><td>C</td><td>R</td><td>C</td><td>R</td></tr>
+    <tr><td>Row 5</td><td>N</td><td>C</td><td>R</td><td>B</td></tr>
+    <tr><td>Row 6</td><td>C</td><td>C</td><td>C</td><td>R</td></tr>
+</table>
+
+<p>Key:</p>
+<ul>
+    <li>N: remove nothing.</li>
+    <li>C: remove the chip.</li>
+    <li>R: remove the resistor.</li>
+    <li>B: remove both.</li>
+    <li>T3, row#: Consult table 3, looking at the specified row.</li>
+</ul>
 <a href='#hacking'>Back to top</a>
 </div>
 
