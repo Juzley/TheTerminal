@@ -21,8 +21,8 @@ exe = EXE(pyz,
           a.binaries,
           a.zipfiles,
           a.datas,
-          name='ggo16',
+          name='theterminal',
           debug=False,
           strip=False,
           upx=True,
-          console=True )
+          console=False)
