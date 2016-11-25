@@ -26,15 +26,11 @@ class Terminal:
     _BUF_SIZE = 100
     _HISTORY_SIZE = 50
 
-    _TIMER_FONT = 'media/fonts/LCDMU___.TTF'
-    _TIMER_SIZE = 20
-    _TIMER_POS = (2, 0)
-    _TIMER_COLOUR = (255, 255, 255)
-    _TIMER_WARNING_COLOUR = (200, 0, 0)
+    _TIMER_POS = (0, 0)
     _TIMER_WARNING_SECS = 30
 
     # Constants related to drawing the terminal text.
-    _VISIBLE_LINES = 30
+    _VISIBLE_LINES = 28
     _TEXT_FONT = constants.TERMINAL_FONT
     _TEXT_SIZE = constants.TERMINAL_TEXT_SIZE
     _TEXT_COLOUR = constants.TEXT_COLOUR
@@ -78,8 +74,8 @@ class Terminal:
 
         # Timer attributes
         self._timer = timer.Timer()
-        self._timeleft = time * 1000
-        self._timer_font = load_font(Terminal._TIMER_FONT, Terminal._TIMER_SIZE)
+        self._countdown_timer = CountdownTimer(time,
+                                               Terminal._TIMER_WARNING_SECS)
 
         # Freeze attributes
         self._freeze_start = None
@@ -353,7 +349,7 @@ class Terminal:
 
     def reduce_time(self, time):
         """Reduce the available time by 'time' seconds."""
-        self._timeleft -= time * 1000
+        self._countdown_timer.update(time * 1000)
 
     def reboot(self, msg=""):
         """Simulate a reboot."""
@@ -371,7 +367,7 @@ class Terminal:
             (PAUSE_LEN, ""),
             (PAUSE_LEN,
              "You have {}s to login before terminal is locked down.".format(
-                round(self._timeleft / 1000))),
+                self._countdown_timer.secs_left)),
             (PAUSE_LEN, ""),
             (PAUSE_LEN,
              "Tip of the day: press ctrl+c to cancel current command."),
@@ -390,9 +386,10 @@ class Terminal:
             end_msgs = [(PAUSE_LEN,
                          "Type 'help' to list available commands")]
 
-        # Push banner to top, leaving space for end messages.
+        # Push banner to top, leaving space for end messages, and for
+        # current line.
         blank_lines = (Terminal._VISIBLE_LINES -
-                       len(self._reboot_buf) - len(end_msgs))
+                       len(self._reboot_buf) - len(end_msgs) - 1)
         self._reboot_buf.extend([(PAUSE_LEN, "")] * blank_lines + end_msgs)
 
     def draw(self):
@@ -439,7 +436,9 @@ class Terminal:
 
         # Draw the buffer.
         y_coord = Terminal._TEXT_START[1]
-        for line in itertools.chain([current_line], buf):
+        first_line_height = None
+        for line in list(itertools.chain(
+                [current_line], buf))[:self._VISIBLE_LINES]:
             # Set defaults before checking whether the line overrides.
             colour = Terminal._TEXT_COLOUR
             size = Terminal._TEXT_SIZE
@@ -470,7 +469,15 @@ class Terminal:
             else:
                 font = self._font
 
-            y_coord -= size
+            # The height of the rendered text can sometimes be quite different
+            # to the 'size' value used. So use the rendered height with a 2
+            # pixel padding each side
+            line_height = font.size(line)[1] + 4
+            if first_line_height is None:
+                first_line_height = line_height
+
+            y_coord -= line_height
+
             text = font.render(line, True, colour)
             pygame.display.get_surface().blit(
                 text, (Terminal._TEXT_START[0], y_coord))
@@ -482,12 +489,12 @@ class Terminal:
                 (self._timer.time % (Terminal._CURSOR_ON_MS +
                                      Terminal._CURSOR_OFF_MS) <
                  Terminal._CURSOR_ON_MS)):
-            curr_line_size = self._font.size(current_line)
+            first_line_size = self._font.size(current_line)
             pygame.draw.rect(pygame.display.get_surface(),
                              Terminal._TEXT_COLOUR,
-                             (Terminal._TEXT_START[0] + curr_line_size[0] + 1,
-                              Terminal._TEXT_START[1] - curr_line_size[1] - 3,
-                              Terminal._CURSOR_WIDTH, curr_line_size[1]),
+                             (Terminal._TEXT_START[0] + first_line_size[0] + 1,
+                              Terminal._TEXT_START[1] - first_line_height - 1,
+                              Terminal._CURSOR_WIDTH, first_line_size[1]),
                              0 if self._has_focus else 1)
 
     def draw_bezel(self):
@@ -495,17 +502,7 @@ class Terminal:
         pygame.display.get_surface().blit(self._bezel, self._bezel.get_rect())
 
         # Draw the countdown text.
-        colour = Terminal._TIMER_COLOUR
-        if self._timeleft // 1000 < Terminal._TIMER_WARNING_SECS:
-            colour = Terminal._TIMER_WARNING_COLOUR
-        minutes, seconds = divmod(self._timeleft // 1000, 60)
-        text = self._timer_font.render('{}:{:02}'.format(minutes, seconds),
-                                       True, colour)
-        surf = pygame.Surface((text.get_rect().w + 4, text.get_rect().h))
-        surf.set_alpha(100)
-        pygame.display.get_surface().blit(surf, (Terminal._TIMER_POS[0] - 2,
-                                                 Terminal._TIMER_POS[1]))
-        pygame.display.get_surface().blit(text, Terminal._TIMER_POS)
+        self._countdown_timer.draw(Terminal._TIMER_POS)
 
     def run(self):
         """Run terminal logic."""
@@ -531,8 +528,8 @@ class Terminal:
             self._reset_prompt()
 
         # Check if the player ran out of time.
-        self._timeleft -= self._timer.frametime
-        if self._timeleft <= 0:
+        self._countdown_timer.update(self._timer.frametime)
+        if self._countdown_timer.ended:
             self.locked = True
 
         # See whether terminal can be unfrozen
@@ -615,3 +612,81 @@ class CommandHistory:
                 # Restore saved line
                 self._pos = -1
                 self._terminal.set_current_line(self._saved_line)
+
+
+class CountdownTimer:
+
+    _TIMER_FONT = 'media/fonts/LCDMU___.TTF'
+    _TIMER_SIZE = 20
+    _TIMER_LARGE_SIZE = 30
+    _TIMER_COLOUR = (255, 255, 255)
+    _TIMER_WARNING_COLOUR = (200, 0, 0)
+    _FLASH_TIME = 3000
+    _FLASH_ON = 600
+    _FLASH_OFF = 400
+
+    """Class for the terminal countdown timer."""
+    def __init__(self, time_in_s, warning_secs):
+        self._timeleft = time_in_s * 1000
+        self._timer_font = load_font(CountdownTimer._TIMER_FONT,
+                                     CountdownTimer._TIMER_SIZE)
+        self._timer_large_font = load_font(CountdownTimer._TIMER_FONT,
+                                           CountdownTimer._TIMER_LARGE_SIZE)
+        self._warning_secs = warning_secs
+
+        # Are we currently flashing the timer, and if so what time did it start
+        self._flash_start = None
+
+        # The times at which the timer should be large and flashing!
+        self._flash_times = [warning_secs, 15, 5, 4, 3, 2, 1]
+
+    @property
+    def secs_left(self):
+        return self._timeleft // 1000
+
+    @property
+    def ended(self):
+        return self._timeleft <= 0
+
+    def update(self, ms_to_subtract):
+        self._timeleft -= ms_to_subtract
+        if self._timeleft <= 0:
+            self._timeleft = 0
+            self._flash_start = None
+        elif (self._flash_start is None and
+                len(self._flash_times) > 0 and
+                self.secs_left <= self._flash_times[0]):
+            self._flash_start = self._timeleft
+            self._flash_times = self._flash_times[1:]
+        elif (self._flash_start is not None and
+                self._flash_start - self._timeleft > self._FLASH_TIME):
+            self._flash_start = None
+
+    def draw(self, pos):
+        # If we are flashing the text, then skip draw if we are in an 'off'
+        if (self._flash_start is not None and
+                        self._timeleft % (self._FLASH_ON + self._FLASH_OFF)
+                        < self._FLASH_OFF):
+            return
+
+        # Are we using normal font or the large flashing font?
+        font = self._timer_font
+        if self._flash_start is not None:
+            font = self._timer_large_font
+
+        # Draw the countdown text on a semi transparent background
+        colour = CountdownTimer._TIMER_COLOUR
+        if self.secs_left <= self._warning_secs:
+            colour = CountdownTimer._TIMER_WARNING_COLOUR
+        minutes, seconds = divmod(self.secs_left, 60)
+        text = font.render('{}:{:02}'.format(minutes, seconds), True, colour)
+        surf = pygame.Surface((text.get_rect().w + 4, text.get_rect().h))
+        surf.set_alpha(100)
+        pygame.display.get_surface().blit(surf, pos)
+        pygame.display.get_surface().blit(text, (pos[0] + 2, pos[1]))
+
+    def _get_font(self):
+        if self._flash_start is not None:
+            return self._timer_large_font
+        else:
+            return self._timer_font

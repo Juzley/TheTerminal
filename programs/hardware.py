@@ -429,13 +429,17 @@ class Chip(Component):
 
     """Chip component."""
 
+    _FONT = "media/fonts/METRO-DF.TTF"
+    _FONT_SIZE = 14
+    _FONT_COLOUR = (180, 180, 180)
+
     def create_image(self):
         # Take a copy as we are going to edit it!
         self._image = load_image('media/chip.png').copy()
 
         # Add code to the chip
-        font = load_font(None, 20)
-        text = font.render(self.code, True, (255, 255, 255))
+        font = load_font(self._FONT, self._FONT_SIZE)
+        text = font.render(self.code, True, self._FONT_COLOUR)
 
         image_rect = self._image.get_rect()
         text_rect = text.get_rect()
