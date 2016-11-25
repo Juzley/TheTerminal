@@ -66,7 +66,8 @@ class ImagePassword(program.TerminalProgram):
     _HEADER_POS = (2, 2)
     _HEADER_SIZE = (256, 26)
     _HEADER_COLOUR = (160, 160, 160)
-    _HEADER_TEXT_SIZE = 22
+    _HEADER_TEXT_SIZE = 14
+    _HEADER_TEXT_FONT = 'media/fonts/METRO-DF.TTF'
     _HEADER_TEXT_COLOUR = (0, 0, 0)
     _HEADER_TEXT_POS = (4, 8)
 
@@ -102,7 +103,8 @@ class ImagePassword(program.TerminalProgram):
         header.fill(ImagePassword._HEADER_COLOUR)
         self._background.blit(header, ImagePassword._HEADER_POS)
 
-        font = load_font(None, ImagePassword._HEADER_TEXT_SIZE)
+        font = load_font(ImagePassword._HEADER_TEXT_FONT,
+                         ImagePassword._HEADER_TEXT_SIZE)
         text = font.render("Select three images", True,
                            ImagePassword._HEADER_TEXT_COLOUR)
         self._background.blit(text, ImagePassword._HEADER_TEXT_POS)

@@ -65,7 +65,7 @@ class Terminal:
         self.locked = False
         self.id_string = ''.join(
             random.choice(string.ascii_uppercase + string.digits)
-            for _ in range(5))
+            for _ in range(4))
 
         # Current line without prompt. If current line with prompt is required,
         # use get_current_line(True)
