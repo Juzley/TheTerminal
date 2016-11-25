@@ -6,12 +6,13 @@ from pygame.font import Font
 from programs import Decrypt
 import constants
 
-_TEXT_HEIGHT = 40
+_TEXT_HEIGHT = 34
 _VERTICAL_SPACING = 20
 _VERTICAL_PADDING = 5
 _HORIZONTAL_SPACING = 20
 _HORIZONTAL_PADDING = 10
 _CENTRAL_SPACING = 50
+_BACKGROUND_COLOUR = (50, 50, 50)
 
 
 def render_font(font, charmap):
@@ -19,7 +20,7 @@ def render_font(font, charmap):
     renders = [font.render(c, True, constants.TEXT_COLOUR) for _, c in charmap]
     surf = Surface((max([r.get_rect().w for r in renders]),
                     (_TEXT_HEIGHT + _VERTICAL_SPACING) * len(renders)))
-    surf.fill((0, 0, 0))
+    surf.fill(_BACKGROUND_COLOUR)
 
     y = _VERTICAL_PADDING
     for r in renders:
@@ -42,7 +43,7 @@ def render_half(fonts):
 
     # Blit each font's column into the final image.
     output = Surface((img_width, img_height))
-    output.fill((0, 0, 0))
+    output.fill(_BACKGROUND_COLOUR)
 
     x = _HORIZONTAL_PADDING
     for surf in surfs:
@@ -73,7 +74,7 @@ if __name__ == '__main__':
     final_width = (surf_left.get_rect().w + surf_right.get_rect().w +
                    _CENTRAL_SPACING)
     output = Surface((final_width, final_height))
-    output.fill((255, 255, 255))
+    output.fill(_BACKGROUND_COLOUR)
     output.blit(surf_left, (0, 0))
     output.blit(surf_right, (surf_left.get_rect().w + _CENTRAL_SPACING, 0))
     pygame.image.save(output, 'manual/decrypt.png')
