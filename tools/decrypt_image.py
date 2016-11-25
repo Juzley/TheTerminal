@@ -77,4 +77,4 @@ if __name__ == '__main__':
     output.fill(_BACKGROUND_COLOUR)
     output.blit(surf_left, (0, 0))
     output.blit(surf_right, (surf_left.get_rect().w + _CENTRAL_SPACING, 0))
-    pygame.image.save(output, 'manual/decrypt.png')
+    pygame.image.save(output, 'docs/decrypt.png')
