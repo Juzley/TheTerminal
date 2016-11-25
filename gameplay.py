@@ -160,7 +160,7 @@ class GameplayState(GameState):
                 program_list = []
                 for d in group_info['dependent_on']:
                     dependent_group_programs = groups[d]
-                    program_list.append(list(dependent_group_programs.keys()))
+                    program_list.extend(list(dependent_group_programs.keys()))
 
                     for program in group_programs.keys():
                         depends[program] = program_list
