@@ -16,6 +16,6 @@ in order to gain access before timer runs out.
 * Clone the repository: git clone https://github.com/juzley/game-off-2016
 * Change into the directory containing the repository.
 * Launch the game: python3 ggo16.py
-* The manual is in the manual directory: manual.
+* The manual (manual.html) is in the manual directory.
 
 
