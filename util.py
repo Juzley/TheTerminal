@@ -73,9 +73,12 @@ def text_align(text, coords, align):
         return (coords[0] - text.get_rect().w, coords[1])
 
 
-def render_bezel(label):
+def render_bezel(label, power_off=False):
     """Render the bezel and label text."""
-    bezel = load_image('media/bezel.png')
+    if power_off:
+        bezel = load_image('media/bezel_off.png')
+    else:
+        bezel = load_image('media/bezel.png')
     text = load_font('media/fonts/METRO-DF.TTF', 19).render(
         label, True, (60, 60, 60))
 

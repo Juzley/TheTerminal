@@ -17,7 +17,8 @@ class ProgramProperties:
                  alternate_buf=False,
                  hide_cursor=False,
                  suppress_success=False,
-                 is_graphical=False):
+                 is_graphical=False,
+                 skip_bezel=False):
 
         # If graphical, then set correct properties
         if is_graphical:
@@ -30,6 +31,7 @@ class ProgramProperties:
         self.hide_cursor = hide_cursor
         self.suppress_success = suppress_success
         self.is_graphical = is_graphical
+        self.skip_bezel = skip_bezel
 
 
 class TerminalProgram:

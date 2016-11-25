@@ -98,6 +98,7 @@ class Terminal:
 
         # Draw the monitor bezel
         self._bezel = render_bezel(self.id_string)
+        self._bezel_off = render_bezel(self.id_string, power_off=True)
 
         self.reboot()
 
@@ -399,10 +400,11 @@ class Terminal:
         if (self._current_program and
                 self._current_program.PROPERTIES.is_graphical):
             self._current_program.draw()
+            if not self._current_program.PROPERTIES.skip_bezel:
+                self.draw_bezel()
         else:
             self._draw_contents()
-
-        self.draw_bezel()
+            self.draw_bezel()
 
         # Make sure cursor is an arrow if we are not in a program. This should
         # be a no-op if it is already an arrow.
@@ -497,9 +499,10 @@ class Terminal:
                               Terminal._CURSOR_WIDTH, first_line_size[1]),
                              0 if self._has_focus else 1)
 
-    def draw_bezel(self):
+    def draw_bezel(self, power_off=False):
         """Draw the bezel."""
-        pygame.display.get_surface().blit(self._bezel, self._bezel.get_rect())
+        bezel = self._bezel if not power_off else self._bezel_off
+        pygame.display.get_surface().blit(bezel, bezel.get_rect())
 
         # Draw the countdown text.
         self._countdown_timer.draw(Terminal._TIMER_POS)

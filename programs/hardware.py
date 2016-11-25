@@ -3,6 +3,7 @@
 import pygame
 import random
 
+import constants
 import mouse
 from . import program
 from resources import load_image, load_font
@@ -185,12 +186,17 @@ class HardwareInspect(program.TerminalProgram):
 
     _BOARD_Y = 50
 
-    _BUTTON_TEXT = "Reboot system"
-    _BUTTON_COLOUR = (255, 255, 255)
+    _MESSAGE_TEXT = "<- Click to power back on"
+    _MESSAGE_COLOUR = (180, 180, 180)
+    _MESSAGE_FONT = "media/fonts/whitrabt.ttf"
+    _MESSAGE_SIZE = 20
+    _MESSAGE_POS = (77, 572)
+    _POWER_BUTTON_RECT = (49, 566, 26, 26)
 
     """The properties of this program."""
     PROPERTIES = program.ProgramProperties(is_graphical=True,
-                                           suppress_success=True)
+                                           suppress_success=True,
+                                           skip_bezel=True)
 
     def __init__(self, terminal):
         """Initialize the class."""
@@ -218,14 +224,11 @@ class HardwareInspect(program.TerminalProgram):
         self._board_pos = (int((screen_rect[2] / 2) - (board_rect[2] / 2)),
                            self._BOARD_Y)
 
-        # Create the button
-        font = load_font(None, 40)
-        self._button_text = font.render(self._BUTTON_TEXT, True,
-                                        self._BUTTON_COLOUR)
-        button_rect = self._button_text.get_rect()
-        self._button_pos = (self._board_pos[0] + board_rect[2] - button_rect[2],
-                            self._board_pos[1] + board_rect[3] + 10)
-        self._button_rect = button_rect.move(self._button_pos)
+        # Create the message pointing at the button
+        font = load_font(self._MESSAGE_FONT, self._MESSAGE_SIZE)
+        self._message_text = font.render(self._MESSAGE_TEXT, True,
+                                         self._MESSAGE_COLOUR)
+        self._button_rect = pygame.Rect(self._POWER_BUTTON_RECT)
 
         self._completed = False
         self._exited = False
@@ -290,12 +293,11 @@ class HardwareInspect(program.TerminalProgram):
         screen = pygame.display.get_surface()
         screen.blit(self._draw_surface, self._board_pos)
 
-        # Draw button
-        screen.blit(self._button_text, self._button_pos)
-        pygame.draw.rect(screen,
-                         self._BUTTON_COLOUR,
-                         self._button_rect,
-                         1)
+        # Draw the power off bezel now, so we can then write on it.
+        self._terminal.draw_bezel(power_off=True)
+
+        # Draw message text
+        screen.blit(self._message_text, self._MESSAGE_POS)
 
     def _create_component_pairs(self, board_def):
         component_pairs = []
