@@ -12,7 +12,7 @@ import pygame
 import constants
 import timer
 import mouse
-from resource import load_font
+from resources import load_font
 from programs.program import BadInput
 from util import render_bezel
 

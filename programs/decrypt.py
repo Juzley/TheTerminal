@@ -2,7 +2,7 @@
 
 
 import random
-from resource import load_font
+from resources import load_font
 from . import program
 
 

@@ -10,7 +10,7 @@ import menu
 import constants
 from gamestate import GameState
 from terminal import Terminal
-from resource import load_font
+from resources import load_font
 
 
 class SuccessState(GameState):

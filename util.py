@@ -2,7 +2,7 @@
 
 
 import pygame
-from resource import load_image, load_font
+from resources import load_image, load_font
 
 
 class Align:

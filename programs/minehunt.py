@@ -6,7 +6,7 @@ from enum import Enum, unique
 
 import mouse
 from . import program
-from resource import load_font
+from resources import load_font
 
 
 class MineHunt(program.TerminalProgram):

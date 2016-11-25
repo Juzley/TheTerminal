@@ -5,7 +5,7 @@ import random
 import mouse
 from enum import Enum, unique
 from . import program
-from resource import load_font, load_image
+from resources import load_font, load_image
 
 
 @unique

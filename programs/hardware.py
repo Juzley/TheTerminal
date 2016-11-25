@@ -5,7 +5,7 @@ import random
 
 import mouse
 from . import program
-from resource import load_image, load_font
+from resources import load_image, load_font
 
 
 class BoardDefinition:

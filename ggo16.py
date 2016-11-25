@@ -8,7 +8,7 @@ import constants
 import mouse
 from gamestate import GameStateManager
 from menu import MainMenu
-from resource import load_image
+from resources import load_image
 
 
 def setup():
