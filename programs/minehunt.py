@@ -17,12 +17,13 @@ class MineHunt(program.TerminalProgram):
     PROPERTIES = program.ProgramProperties(is_graphical=True)
 
     _TIMER_Y = 50
-    _BOARD_Y = 80
+    _BOARD_Y = 85
     _BOARD_MAX_WIDTH = 600
     _BOARD_MAX_HEIGHT = 400
-    _STATUS_FONT_SIZE = 30
-    _END_FONT_SIZE = 40
-    _TIMER_FONT_SIZE = 40
+    _STATUS_FONT_SIZE = 20
+    _END_FONT_SIZE = 25
+    _TIMER_FONT_SIZE = 30
+    _FONT = 'media/fonts/Sansation_Regular.ttf'
 
     def __init__(self, terminal):
         """Initialize the class."""
@@ -41,9 +42,9 @@ class MineHunt(program.TerminalProgram):
         self._board_pos = (int((screen_rect[2] / 2) - (self._board.width / 2)),
                            self._BOARD_Y)
 
-        self._status_font = load_font(None, self._STATUS_FONT_SIZE)
-        self._timer_font = load_font(None, self._TIMER_FONT_SIZE)
-        end_font = load_font(None, self._END_FONT_SIZE)
+        self._status_font = load_font(self._FONT, self._STATUS_FONT_SIZE)
+        self._timer_font = load_font(self._FONT, self._TIMER_FONT_SIZE)
+        end_font = load_font(self._FONT, self._END_FONT_SIZE)
         self._game_over_texts = [
             end_font.render("Game over!!", True, (255, 255, 255)),
             end_font.render("Press R to retry, or Q to quit",
@@ -386,6 +387,8 @@ class Square:
     _FLAG_POLE_WIDTH = 3
     _FLAG_SIZE_FACTOR = 0.6
     _MINE_SCALE_FACTOR = 0.8
+    _FONT = 'media/fonts/whitrabt.ttf'
+    _FONT_SCALE = 0.6
 
     def __init__(self, square_type, rect):
         # Square type
@@ -458,7 +461,7 @@ class Square:
 
         # Draw the number on our revealed surface
         if self.mines_nearby > 0:
-            font = load_font(None, self.rect[2] - 3)
+            font = load_font(self._FONT, int(self.rect[2] * self._FONT_SCALE))
             text = font.render(str(self.mines_nearby), True, (0, 0, 0))
 
             surface = self._surfaces[Square.State.REVEALED]
