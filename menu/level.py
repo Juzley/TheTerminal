@@ -6,6 +6,7 @@ import programs
 from . import menu
 from enum import Enum, unique
 from gameplay import GameplayState
+from resources import make_path
 
 
 class LevelMenu(menu.CLIMenu):
@@ -16,13 +17,13 @@ class LevelMenu(menu.CLIMenu):
     class Items(Enum):
         BACK = 1
 
-    _LEVELS_FILE = 'levels.json'
+    _LEVELS_FILE = 'media/levels.json'
     _PROGRESS_FILE = 'progress.json'
 
     def __init__(self, mgr):
         """Initialize the class."""
         # Load levels from the level file.
-        with open(LevelMenu._LEVELS_FILE) as f:
+        with open(make_path(LevelMenu._LEVELS_FILE)) as f:
             self._levels = json.load(f)
 
             # The program class names are represented in the JSON as strings,
