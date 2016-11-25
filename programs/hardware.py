@@ -3,7 +3,6 @@
 import pygame
 import random
 
-import constants
 import mouse
 from . import program
 from resources import load_image, load_font

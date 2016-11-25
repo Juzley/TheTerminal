@@ -659,25 +659,25 @@ class CountdownTimer:
         else:
             # Should we end current flash time?
             if (self._flash_start is not None and
-                self._flash_start - self._timeleft > self._FLASH_TIME):
+                    self._flash_start - self._timeleft > self._FLASH_TIME):
                 self._flash_start = None
 
             # Should we start a new flash time?
             if (self._flash_start is None and
-                len(self._flash_times) > 0 and
-                self.secs_left <= self._flash_times[0]):
+                    len(self._flash_times) > 0 and
+                    self.secs_left <= self._flash_times[0]):
                 self._flash_start = self._timeleft
 
                 # Keep stripping until we reach a time larger than current
                 while (len(self._flash_times) > 0 and
-                               self.secs_left <= self._flash_times[0]):
+                        self.secs_left <= self._flash_times[0]):
                     self._flash_times = self._flash_times[1:]
 
     def draw(self, pos):
         # If we are flashing the text, then skip draw if we are in an 'off'
         if (self._flash_start is not None and
-                        self._timeleft % (self._FLASH_ON + self._FLASH_OFF)
-                        < self._FLASH_OFF):
+                self._timeleft % (self._FLASH_ON + self._FLASH_OFF)
+                < self._FLASH_OFF):
             return
 
         # Are we using normal font or the large flashing font?

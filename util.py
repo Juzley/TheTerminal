@@ -68,9 +68,9 @@ def text_align(text, coords, align):
     if align == Align.LEFT:
         return coords
     elif align == Align.CENTER:
-        return (coords[0] - text.get_rect().w / 2, coords[1])
+        return coords[0] - text.get_rect().w / 2, coords[1]
     else:
-        return (coords[0] - text.get_rect().w, coords[1])
+        return coords[0] - text.get_rect().w, coords[1]
 
 
 def render_bezel(label, power_off=False):

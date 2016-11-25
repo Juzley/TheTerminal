@@ -514,7 +514,6 @@ class Puzzle:
         # Add to global puzzle list
         Puzzle.puzzles.append(self)
 
-
     def _find_click_mine(self):
         for row in range(len(self.board_def)):
             for col in range(len(self.board_def[row])):
