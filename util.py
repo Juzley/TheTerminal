@@ -76,11 +76,12 @@ def text_align(text, coords, align):
 def render_bezel(label):
     """Render the bezel and label text."""
     bezel = load_image('media/bezel.png')
-    text = load_font(None, 30).render(label, True, (60, 60, 60))
+    text = load_font('media/fonts/METRO-DF.TTF', 19).render(
+        label, True, (60, 60, 60))
 
     # Copy the bezel surface so we don't overwrite the stored cached surface in
     # the media manager.
     surf = bezel.copy()
-    surf.blit(text, text_align(text, (725, 571), Align.CENTER))
+    surf.blit(text, text_align(text, (725, 570), Align.CENTER))
 
     return surf
