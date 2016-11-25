@@ -66,8 +66,8 @@ class ImagePassword(program.TerminalProgram):
     _HEADER_POS = (2, 2)
     _HEADER_SIZE = (256, 26)
     _HEADER_COLOUR = (160, 160, 160)
-    _HEADER_TEXT_SIZE = 14
-    _HEADER_TEXT_FONT = 'media/fonts/METRO-DF.TTF'
+    _HEADER_TEXT_SIZE = 16
+    _HEADER_TEXT_FONT = 'media/fonts/Sansation_Regular.ttf'
     _HEADER_TEXT_COLOUR = (0, 0, 0)
     _HEADER_TEXT_POS = (4, 8)
 

@@ -213,21 +213,6 @@
                 ]
             }
         }
-    },
-    {
-        "id": 8,
-        "name": "Test",
-        "cmd": "connect test",
-        "time": 60,
-        "requires": [],
-        "program_groups": {
-            "login": {
-                "program_count": 1,
-                "programs": [
-                    ["login", "ImagePassword"]
-                ]
-            }
-        }
     }
 ]
 
