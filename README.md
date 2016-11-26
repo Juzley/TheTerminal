@@ -22,6 +22,6 @@ in order to gain access before timer runs out.
 ### Pre-built binary (windows only)
 * Download a pre-built archive from the [github releases page](https://github.com/Juzley/game-off-2016/releases).
 * Extract the files from the archive and launch theterminal.exe.
-* The manual can be found in the docs dir of the archive (docs/manua.html), or at http://juzley.github.io/game-off-2016/manual.html
+* The manual can be found in the docs dir of the archive (docs/manual.html), or at http://juzley.github.io/game-off-2016/manual.html
 
 
