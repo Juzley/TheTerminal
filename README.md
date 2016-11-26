@@ -12,10 +12,16 @@ allowed to see the computer. The two groups must communicate with each other
 in order to gain access before timer runs out.
 
 ## Setup
+### From the source (all platforms)
 * Install python3 and the pygame module.
 * Clone the repository: git clone https://github.com/juzley/game-off-2016
 * Change into the directory containing the repository.
 * Launch the game: python3 ggo16.py
-* The manual (manual.html) is in the manual directory.
+* The manual can be found in the docs dir of the repository (docs/manual.html), or at http://juzley.github.io/game-off-2016/manual.html
+
+### Pre-built binary (windows only)
+* Download a pre-built archive from the [github releases page](https://github.com/Juzley/game-off-2016/releases).
+* Extract the files from the archive and launch theterminal.exe.
+* The manual can be found in the docs dir of the archive (docs/manua.html), or at http://juzley.github.io/game-off-2016/manual.html
 
 
