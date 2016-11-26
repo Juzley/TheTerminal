@@ -60,8 +60,8 @@ div.section {
     padding-bottom: 10px;
 }
 
-.puzzle-section em {
-    font-style: bold;
+.section em {
+    font-weight: bold;
 }
 
 .puzzle-section a {
