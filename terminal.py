@@ -30,7 +30,7 @@ class Terminal:
     _TIMER_WARNING_SECS = 30
 
     # Constants related to drawing the terminal text.
-    _VISIBLE_LINES = 28
+    _VISIBLE_LINES = 29
     _TEXT_FONT = constants.TERMINAL_FONT
     _TEXT_SIZE = constants.TERMINAL_TEXT_SIZE
     _TEXT_COLOUR = constants.TEXT_COLOUR
