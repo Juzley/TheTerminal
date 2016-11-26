@@ -158,7 +158,15 @@ class HexEditor(program.TerminalProgram):
         for idx, (start, end) in enumerate(zip(self._start_data,
                                                self._end_data)):
             expect_edit = True
-            if idx == 0 or not edited_previous:
+            if idx + 1 == len(self._start_data):
+                # This is the last line - (j) in the manual
+                # The last value should match the total number of lines, and
+                # the rest of the line should be unedited.
+                logging.debug('j - Line {}: col 5 {}->{}'.format(
+                    idx, start[-1], edits))
+                if end[-1] != edits or end[:-1] != start[:-1]:
+                    return False
+            elif idx == 0 or not edited_previous:
                 # This is the first line, or we didn't edit the previous line.
                 if start.count(9) > 0:
                     # (d) in the manual
@@ -168,9 +176,9 @@ class HexEditor(program.TerminalProgram):
                         return False
                 elif start.count(0) > 0:
                     # (e) in the manual
-                    logging.debug('e - Line {} has {} 0s, col {} 0->15'.format(
+                    logging.debug('e - Line {} has {} 0s, col {} 0->9'.format(
                         idx, start.count(0), start.index(0)))
-                    if end[start.index(0)] != 0xf:
+                    if end[start.index(0)] != 9:
                         return False
                 else:
                     # Count odd numbers.
@@ -187,14 +195,6 @@ class HexEditor(program.TerminalProgram):
                         # (x) in the manual - don't edit.
                         logging.debug('x- Line {}: do not edit'.format(idx))
                         expect_edit = False
-            elif idx + 1 == len(self._start_data):
-                # This is the last line - (j) in the manual
-                # The last value should match the total number of lines, and
-                # the rest of the line should be unedited.
-                logging.debug('j - Line {}: col 5 {}->{}'.format(
-                    idx, start[-1], edits))
-                if end[-1] != edits or end[:-1] != start[:-1]:
-                    return False
             else:
                 # A middle line, and we edited the previous line.
                 if start.count(0) > 1:
@@ -210,7 +210,7 @@ class HexEditor(program.TerminalProgram):
                         start[start.index(9)], edited_idx))
                     if end[start.index(9)] != edited_idx:
                         return False
-                elif start.count(edited_new):
+                elif start.count(edited_new) > 0:
                     # (i) in the manual
                     logging.debug('i - Line {} has {} {}s: col {} {}->0'.format(
                         idx, start.count(edited_new), edited_new,
