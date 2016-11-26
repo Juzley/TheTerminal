@@ -182,7 +182,7 @@ class HexEditor(program.TerminalProgram):
                         return False
                 else:
                     # Count odd numbers.
-                    odds = [(i, v) for i, v in enumerate(start) if i % 2 == 1]
+                    odds = [v for v in start if v % 2 == 1]
                     if len(odds) > 3:
                         # (f) in the manual
                         logging.debug(
