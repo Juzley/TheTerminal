@@ -5,3 +5,4 @@
 from menu.mainmenu import MainMenu
 from menu.pause import PauseMenu
 from menu.level import LevelMenu
+from menu.splash import SplashScreen

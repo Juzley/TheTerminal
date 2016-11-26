@@ -7,7 +7,7 @@ import random
 import constants
 import mouse
 from gamestate import GameStateManager
-from menu import MainMenu
+from menu import SplashScreen
 from resources import load_image
 
 
@@ -26,7 +26,7 @@ def setup():
 def run():
     """Run the game loop."""
     gamestates = GameStateManager()
-    gamestates.push(MainMenu(gamestates))
+    gamestates.push(SplashScreen(gamestates))
 
     running = True
     while running:

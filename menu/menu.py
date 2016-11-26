@@ -211,7 +211,7 @@ class CLIMenu(GameState):
             if line:
                 pygame.display.get_surface().blit(line, coords)
 
-            if item == selected_item:
+            if item == selected_item and self._highlight_selection():
                 pygame.display.get_surface().blit(
                     self._select_marker,
                     (coords[0] + line.get_rect().w, coords[1]))
@@ -223,6 +223,11 @@ class CLIMenu(GameState):
 
         # Draw the bezel
         pygame.display.get_surface().blit(self._bezel, self._bezel.get_rect())
+
+    @staticmethod
+    def _highlight_selection():
+        """Override to control selection highlighting."""
+        return True
 
     def _hit_item(self, pos):
         """Determine whether a given point hits a menu item."""

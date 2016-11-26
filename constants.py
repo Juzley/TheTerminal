@@ -10,3 +10,4 @@ TERMINAL_TEXT_SIZE = 16
 GAMENAME = "The Terminal"
 VERSION = 0.1
 VERSION_STRING = 'v{}'.format(VERSION)
+MANUAL_URL = 'https://juzley.github.io/game-off-2016/manual.html'
