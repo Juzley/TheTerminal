@@ -180,7 +180,6 @@ div.resistor {
     margin: auto;
     padding-top: 1px;
     padding-bottom: 1px;
-    background-color: #e5e5cb;
 }
 
 .resistor div {
@@ -189,26 +188,28 @@ div.resistor {
     margin-left: 1px;
     margin-right: 1px;
     display: inline-block;
+    font-weight: bold;
+    font-size: 2em;
 }
 
 .resistor div.red {
-    background-color: red;
+    color: red;
 }
 
 .resistor div.yellow {
-    background-color: yellow;
+    color: yellow;
 }
 
 .resistor div.green {
-    background-color: green;
+    color: green;
 }
 
 .resistor div.blue {
-    background-color: blue;
+    color: blue;
 }
 
 .resistor div.black {
-    background-color: black;
+    color: black;
 }
 
 @media print {
