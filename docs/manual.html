@@ -626,7 +626,8 @@ should be detonated:
 
 
     var networks = document.querySelectorAll('.network-diagram pre');
-    for (var network of networks) {
+    for (var i = 0; i < networks.length; i++) {
+        var network = networks[i];
         var diagram = network.innerHTML;
         diagram = diagram.replaceAll("x", "<span class=firewall>x</span>");
         diagram = diagram.replaceAll("G", "<span class=gateway>G</span>");
@@ -637,7 +638,8 @@ should be detonated:
     }
 
     var rows = document.querySelectorAll('.minehunt-diagram tr');
-    for (var row of rows) {
+    for (var i = 0; i < rows.length; i++) {
+        var row = rows[i];
         var div = row.children[0];
         var divs = div.innerHTML;
         divs = divs.replaceAll("x", "<td><div class=finish></div></td>");
