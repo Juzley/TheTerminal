@@ -148,19 +148,13 @@ div.minehunt-diagram {
 }
 
 .minehunt-diagram div.bomb {
-    background-color: black;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    margin: auto;
+    color: black;
+    font-weight: bold;
 }
 
 .minehunt-diagram div.finish {
-    background-color: red;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    margin: auto;
+    color: red;
+    font-weight: bold;
 }
 
 .minehunt-diagram span.count {
@@ -216,3 +210,19 @@ div.resistor {
 .resistor div.black {
     background-color: black;
 }
+
+@media print {
+    .puzzle-section {
+        page-break-before: always;
+    }
+
+    table {
+        page-break-inside: avoid;
+    }
+
+    img {
+        page-break-inside: avoid;
+    }
+}
+
+
