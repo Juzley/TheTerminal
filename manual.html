@@ -515,9 +515,9 @@ should be detonated:
 </p>
 
 <table id=minehunt-key>
-    <tr><td class=minehunt-diagram><div class=bomb></div></td>
+    <tr><td class=minehunt-diagram><div class=bomb>o</div></td>
         <td>The location of a mine that should be flagged</td></tr>
-    <tr><td class=minehunt-diagram><div class=finish></div></td>
+    <tr><td class=minehunt-diagram><div class=finish>x</div></td>
         <td>The location of the mine that should be detonated</td></tr>
 </table>
 
@@ -642,8 +642,8 @@ should be detonated:
         var row = rows[i];
         var div = row.children[0];
         var divs = div.innerHTML;
-        divs = divs.replaceAll("x", "<td><div class=finish></div></td>");
-        divs = divs.replaceAll("o", "<td><div class=bomb></div></td>");
+        divs = divs.replaceAll("x", "<td><div class=finish>x</div></td>");
+        divs = divs.replaceAll("o", "<td><div class=bomb>o</div></td>");
         divs = divs.replaceAll(".", "<td></td>");
         row.innerHTML = divs;
     }
