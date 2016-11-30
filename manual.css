@@ -174,7 +174,7 @@ div.minehunt-diagram {
 }
 
 .minehunt-diagram span.time em {
-    font-style: bold;
+    font-weight: bold;
 }
 
 #minehunt-key td {
