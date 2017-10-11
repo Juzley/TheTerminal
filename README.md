@@ -17,11 +17,11 @@ in order to gain access before timer runs out.
 * Clone the repository: git clone https://github.com/juzley/theterminal
 * Change into the directory containing the repository.
 * Launch the game: python3 ggo16.py
-* The manual can be found in the docs dir of the repository (docs/manual.html), or at http://juzley.github.io/theterminal/manual.html
+* The manual can be found in the docs dir of the repository (docs/manual.html), or at http://juzley.github.io/TheTerminal/manual.html
 
 ### Pre-built binary (windows only)
 * Download a pre-built archive from the [github releases page](https://github.com/Juzley/theterminal/releases).
 * Extract the files from the archive and launch theterminal.exe.
-* The manual can be found in the docs dir of the archive (docs/manual.html), or at http://juzley.github.io/theterminal/manual.html
+* The manual can be found in the docs dir of the archive (docs/manual.html), or at http://juzley.github.io/TheTerminal/manual.html
 
 
